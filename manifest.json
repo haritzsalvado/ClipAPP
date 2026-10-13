@@ -1,14 +1,24 @@
 {
-  "name": "Tallador XPS",
-  "short_name": "Tallador",
-  "start_url": "./",
+  "name": "ClipAPP",
+  "short_name": "ClipAPP",
+  "start_url": "./?app=tallador-2",
   "scope": "./",
   "display": "standalone",
   "orientation": "landscape",
   "background_color": "#0f1317",
   "theme_color": "#0f1317",
   "icons": [
-    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
-    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
-  ]
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "id": "./?app=tallador-2"
 }

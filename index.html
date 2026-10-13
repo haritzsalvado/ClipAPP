@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Tallador XPS</title>
+<title>ClipAPP</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f1317">
 <link rel="icon" href="icon-192.png">
@@ -160,7 +160,7 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 
 <!-- ================= SETUP ================= -->
 <section id="setup">
-  <h1>Tallador XPS</h1>
+  <h1>ClipAPP</h1>
   <div class="muted">Marca les fases i els individuals d'un partit i passa-les a XPS Sideline.</div>
 
   <div class="card">
@@ -216,9 +216,9 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
       <div id="timeline"><div id="playhead"></div></div>
       <input type="range" id="seek" min="0" max="100" step="0.1" value="0" aria-label="Posició del vídeo">
       <div id="controls">
-        <button class="btn" data-act="BACK">−5 s</button>
+        <button class="btn" data-act="BACK">−3 s</button>
         <button class="btn primary" data-act="PLAY" id="bPlay">▶</button>
-        <button class="btn" data-act="FWD">+5 s</button>
+        <button class="btn" data-act="FWD">+3 s</button>
         <button class="btn" data-act="SPEED" id="bSpeed">x1</button>
         <button class="btn" data-act="UNDO">Desfer</button>
         <div class="sp"></div>
@@ -315,7 +315,7 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 
 <script>
 'use strict';
-const APP_VERSION = 'v2';
+const APP_VERSION = 'v4';
 /* =====================================================================
    TAG DICTIONARY — exact texts as they exist in the XPS template.
    Trailing spaces matter. Lines marked (?) are not yet verified.
@@ -354,11 +354,12 @@ const KIND_SIDE = {ATT:'TAM',BAL:'TAM',DEF:'VED',FB:'VED'};
 const ACTIONS = [
   ['ATT','Inici ATT'],['BAL','Inici BAL'],['DEF','Inici DEF'],['FB','Inici FB'],['TO','Inici TO'],
   ['INDATT','IND ATT'],['INDDEF','IND DEF'],['FINAL','FINAL · i «Fet» als individuals'],
-  ['PLAY','Play / pausa'],['BACK','−5 s'],['FWD','+5 s'],['SPEED','Velocitat'],['UNDO','Desfer']
+  ['PLAY','Play / pausa'],['BACK','−3 s'],['FWD','+3 s'],['SPEED','Velocitat'],['UNDO','Desfer']
 ];
 const DEFAULT_KEYS = {'1':'ATT','2':'BAL','3':'DEF','4':'FB','5':'TO','6':'INDATT','7':'INDDEF','Enter':'FINAL',
   '0':'PLAY',' ':'PLAY','-':'BACK','ArrowLeft':'BACK','+':'FWD','ArrowRight':'FWD','*':'SPEED','/':'UNDO'};
 const SPEEDS = [1,1.5,2];
+const SEEK_STEP = 3;
 
 /* ===================== helpers ===================== */
 const $ = s => document.querySelector(s);
@@ -450,7 +451,7 @@ function renderSetup(){
     : '<div class="muted">Encara no hi ha cap partit.</div>';
   const teams = new Set([...Object.keys(rosters()), ...list.map(s=>s.team)]);
   $('#teamList').innerHTML = [...teams].map(t=>`<option value="${esc(t)}">`).join('');
-  $('#scrInfo').textContent = 'Tallador XPS '+APP_VERSION+' · pantalla '+innerWidth+'×'+innerHeight;
+  $('#scrInfo').textContent = 'ClipAPP '+APP_VERSION+' · pantalla '+innerWidth+'×'+innerHeight;
 }
 $('#sessList').addEventListener('click', e=>{
   const o=e.target.closest('[data-open]'), d=e.target.closest('[data-del]');
@@ -469,7 +470,7 @@ function openSession(id){ const s=LS.get('xt.s.'+id,null); if(!s){ toast('No s\'
 
 $('#bBackup').onclick = ()=>{
   const data = {app:'tallador-xps',v:1,date:new Date().toISOString(),rosters:rosters(),keys,sessions:idx().map(x=>LS.get('xt.s.'+x.id,null)).filter(Boolean)};
-  download('tallador_copia_'+new Date().toISOString().slice(0,10)+'.json', JSON.stringify(data), 'application/json');
+  download('clipapp_copia_'+new Date().toISOString().slice(0,10)+'.json', JSON.stringify(data), 'application/json');
 };
 $('#fRestore').onchange = async e=>{
   const f=e.target.files[0]; if(!f) return;
@@ -581,8 +582,8 @@ function act(a){
     case 'INDDEF': startInd('VED'); break;
     case 'FINAL': finalClip(); break;
     case 'PLAY': if(needVideo()) return; video.paused ? video.play() : video.pause(); break;
-    case 'BACK': if(videoReady) video.currentTime=Math.max(0,now()-5); break;
-    case 'FWD': if(videoReady) video.currentTime=Math.min(dur(),now()+5); break;
+    case 'BACK': if(videoReady) video.currentTime=Math.max(0,now()-SEEK_STEP); break;
+    case 'FWD': if(videoReady) video.currentTime=Math.min(dur(),now()+SEEK_STEP); break;
     case 'SPEED': speedIdx=(speedIdx+1)%SPEEDS.length; video.playbackRate=SPEEDS[speedIdx];
                   $('#bSpeed').textContent='x'+String(SPEEDS[speedIdx]).replace('.',','); break;
     case 'UNDO': undo(); break;
