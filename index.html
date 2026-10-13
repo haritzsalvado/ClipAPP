@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tallador XPS</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f1317">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#0f1317;--panel:#1a2027;--chip:#222a33;--line:#33404d;--text:#e8ecef;--muted:#9aa6b2;
+  --tam:#f59e0b;--ved:#2563eb;--ok:#4ade80;--warn:#fbbf24;--bad:#ef4444;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;cursor:pointer;color:inherit}
+button:disabled{opacity:.35;cursor:default}
+input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px}
+.hidden{display:none!important}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.muted{color:var(--muted)}
+.btn{height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--panel);font-size:15px;font-weight:600}
+.btn.primary{background:var(--text);color:#0f1317;border:none}
+.btn.danger{border-color:#7f1d1d;color:#fca5a5}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;letter-spacing:.03em}
+.b-TAM{background:var(--tam);color:#111418}
+.b-VED{background:var(--ved);color:#fff}
+.b-none{background:var(--line);color:var(--text)}
+
+/* ---------- SETUP ---------- */
+#setup{max-width:860px;margin:0 auto;padding:24px 16px 60px}
+#setup h1{font-size:26px;margin:0 0 4px}
+.card{background:var(--panel);border-radius:12px;padding:16px;margin-top:16px}
+.card h2{font-size:15px;letter-spacing:.06em;color:var(--muted);margin:0 0 12px;text-transform:uppercase}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.field{display:flex;flex-direction:column;gap:6px;flex:1 1 220px}
+.field label{font-size:13px;color:var(--muted);font-weight:600}
+.sess{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.sess:first-child{border-top:none}
+.sess .info{flex:1;min-width:0}
+.sess .t{font-weight:700;font-size:16px}
+
+/* ---------- MAIN ---------- */
+#main{height:100%;display:flex;flex-direction:column}
+#topbar{height:52px;flex:none;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid #252e37}
+#topbar .title{font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#topbar .sp{flex:1}
+#topbar .btn{height:38px;font-size:14px}
+#saved{font-size:12px;color:var(--muted);white-space:nowrap}
+#body{flex:1;display:flex;min-height:0}
+#left{flex:1;display:flex;flex-direction:column;gap:8px;padding:10px;min-width:0}
+#vwrap{flex:1;position:relative;background:#05080a;border-radius:10px;overflow:hidden;min-height:160px}
+#video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
+#novideo{position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;text-align:center;padding:20px}
+#vbadge{position:absolute;left:12px;top:10px;display:flex;gap:6px;pointer-events:none}
+#vclock{position:absolute;right:12px;bottom:10px;font-size:22px;font-weight:700;background:rgba(15,19,23,.85);padding:3px 10px;border-radius:8px;pointer-events:none}
+#flash{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);font-size:44px;font-weight:800;padding:10px 26px;border-radius:14px;opacity:0;transition:opacity .35s;pointer-events:none}
+#timeline{height:34px;flex:none;position:relative;background:var(--panel);border-radius:6px;overflow:hidden;cursor:pointer}
+#timeline .seg{position:absolute;height:15px;border-radius:2px}
+#timeline .ph{top:2px}
+#timeline .in{top:18px;height:14px}
+#timeline .seg.f{outline:2px solid #fff;z-index:2}
+#playhead{position:absolute;top:0;bottom:0;width:2px;background:#fff;z-index:3;pointer-events:none}
+#seek{width:100%;margin:0;flex:none;padding:0}
+#controls{display:flex;align-items:center;gap:8px;flex:none}
+#controls .btn{height:46px;min-width:58px;font-size:15px}
+#controls .sp{flex:1}
+#tclock{font-size:14px;color:var(--muted)}
+
+#right{width:440px;flex:none;border-left:1px solid #252e37;display:flex;flex-direction:column;min-height:0}
+#starts{padding:10px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;flex:none}
+.sb{height:56px;border-radius:11px;border:none;font-size:17px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+.sb small{font-size:11px;font-weight:600;opacity:.9}
+.sb.TAM{background:var(--tam);color:#111418}
+.sb.VED{background:var(--ved);color:#fff}
+.sb.N{background:#2a323c;border:1px solid #4a5664;color:var(--text)}
+.sb.IA{background:#2a323c;border:2px solid var(--tam)}
+.sb.ID{background:#2a323c;border:2px solid var(--ved)}
+.sb.FIN{background:var(--text);color:#0f1317}
+.sb.on{outline:3px solid #fff;outline-offset:-3px}
+#recents{display:flex;gap:6px;padding:0 10px 8px;overflow-x:auto;flex:none}
+.rc{flex:none;height:34px;padding:0 10px;border-radius:999px;border:1px solid var(--line);background:var(--chip);font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.rc.f{background:var(--text);color:#0f1317;border-color:var(--text)}
+.rc .dot{width:9px;height:9px;border-radius:50%}
+.rc.open .dot{animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.25}}
+#panel{flex:1;overflow-y:auto;padding:0 10px 16px;display:flex;flex-direction:column;gap:12px}
+.cc{background:var(--panel);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.cc .hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cc .hd .k{font-weight:800;font-size:16px}
+.times{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
+.nud{display:flex;align-items:center;gap:4px}
+.nud button{width:34px;height:32px;border-radius:7px;border:1px solid var(--line);background:var(--chip);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:30px}
+.chip{height:30px;padding:0 10px;border-radius:999px;border:none;background:#33404d;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.chip i{font-style:normal;color:var(--muted);font-size:11px}
+.out{font-size:12px;color:#c9d2db;word-break:break-word}
+.sec{display:flex;flex-direction:column;gap:6px}
+.sec .lb{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.g{display:grid;gap:6px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.gt{grid-template-columns:62px repeat(4,minmax(0,1fr));align-items:center}
+.gt .rl{font-size:13px;font-weight:700;color:#c9d2db}
+.tb{min-height:44px;padding:4px 6px;border-radius:8px;border:1px solid var(--line);background:var(--chip);font-size:14px;font-weight:600;line-height:1.15}
+.tb.on{background:var(--sel,#e8ecef);border-color:var(--sel,#e8ecef);color:var(--selt,#0f1317);font-weight:800}
+.tb .n{display:block;font-size:17px;font-weight:800}
+.tb .s{display:block;font-size:10px;font-weight:600;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.empty{padding:24px 10px;text-align:center;color:var(--muted);font-size:14px;line-height:1.5}
+
+/* ---------- OVERLAYS ---------- */
+.ov{position:fixed;inset:0;background:rgba(5,8,10,.75);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.modal{background:var(--bg);border:1px solid var(--line);border-radius:14px;width:min(1100px,100%);max-height:100%;display:flex;flex-direction:column;overflow:hidden}
+.modal .mh{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #252e37}
+.modal .mh .t{font-weight:800;font-size:17px;flex:1}
+.modal .mb{padding:14px 16px;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.ex{display:flex;gap:16px;flex-wrap:wrap}
+.ex .l{flex:1 1 520px;min-width:0}
+.ex .r{flex:1 1 340px;display:flex;flex-direction:column;gap:10px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12px;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:9px 8px;border-bottom:1px solid #222a33;vertical-align:top}
+tr.w td{background:#2a2113}
+tbody tr{cursor:pointer}
+pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padding:10px;font-size:11px;line-height:1.6;color:#c9d2db;overflow:auto;max-height:220px;white-space:pre}
+.keyrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #222a33}
+.keyrow .a{flex:1;font-weight:600}
+.kcap{min-width:70px;text-align:center;padding:6px 10px;border-radius:7px;background:var(--chip);border:1px solid var(--line)}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--text);color:#0f1317;font-weight:700;padding:10px 16px;border-radius:10px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%}
+
+@media (max-width:900px){
+  #body{flex-direction:column}
+  #right{width:auto;border-left:none;border-top:1px solid #252e37;flex:1}
+  #vwrap{min-height:200px}
+  #left{flex:none;height:46vh}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= SETUP ================= -->
+<section id="setup">
+  <h1>Tallador XPS</h1>
+  <div class="muted">Marca les fases i els individuals d'un partit i passa-les a XPS Sideline.</div>
+
+  <div class="card">
+    <h2>Nou partit</h2>
+    <div class="row">
+      <div class="field"><label for="nName">Nom del partit</label><input id="nName" placeholder="p. ex. S7.PLO-GDA"></div>
+      <div class="field"><label for="nTeam">Equip analitzat (com a XPS, sense TAM/VED)</label><input id="nTeam" list="teamList" placeholder="p. ex. GDANSK 26-27"><datalist id="teamList"></datalist></div>
+    </div>
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="bCreate">Crear i començar</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Partits desats en aquesta tauleta</h2>
+    <div id="sessList"></div>
+  </div>
+
+  <div class="card">
+    <h2>Còpia de seguretat</h2>
+    <div class="muted" style="font-size:14px;margin-bottom:10px">Guarda tots els partits i plantilles en un fitxer, per si la tauleta perd les dades.</div>
+    <div class="row">
+      <button class="btn" id="bBackup">Exportar còpia (.json)</button>
+      <label class="btn" style="display:flex;align-items:center">Importar còpia<input type="file" id="fRestore" accept=".json,application/json" class="hidden"></label>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAIN ================= -->
+<section id="main" class="hidden">
+  <div id="topbar">
+    <button class="btn" id="bHome" aria-label="Tornar als partits">‹ Partits</button>
+    <div class="title" id="mTitle"></div>
+    <div class="sp"></div>
+    <div id="saved"></div>
+    <label class="btn" style="display:flex;align-items:center">Vídeo<input type="file" id="fVideo2" accept="video/*" class="hidden"></label>
+    <button class="btn" id="bRoster">Plantilla</button>
+    <button class="btn" id="bKeys">Tecles</button>
+    <button class="btn primary" id="bExport">Talls i exportar</button>
+  </div>
+  <div id="body">
+    <div id="left">
+      <div id="vwrap">
+        <video id="video" playsinline preload="auto"></video>
+        <div id="novideo">
+          <div style="font-size:18px;font-weight:700">Tria el vídeo del partit</div>
+          <div class="muted" id="novideoHint" style="font-size:14px">El vídeo no es puja enlloc: es llegeix des de la tauleta.</div>
+          <label class="btn primary" style="display:flex;align-items:center;height:52px;font-size:16px">Obrir vídeo (mp4)<input type="file" id="fVideo" accept="video/*" class="hidden"></label>
+        </div>
+        <div id="vbadge"></div>
+        <div id="vclock" class="mono">00:00:00</div>
+        <div id="flash"></div>
+      </div>
+      <div id="timeline"><div id="playhead"></div></div>
+      <input type="range" id="seek" min="0" max="100" step="0.1" value="0" aria-label="Posició del vídeo">
+      <div id="controls">
+        <button class="btn" data-act="BACK">−5 s</button>
+        <button class="btn primary" data-act="PLAY" id="bPlay">▶</button>
+        <button class="btn" data-act="FWD">+5 s</button>
+        <button class="btn" data-act="SPEED" id="bSpeed">x1</button>
+        <button class="btn" data-act="UNDO">Desfer</button>
+        <div class="sp"></div>
+        <div id="tclock" class="mono">00:00:00 / 00:00:00</div>
+      </div>
+    </div>
+    <div id="right">
+      <div id="starts">
+        <button class="sb TAM" data-act="ATT">ATT<small>TAM</small></button>
+        <button class="sb TAM" data-act="BAL">BAL<small>TAM</small></button>
+        <button class="sb VED" data-act="DEF">DEF<small>VED</small></button>
+        <button class="sb VED" data-act="FB">FB<small>VED</small></button>
+        <button class="sb N" data-act="TO">TO<small>time out</small></button>
+        <button class="sb IA" data-act="INDATT">IND ATT<small>TAM · 1 clic</small></button>
+        <button class="sb ID" data-act="INDDEF">IND DEF<small>VED · 1 clic</small></button>
+        <button class="sb FIN" data-act="FINAL" id="bFinal">FINAL</button>
+      </div>
+      <div id="recents"></div>
+      <div id="panel"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXPORT ================= -->
+<div class="ov hidden" id="ovExport">
+  <div class="modal">
+    <div class="mh"><div class="t">Talls i exportar a XPS</div><button class="btn" data-close="ovExport">Tancar</button></div>
+    <div class="mb">
+      <div class="muted" id="exSummary" style="font-size:14px"></div>
+      <div class="ex">
+        <div class="l">
+          <table>
+            <thead><tr><th>#</th><th>Tipus</th><th>Temps</th><th>Etiquetes</th></tr></thead>
+            <tbody id="exRows"></tbody>
+          </table>
+        </div>
+        <div class="r">
+          <div class="sec"><div class="lb">1 · Fases → Importar Eventos desde el portapapeles</div>
+            <pre id="exTxt"></pre>
+            <div class="row"><button class="btn primary" id="bCopyTxt">Copiar</button><button class="btn" id="bDlTxt">Descarregar .txt</button></div>
+          </div>
+          <div class="sec"><div class="lb">2 · Individuals → Importar XML/XLS › SportsCode</div>
+            <pre id="exXml"></pre>
+            <div class="row"><button class="btn" id="bDlXml">Descarregar .xml</button></div>
+          </div>
+          <button class="btn primary" id="bShare" style="height:52px">Compartir els dos fitxers</button>
+          <div class="muted" style="font-size:13px;line-height:1.5">Al PC: obre el .txt, Ctrl+A, Ctrl+C, i a XPS botó dret al partit › Avanzado › Importar Eventos desde el portapapeles. Després, Importar XML/XLS › SportsCode amb el .xml.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ROSTER ================= -->
+<div class="ov hidden" id="ovRoster">
+  <div class="modal" style="width:min(640px,100%)">
+    <div class="mh"><div class="t" id="rTitle">Plantilla</div><button class="btn" data-close="ovRoster">Tancar</button></div>
+    <div class="mb">
+      <div class="muted" style="font-size:14px;line-height:1.5">Un jugador per línia, escrit exactament com a XPS (p. ex. <span class="mono">32. ZMAVC Nejc</span>). També pots enganxar-hi una exportació de text d'XPS: l'app n'agafarà la columna Deportista.</div>
+      <textarea id="rText" rows="14" class="mono" style="font-size:14px"></textarea>
+      <div class="row"><button class="btn primary" id="bRSave">Desar plantilla</button><span class="muted" id="rCount"></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= KEYS ================= -->
+<div class="ov hidden" id="ovKeys">
+  <div class="modal" style="width:min(560px,100%)">
+    <div class="mh"><div class="t">Tecles del comandament</div><button class="btn" data-close="ovKeys">Tancar</button></div>
+    <div class="mb">
+      <div class="muted" style="font-size:14px">Prem «Canviar» i després la tecla del comandament que vulguis fer servir.</div>
+      <div id="kList"></div>
+      <div class="row"><button class="btn" id="bKReset">Restablir per defecte</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   TAG DICTIONARY — exact texts as they exist in the XPS template.
+   Trailing spaces matter. Lines marked (?) are not yet verified.
+   ===================================================================== */
+const TRANS = {
+  BAL: [['BAL',   ['BAL 1W','BAL FLASH','BAL 2W','BAL 3W']],
+        ['BAL AG',['BAL AG 1W','BAL AG FLASH','BAL AG 2W','BAL AG 3W']]],   // BAL AG (?)
+  FB:  [['FB',    ['FB 1W','FB FLASH','FB 2W','FB 3W']],
+        ['FB AG', ['FB AG 1W','FB AG FLASH','FB AG 2W','FB AG 3W']]]
+};
+const SYS_MAIN = [ {p:['6:0']}, {p:['5:1']}, {p:['7X6']}, {p:['PASSIVE '],l:'PASSIVE'} ];
+const SYS_MODS = [ {p:['+1']}, {p:['-1'],l:'−1'}, {p:['OTHERS ','+2 '],l:'+2'}, {p:['OTHERS ','-2'],l:'−2'},
+                   {p:['OTHERS ','7x5 '],l:'7x5'}, {p:['OTHERS ','5x6 '],l:'5x6'} ];
+const TIMEOUT = ['TIME OUT '];
+const FORCE_BRACKET = new Set(['TIME OUT ']);
+
+const IND_ATT = [
+  ['SHOOT', [ {p:['SHOOT ','JUMP '],l:'JUMP'}, {p:['SHOOT ','PIE CAMB. '],l:'PIE CAMB.'}, {p:['SHOOT ','APOYO'],l:'APOYO'},
+              {p:['SHOOT ','CADERA '],l:'CADERA'}, {p:['SHOOT ','RECTIFIC. '],l:'RECTIFIC.'} ]],
+  ['FINTA', [ {p:['FINTA ','STRONG SIDE '],l:'STRONG SIDE'}, {p:['FINTA ','BAD SIDE '],l:'BAD SIDE'}, {p:['FINTA ','SHOOT '],l:'SHOOT'},
+              {p:['FINTA ','PASS '],l:'PASS'}, {p:['FINTA ','BOUNCE'],l:'BOUNCE'}, {p:['FINTA ','TURN (GIRO)'],l:'TURN (GIRO)'} ]],
+  ['PASSADA I SENSE PILOTA', [ {p:['PASS']} /* (?) */, {p:['PASS PIV']}, {p:['PASS WING','LW'],l:'PASS WING LW'},
+              {p:['PASS WING','RW'],l:'PASS WING RW'}, {p:['WITHOUT BALL/RUN']} ]]
+];
+const DECISIONS = [ {v:'LW ',l:'LW'} /* (?) */, {v:'RW ',l:'RW'} /* (?) */, {v:'LB ',l:'LB'}, {v:'RB ',l:'RB'}, {v:'PL ',l:'PL'}, {v:'PIV ',l:'PIV'} /* (?) */ ];
+const IND_DEF = [
+  ['ACCIONS DEFENSIVES', [ {p:['1X1']}, {p:['HELP']}, {p:['1X2']}, {p:['BLOCK']}, {p:['STEAL (LOP) '],l:'STEAL (LOP)'},
+     {p:['CONTROL PIVOT']}, {p:['FIGHT PIVOT']}, {p:['ATTACK FAULT']}, {p:['DISSUATION (IMPAR)'],l:'DISSUATION'},
+     {p:['DISSUATION (IMPAR)','OWN OPPONENT (PAR)'],l:'DISS. OWN OPP.'} ]],
+  ['ALTRES', [ {p:['BRUTAL '],l:'BRUTAL'}, {p:['ACTITUDS '],l:'ACTITUDS'}, {p:['OUT '],l:'OUT'} ]]
+];
+const IND_FIRST = ['INDIVIDUAL'];
+
+const KIND_SIDE = {ATT:'TAM',BAL:'TAM',DEF:'VED',FB:'VED'};
+const PHASES = ['ATT','BAL','DEF','FB','TO'];
+const ACTIONS = [
+  ['ATT','Inici ATT'],['BAL','Inici BAL'],['DEF','Inici DEF'],['FB','Inici FB'],['TO','Inici TO'],
+  ['INDATT','IND ATT'],['INDDEF','IND DEF'],['FINAL','FINAL'],
+  ['PLAY','Play / pausa'],['BACK','−5 s'],['FWD','+5 s'],['SPEED','Velocitat'],['UNDO','Desfer']
+];
+const DEFAULT_KEYS = {'1':'ATT','2':'BAL','3':'DEF','4':'FB','5':'TO','6':'INDATT','7':'INDDEF','Enter':'FINAL',
+  '0':'PLAY',' ':'PLAY','-':'BACK','ArrowLeft':'BACK','+':'FWD','ArrowRight':'FWD','*':'SPEED','/':'UNDO'};
+const SPEEDS = [1,1.5,2];
+
+/* ===================== helpers ===================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const key = p => p.join('\u0001');
+const pad = n => String(n).padStart(2,'0');
+function hms(sec){ sec = Math.max(0, Math.round(sec)); return pad(Math.floor(sec/3600))+':'+pad(Math.floor(sec%3600/60))+':'+pad(sec%60); }
+function hmsF(sec){ const d=Math.round(Math.max(0,sec)*10); return hms(Math.floor(d/10)).slice(3)+'.'+(d%10); }
+const r1 = x => Math.round(x*10)/10;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.style.opacity=1; clearTimeout(toast._t); toast._t=setTimeout(()=>t.style.opacity=0,2200); }
+
+const LS = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ toast('ATENCIÓ: no s\'ha pogut desar a la tauleta'); return false; } },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+
+/* ===================== tag formatting ===================== */
+function fmtPath(p){ return p.map(x=>'['+x+']').join('/'); }
+function fmtCol(paths){
+  if(!paths.length) return '';
+  if(paths.length===1 && paths[0].length===1 && !FORCE_BRACKET.has(paths[0][0])) return paths[0][0];
+  return paths.map(fmtPath).join(', ');
+}
+function labelOf(p){
+  const all=[...SYS_MAIN,...SYS_MODS];
+  for(const t of all) if(key(t.p)===key(p)) return t.l||p.join(' ');
+  for(const g of [...IND_ATT,...IND_DEF]) for(const t of g[1]) if(key(t.p)===key(p)) return t.l||p.join(' ');
+  return p.map(s=>s.trim()).join(' ');
+}
+
+/* ===================== state ===================== */
+let S = null;            // current session
+let undoStack = [];
+let keys = LS.get('xt.keys', null) || {...DEFAULT_KEYS};
+let learning = null;
+let videoReady = false;
+let speedIdx = 0;
+let wakeLock = null;
+
+function idx(){ return LS.get('xt.index', []); }
+function rosters(){ return LS.get('xt.rosters', {}); }
+function roster(){ return (S && rosters()[S.team]) || []; }
+function clip(id){ return S && S.clips.find(c=>c.id===id) || null; }
+function save(){
+  if(!S) return;
+  S.updated = Date.now();
+  const ok = LS.set('xt.s.'+S.id, S);
+  const list = idx(); const i = list.findIndex(x=>x.id===S.id);
+  const e = {id:S.id,name:S.name,team:S.team,updated:S.updated,count:S.clips.length};
+  if(i>=0) list[i]=e; else list.unshift(e);
+  LS.set('xt.index', list);
+  $('#saved').textContent = ok ? '✓ desat · '+S.clips.length+' talls' : '⚠ NO DESAT';
+  $('#saved').style.color = ok ? 'var(--muted)' : 'var(--bad)';
+}
+function snapshot(){
+  undoStack.push(JSON.stringify({clips:S.clips,openId:S.openId,focusId:S.focusId,counter:S.counter}));
+  if(undoStack.length>60) undoStack.shift();
+}
+function undo(){
+  if(!undoStack.length){ toast('No hi ha res per desfer'); return; }
+  Object.assign(S, JSON.parse(undoStack.pop())); save(); renderAll(); toast('Desfet');
+}
+
+/* ===================== setup screen ===================== */
+function renderSetup(){
+  const list = idx();
+  $('#sessList').innerHTML = list.length ? list.map(s=>`
+    <div class="sess"><div class="info"><div class="t">${esc(s.name)}</div>
+      <div class="muted" style="font-size:13px">${esc(s.team)} · ${s.count} talls · ${new Date(s.updated).toLocaleString('ca-ES')}</div></div>
+      <button class="btn primary" data-open="${s.id}">Obrir</button>
+      <button class="btn danger" data-del="${s.id}">Esborrar</button></div>`).join('')
+    : '<div class="muted">Encara no hi ha cap partit.</div>';
+  const teams = new Set([...Object.keys(rosters()), ...list.map(s=>s.team)]);
+  $('#teamList').innerHTML = [...teams].map(t=>`<option value="${esc(t)}">`).join('');
+}
+$('#sessList').addEventListener('click', e=>{
+  const o=e.target.closest('[data-open]'), d=e.target.closest('[data-del]');
+  if(o) openSession(o.dataset.open);
+  if(d){ const s=idx().find(x=>x.id===d.dataset.del);
+    if(confirm('Esborrar el partit «'+s.name+'» i tots els seus talls?')){ LS.del('xt.s.'+s.id); LS.set('xt.index', idx().filter(x=>x.id!==s.id)); renderSetup(); } }
+});
+$('#bCreate').onclick = ()=>{
+  const name=$('#nName').value.trim(), team=$('#nTeam').value.trim().replace(/\s+(TAM|VED)$/i,'');
+  if(!name||!team){ toast('Omple el nom del partit i l\'equip'); return; }
+  S = {id:uid(), name, team, created:Date.now(), updated:Date.now(), clips:[], openId:null, focusId:null, counter:1, videoName:null};
+  save(); $('#nName').value=''; showMain();
+  if(!roster().length) setTimeout(()=>openRoster(),300);
+};
+function openSession(id){ const s=LS.get('xt.s.'+id,null); if(!s){ toast('No s\'ha trobat'); return; } S=s; undoStack=[]; showMain(); }
+
+$('#bBackup').onclick = ()=>{
+  const data = {app:'tallador-xps',v:1,date:new Date().toISOString(),rosters:rosters(),keys,sessions:idx().map(x=>LS.get('xt.s.'+x.id,null)).filter(Boolean)};
+  download('tallador_copia_'+new Date().toISOString().slice(0,10)+'.json', JSON.stringify(data), 'application/json');
+};
+$('#fRestore').onchange = async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  try{
+    const d=JSON.parse(await f.text()); if(d.app!=='tallador-xps') throw 0;
+    const r={...rosters(),...(d.rosters||{})}; LS.set('xt.rosters',r);
+    for(const s of d.sessions||[]){ LS.set('xt.s.'+s.id,s); const l=idx().filter(x=>x.id!==s.id);
+      l.unshift({id:s.id,name:s.name,team:s.team,updated:s.updated,count:s.clips.length}); LS.set('xt.index',l); }
+    toast('Còpia importada: '+(d.sessions||[]).length+' partits'); renderSetup();
+  }catch(err){ toast('Aquest fitxer no és una còpia vàlida'); }
+  e.target.value='';
+};
+
+/* ===================== main screen ===================== */
+const video = $('#video');
+function showMain(){
+  $('#setup').classList.add('hidden'); $('#main').classList.remove('hidden');
+  $('#mTitle').innerHTML = esc(S.name)+' <span class="muted" style="font-weight:500">· '+esc(S.team)+'</span>';
+  $('#novideoHint').textContent = S.videoName ? 'Últim vídeo fet servir: '+S.videoName : 'El vídeo no es puja enlloc: es llegeix des de la tauleta.';
+  save(); renderAll();
+}
+$('#bHome').onclick = ()=>{ video.pause(); $('#main').classList.add('hidden'); $('#setup').classList.remove('hidden'); renderSetup(); };
+
+function loadVideo(f){
+  if(!f) return;
+  if(S.videoName && S.videoName!==f.name && !confirm('Aquest partit es va tallar amb «'+S.videoName+'». Segur que vols fer servir «'+f.name+'»?')) return;
+  if(video.src) URL.revokeObjectURL(video.src);
+  video.src = URL.createObjectURL(f); S.videoName=f.name; save();
+  videoReady = true; $('#novideo').classList.add('hidden');
+  video.playbackRate = SPEEDS[speedIdx];
+}
+$('#fVideo').onchange = e=>{ loadVideo(e.target.files[0]); e.target.value=''; };
+$('#fVideo2').onchange = e=>{ loadVideo(e.target.files[0]); e.target.value=''; };
+video.addEventListener('loadedmetadata', ()=>{ $('#seek').max = video.duration||100; renderTimeline(); });
+video.addEventListener('timeupdate', tick);
+video.addEventListener('seeked', tick);
+video.addEventListener('play', ()=>{ $('#bPlay').textContent='❚❚'; try{ navigator.wakeLock && navigator.wakeLock.request('screen').then(w=>wakeLock=w).catch(()=>{}); }catch(e){} });
+video.addEventListener('pause', ()=>{ $('#bPlay').textContent='▶'; if(wakeLock){ wakeLock.release().catch(()=>{}); wakeLock=null; } });
+video.addEventListener('click', ()=>act('PLAY'));
+$('#seek').addEventListener('input', e=>{ if(videoReady) video.currentTime = +e.target.value; });
+$('#timeline').addEventListener('click', e=>{
+  const seg = e.target.closest('.seg');
+  if(seg){ focusClip(seg.dataset.id, true); return; }
+  if(!videoReady) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  video.currentTime = (e.clientX-r.left)/r.width * dur();
+});
+const dur = () => (videoReady && isFinite(video.duration) && video.duration) || Math.max(60, ...(S?S.clips.map(c=>c.end||c.start):[0]));
+const now = () => video.currentTime || 0;
+
+function tick(){
+  const t=now(); $('#vclock').textContent=hms(Math.floor(t));
+  $('#tclock').textContent = hms(Math.floor(t))+' / '+hms(Math.floor(dur()));
+  if(document.activeElement!==$('#seek')) $('#seek').value=t;
+  $('#playhead').style.left = (t/dur()*100)+'%';
+  const o=clip(S&&S.openId);
+  if(o){ const el=document.getElementById('liveEnd'); if(el) el.textContent='obert · '+hms(Math.floor(t)); }
+}
+
+/* ---------- actions ---------- */
+function needVideo(){ if(!videoReady){ toast('Primer obre el vídeo'); return true; } return false; }
+function flash(text, side){
+  const f=$('#flash'); f.textContent=text;
+  f.style.background = side==='TAM'?'var(--tam)':side==='VED'?'var(--ved)':'#e8ecef';
+  f.style.color = side==='VED'?'#fff':'#0f1317'; f.style.opacity=.95;
+  clearTimeout(flash._t); flash._t=setTimeout(()=>f.style.opacity=0,500);
+}
+function closeOpen(t){
+  const o=clip(S.openId);
+  if(o){ o.end = Math.max(o.start+1, Math.ceil(t)); }
+  S.openId=null; return o;
+}
+function startPhase(kind){
+  if(needVideo()) return;
+  snapshot();
+  const t=now(); closeOpen(t);
+  const c={id:uid(), n:S.counter++, kind, side:KIND_SIDE[kind]||null, start:Math.max(0,Math.floor(t-1)), end:null,
+           tags: kind==='TO'?[TIMEOUT]:[], player:null, decision:null};
+  S.clips.push(c); S.openId=c.id; S.focusId=c.id; save(); renderAll();
+  flash(kind, c.side);
+}
+function finalClip(){
+  if(!S.openId){ toast('No hi ha cap tall obert'); return; }
+  snapshot(); const o=closeOpen(now()); S.focusId=o.id; save(); renderAll(); flash('FINAL');
+}
+function startInd(side){
+  if(needVideo()) return;
+  snapshot(); const t=now();
+  const c={id:uid(), n:S.counter++, kind:'IND', side, start:r1(Math.max(0,t-3)), end:r1(t+2), tags:[], player:null, decision:null};
+  S.clips.push(c); S.focusId=c.id; save(); renderAll();
+  flash('IND '+(side==='TAM'?'ATT':'DEF'), side);
+}
+function act(a){
+  if(!S) return;
+  switch(a){
+    case 'ATT': case 'BAL': case 'DEF': case 'FB': case 'TO': startPhase(a); break;
+    case 'INDATT': startInd('TAM'); break;
+    case 'INDDEF': startInd('VED'); break;
+    case 'FINAL': finalClip(); break;
+    case 'PLAY': if(needVideo()) return; video.paused ? video.play() : video.pause(); break;
+    case 'BACK': if(videoReady) video.currentTime=Math.max(0,now()-5); break;
+    case 'FWD': if(videoReady) video.currentTime=Math.min(dur(),now()+5); break;
+    case 'SPEED': speedIdx=(speedIdx+1)%SPEEDS.length; video.playbackRate=SPEEDS[speedIdx];
+                  $('#bSpeed').textContent='x'+String(SPEEDS[speedIdx]).replace('.',','); break;
+    case 'UNDO': undo(); break;
+  }
+}
+document.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click', ()=>act(b.dataset.act)));
+
+function focusClip(id, seek){
+  const c=clip(id); if(!c) return;
+  S.focusId=id; save(); renderAll();
+  if(seek && videoReady){ video.pause(); video.currentTime=c.start; }
+}
+
+/* ---------- edits on focused clip ---------- */
+function edit(fn){ const c=clip(S.focusId); if(!c) return; snapshot(); fn(c); save(); renderAll(); }
+function toggleTag(p){ edit(c=>{ const i=c.tags.findIndex(x=>key(x)===key(p)); if(i>=0) c.tags.splice(i,1); else c.tags.push(p); }); }
+function removeTagAt(i){ edit(c=>{ if(c.kind==='TO') return; c.tags.splice(i,1); }); }
+function nudge(which, d){
+  edit(c=>{
+    const step = c.kind==='IND' ? 0.5 : 1;
+    if(which==='s') c.start = Math.max(0, r1(c.start + d*step));
+    else if(c.end!=null) c.end = r1(c.end + d*step);
+    if(c.end!=null && c.end<=c.start) c.end = r1(c.start+step);
+  });
+}
+function deleteFocused(){
+  const c=clip(S.focusId); if(!c) return;
+  snapshot(); S.clips=S.clips.filter(x=>x.id!==c.id);
+  if(S.openId===c.id) S.openId=null;
+  const last=S.clips[S.clips.length-1]; S.focusId= last?last.id:null; save(); renderAll(); toast('Tall esborrat (pots desfer-ho)');
+}
+
+/* ===================== rendering ===================== */
+function renderAll(){ renderStarts(); renderRecents(); renderPanel(); renderTimeline(); renderBadge(); tick(); }
+function renderStarts(){
+  const o=clip(S.openId);
+  document.querySelectorAll('#starts .sb').forEach(b=>b.classList.toggle('on', !!o && b.dataset.act===o.kind));
+  $('#bFinal').disabled = !o;
+}
+function renderBadge(){
+  const o=clip(S.openId);
+  $('#vbadge').innerHTML = o ? `<span class="badge b-${o.side||'none'}">● ${o.kind}${o.side?' · '+o.side:''}</span>` : '';
+}
+function clipName(c){ return c.kind==='IND' ? 'IND '+(c.side==='TAM'?'ATT':'DEF') : c.kind; }
+function renderRecents(){
+  const list=S.clips.slice(-6).reverse();
+  const o=clip(S.openId);
+  if(o && !list.includes(o)) list.unshift(o);
+  $('#recents').innerHTML = list.map(c=>`<button class="rc ${c.id===S.focusId?'f':''} ${c.id===S.openId?'open':''}" data-fid="${c.id}">
+      <span class="dot" style="background:${c.side==='VED'?'var(--ved)':c.side==='TAM'?'var(--tam)':'#9aa6b2'}"></span>${c.n} · ${clipName(c)}</button>`).join('');
+}
+$('#recents').addEventListener('click', e=>{ const b=e.target.closest('[data-fid]'); if(b) focusClip(b.dataset.fid,false); });
+
+function tagBtn(p, label, on, side){
+  const sel = on ? (side==='VED'?'--sel:#2563eb;--selt:#fff':'--sel:#f59e0b;--selt:#111418') : '';
+  return `<button class="tb ${on?'on':''}" style="${sel}" data-tag='${esc(JSON.stringify(p))}'>${esc(label)}</button>`;
+}
+function renderPanel(){
+  const c=clip(S.focusId), P=$('#panel');
+  if(!c){ P.innerHTML = `<div class="empty">Prem un botó d'inici (ATT, BAL, DEF, FB, TO) per començar un tall,<br>o IND ATT / IND DEF per marcar una acció individual.</div>`; return; }
+  const has = p => c.tags.some(x=>key(x)===key(p));
+  const isOpen = c.id===S.openId;
+  let h = `<div class="cc"><div class="hd"><span class="k">#${c.n} · ${clipName(c)}</span>
+      ${c.side?`<span class="badge b-${c.side}">${c.side}</span>`:'<span class="badge b-none">tria equip</span>'}
+      <span style="flex:1"></span><button class="btn danger" style="height:34px;font-size:13px" id="bDel">Esborrar tall</button></div>
+    <div class="times mono">
+      <div class="nud"><button data-nud="s,-1" aria-label="Inici abans">−</button>${c.kind==='IND'?hmsF(c.start):hms(c.start)}<button data-nud="s,1" aria-label="Inici després">+</button></div>
+      <span>→</span>
+      ${isOpen?`<span id="liveEnd" style="color:var(--warn)">obert</span>`:
+      `<div class="nud"><button data-nud="e,-1" aria-label="Final abans">−</button>${c.kind==='IND'?hmsF(c.end):hms(c.end)}<button data-nud="e,1" aria-label="Final després">+</button></div>`}
+      ${videoReady?`<button class="btn" style="height:32px;font-size:13px" id="bGo">Veure</button>`:''}
+    </div>`;
+  // ordered chips
+  const chips = (c.kind==='IND'?[IND_FIRST,...c.tags]:c.tags).map((p,i)=>{
+    const fixed = c.kind==='TO' || (c.kind==='IND' && i===0);
+    const ri = c.kind==='IND' ? i-1 : i;
+    return `<button class="chip" ${fixed?'disabled style="opacity:.8"':`data-rm="${ri}"`}><i>${i+1}</i>${esc(labelOf(p))}${fixed?'':' <i>×</i>'}</button>`;
+  }).join('');
+  h += `<div class="chips">${chips||'<span class="muted" style="font-size:13px">Sense etiquetes</span>'}</div>`;
+  if(c.kind==='IND'){
+    const pl = c.player?`<div class="out mono">Jugador: ${esc(c.player)}</div>`:'';
+    h += `${pl}<div class="out mono">INDIVIDUAL: ${esc(fmtCol([IND_FIRST,...c.tags]))}${c.decision?'<br>DECISION: '+esc(c.decision):''}</div>`;
+  } else {
+    h += `<div class="out mono">SYSTEM: ${esc(fmtCol(c.tags))||'—'}</div>`;
+  }
+  h += `</div>`;
+
+  if(c.kind==='TO'){
+    h += `<div class="sec"><div class="lb">De qui és el temps mort?</div><div class="g g3" style="grid-template-columns:1fr 1fr">
+      <button class="tb ${c.side==='TAM'?'on':''}" style="--sel:#f59e0b;--selt:#111418;min-height:56px" data-side="TAM">Nostre (TAM)</button>
+      <button class="tb ${c.side==='VED'?'on':''}" style="--sel:#2563eb;--selt:#fff;min-height:56px" data-side="VED">Rival (VED)</button></div></div>`;
+  } else if(c.kind==='IND'){
+    const R=roster();
+    if(R.length){
+      h += `<div class="sec"><div class="lb">Jugador</div><div class="g" style="grid-template-columns:repeat(auto-fill,minmax(64px,1fr))">`+
+        R.map(n=>{ const m=n.match(/^\s*(\d+)\.?\s*(.*)$/); const num=m?m[1]:'·', nm=(m?m[2]:n).split(' ')[0];
+          return `<button class="tb ${c.player===n?'on':''}" style="${c.side==='VED'?'--sel:#2563eb;--selt:#fff':'--sel:#f59e0b;--selt:#111418'}" data-player="${esc(n)}"><span class="n">${esc(num)}</span><span class="s">${esc(nm)}</span></button>`; }).join('')+
+        `</div></div>`;
+    } else {
+      h += `<div class="muted" style="font-size:13px">Sense plantilla: el tall sortirà amb NINGUNO. <button class="btn" style="height:32px;font-size:13px" id="bR2">Afegir plantilla</button></div>`;
+    }
+    const groups = c.side==='TAM'?IND_ATT:IND_DEF;
+    for(const [lb,items] of groups){
+      h += `<div class="sec"><div class="lb">${lb}</div><div class="g g3">`+items.map(t=>tagBtn(t.p,t.l||t.p.join(' '),has(t.p),c.side)).join('')+`</div></div>`;
+    }
+    if(c.side==='TAM'){
+      h += `<div class="sec"><div class="lb">Decision (només una)</div><div class="g g3">`+
+        DECISIONS.map(d=>`<button class="tb ${c.decision===d.v?'on':''}" style="--sel:#f59e0b;--selt:#111418" data-dec="${esc(d.v)}">${d.l}</button>`).join('')+`</div></div>`;
+    }
+  } else {
+    if(c.kind==='BAL'||c.kind==='FB'){
+      h += `<div class="sec"><div class="lb">Transició</div><div class="g gt">`;
+      for(const [rl,arr] of TRANS[c.kind]){
+        h += `<div class="rl">${rl}</div>` + arr.map(v=>tagBtn([v], v.replace(rl+' ',''), has([v]), c.side)).join('');
+      }
+      h += `</div></div>`;
+    }
+    h += `<div class="sec"><div class="lb">Sistema</div><div class="g g4">`+SYS_MAIN.map(t=>tagBtn(t.p,t.l||t.p[0],has(t.p),c.side)).join('')+`</div></div>`;
+    h += `<div class="sec"><div class="lb">Inferioritat / superioritat</div><div class="g g3">`+SYS_MODS.map(t=>tagBtn(t.p,t.l||t.p[0],has(t.p),c.side)).join('')+`</div></div>`;
+  }
+  P.innerHTML = h;
+}
+$('#panel').addEventListener('click', e=>{
+  const t=e.target.closest('button'); if(!t||t.disabled) return;
+  if(t.dataset.tag) toggleTag(JSON.parse(t.dataset.tag));
+  else if(t.dataset.rm!=null) removeTagAt(+t.dataset.rm);
+  else if(t.dataset.side) edit(c=>{ c.side=t.dataset.side; });
+  else if(t.dataset.player) edit(c=>{ c.player = c.player===t.dataset.player?null:t.dataset.player; });
+  else if(t.dataset.dec) edit(c=>{ c.decision = c.decision===t.dataset.dec?null:t.dataset.dec; });
+  else if(t.dataset.nud){ const [w,d]=t.dataset.nud.split(','); nudge(w,+d); }
+  else if(t.id==='bDel') deleteFocused();
+  else if(t.id==='bGo'){ const c=clip(S.focusId); video.currentTime=c.start; video.play(); }
+  else if(t.id==='bR2') openRoster();
+});
+
+function renderTimeline(){
+  if(!S) return;
+  const D=dur(), TL=$('#timeline');
+  TL.querySelectorAll('.seg').forEach(x=>x.remove());
+  const frag=document.createDocumentFragment();
+  for(const c of S.clips){
+    const end = c.end==null ? Math.max(c.start+1, now()) : c.end;
+    const d=document.createElement('div');
+    d.className='seg '+(c.kind==='IND'?'in':'ph')+(c.id===S.focusId?' f':'');
+    d.dataset.id=c.id;
+    d.style.left=(c.start/D*100)+'%'; d.style.width=Math.max(0.4,(end-c.start)/D*100)+'%';
+    d.style.background = c.side==='VED'?'var(--ved)':c.side==='TAM'?'var(--tam)':'#9aa6b2';
+    if(c.kind==='TO') d.style.background='repeating-linear-gradient(45deg,#9aa6b2 0 4px,#4a5664 4px 8px)';
+    frag.appendChild(d);
+  }
+  TL.appendChild(frag);
+}
+
+/* ===================== export ===================== */
+function warnings(c){
+  const w=[];
+  if(c.end==null) w.push('obert');
+  if(c.kind==='TO' && !c.side) w.push('falta de qui és');
+  if((c.kind==='BAL'||c.kind==='FB') && !c.tags.some(p=>p.length===1 && /^(BAL|FB) /.test(p[0]))) w.push('falta l\'onada');
+  if(c.kind==='IND' && !c.tags.length) w.push('sense etiquetes');
+  return w;
+}
+const sorted = arr => arr.slice().sort((a,b)=>a.start-b.start || a.n-b.n);
+function phasesTxt(){
+  const rows = sorted(S.clips.filter(c=>c.kind!=='IND' && c.end!=null));
+  const L=['Partido\tNr\tStart\tEnd\tEquipo\tDeportista\tSYSTEM'];
+  rows.forEach((c,i)=>L.push([S.name, i+1, hms(c.start), hms(c.end), S.team+' '+(c.side||'TAM'), 'NINGUNO', fmtCol(c.tags)].join('\t')));
+  return {text:L.join('\r\n'), n:rows.length};
+}
+const xesc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
+function indXml(){
+  const rows = sorted(S.clips.filter(c=>c.kind==='IND'));
+  const inst = rows.map((c,i)=>{
+    const code = S.team+' '+c.side+(c.player?' '+c.player:'');
+    const labels = [IND_FIRST,...c.tags].map(p=>`      <label><group>INDIVIDUAL </group><text>${xesc(p.length===1?p[0]:fmtPath(p))}</text></label>`);
+    if(c.decision) labels.push(`      <label><group>DECISION </group><text>${xesc(c.decision)}</text></label>`);
+    return `    <instance>\n      <ID>${i+1}</ID>\n      <start>${c.start}</start>\n      <end>${c.end}</end>\n      <code>${xesc(code)}</code>\n${labels.join('\n')}\n    </instance>`;
+  });
+  return {text:`<?xml version="1.0" encoding="utf-8"?>\n<file>\n  <ALL_INSTANCES>\n${inst.join('\n')}\n  </ALL_INSTANCES>\n</file>\n`, n:rows.length};
+}
+function safeName(){ return (S.name||'partit').replace(/[^\w.\-]+/g,'_'); }
+function download(name, text, type){
+  const b=new Blob([text],{type}); const a=document.createElement('a');
+  a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1000);
+}
+function openExport(){
+  const all=sorted(S.clips);
+  const wn = all.filter(c=>warnings(c).length).length;
+  const ph = all.filter(c=>c.kind!=='IND').length, ind = all.length-ph;
+  $('#exSummary').innerHTML = `${all.length} talls · ${ph} de fase · ${ind} individuals`+(wn?` · <span style="color:var(--warn)">${wn} amb avisos</span>`:'')+
+    (S.openId?` · <span style="color:var(--warn)">hi ha un tall obert: no s'exportarà fins que el tanquis</span>`:'');
+  $('#exRows').innerHTML = all.map(c=>{
+    const w=warnings(c);
+    const tags = c.kind==='IND' ? (c.player?esc(c.player)+'<br>':'')+esc(fmtCol([IND_FIRST,...c.tags]))+(c.decision?' · '+esc(c.decision):'') : esc(fmtCol(c.tags));
+    return `<tr class="${w.length?'w':''}" data-go="${c.id}"><td class="muted">${c.n}</td>
+      <td><span class="badge b-${c.side||'none'}">${clipName(c)}${c.side?' · '+c.side:''}</span></td>
+      <td class="mono" style="white-space:nowrap">${c.kind==='IND'?hmsF(c.start):hms(c.start)} → ${c.end==null?'obert':(c.kind==='IND'?hmsF(c.end):hms(c.end))}</td>
+      <td class="mono" style="font-size:12px">${tags||'—'}${w.length?`<div style="color:var(--warn);font-family:system-ui;font-size:12px;font-weight:600">${w.join(' · ')}</div>`:''}</td></tr>`;
+  }).join('') || '<tr><td colspan="4" class="muted">Encara no hi ha talls.</td></tr>';
+  const T=phasesTxt(), X=indXml();
+  $('#exTxt').textContent = T.text; $('#exXml').textContent = X.n ? X.text : '(cap individual)';
+  $('#bDlXml').disabled = !X.n;
+  $('#ovExport').classList.remove('hidden');
+}
+$('#bExport').onclick = ()=>{ video.pause(); openExport(); };
+$('#exRows').addEventListener('click', e=>{ const r=e.target.closest('[data-go]'); if(r){ $('#ovExport').classList.add('hidden'); focusClip(r.dataset.go,true); } });
+$('#bCopyTxt').onclick = async ()=>{
+  const t=phasesTxt().text;
+  try{ await navigator.clipboard.writeText(t); toast('Copiat'); }
+  catch(e){ const a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); toast('Copiat'); }
+};
+$('#bDlTxt').onclick = ()=> download(safeName()+'_fases.txt', phasesTxt().text, 'text/plain;charset=utf-8');
+$('#bDlXml').onclick = ()=> download(safeName()+'_individuals.xml', indXml().text, 'application/xml');
+$('#bShare').onclick = async ()=>{
+  const files=[new File([phasesTxt().text], safeName()+'_fases.txt', {type:'text/plain'})];
+  const X=indXml(); if(X.n) files.push(new File([X.text], safeName()+'_individuals.xml', {type:'text/xml'}));
+  try{
+    if(navigator.canShare && navigator.canShare({files})){ await navigator.share({files, title:S.name}); return; }
+  }catch(e){ if(e && e.name==='AbortError') return; }
+  toast('Aquest dispositiu no permet compartir: es descarreguen');
+  $('#bDlTxt').click(); if(X.n) setTimeout(()=>$('#bDlXml').click(),400);
+};
+
+/* ===================== roster ===================== */
+function parseRoster(text){
+  const lines=text.split(/\r?\n/);
+  let names=[];
+  const hi=lines.findIndex(l=>l.includes('\t') && /(^|\t)Deportista\s*(\t|$)/.test(l));
+  if(hi>=0){
+    const col=lines[hi].split('\t').findIndex(x=>x.trim()==='Deportista');
+    for(const l of lines.slice(hi+1)){ const v=(l.split('\t')[col]||'').trim(); if(v) names.push(v); }
+  } else names=lines.map(l=>l.trim()).filter(Boolean);
+  names=[...new Set(names)].filter(n=>n.toUpperCase()!=='NINGUNO');
+  const num=n=>{ const m=n.match(/^\s*(\d+)/); return m?+m[1]:999; };
+  return names.sort((a,b)=>num(a)-num(b)||a.localeCompare(b));
+}
+function openRoster(){
+  $('#rTitle').textContent='Plantilla · '+S.team; $('#rText').value=roster().join('\n'); $('#rCount').textContent=roster().length+' jugadors';
+  $('#ovRoster').classList.remove('hidden');
+}
+$('#bRoster').onclick=openRoster;
+$('#bRSave').onclick=()=>{
+  const list=parseRoster($('#rText').value); const r=rosters(); r[S.team]=list; LS.set('xt.rosters',r);
+  $('#rText').value=list.join('\n'); $('#rCount').textContent=list.length+' jugadors desats'; renderPanel(); toast('Plantilla desada');
+};
+
+/* ===================== keys ===================== */
+function keyName(k){ return k===' '?'Espai':k; }
+function renderKeys(){
+  $('#kList').innerHTML = ACTIONS.map(([a,l])=>{
+    const ks=Object.keys(keys).filter(k=>keys[k]===a);
+    return `<div class="keyrow"><div class="a">${l}</div><div class="kcap mono">${learning===a?'prem una tecla…':(ks.map(keyName).join(' · ')||'—')}</div>
+      <button class="btn" data-learn="${a}">Canviar</button></div>`;
+  }).join('');
+}
+$('#bKeys').onclick=()=>{ renderKeys(); $('#ovKeys').classList.remove('hidden'); };
+$('#kList').addEventListener('click', e=>{ const b=e.target.closest('[data-learn]'); if(b){ learning=b.dataset.learn; renderKeys(); } });
+$('#bKReset').onclick=()=>{ keys={...DEFAULT_KEYS}; LS.set('xt.keys',keys); learning=null; renderKeys(); };
+document.addEventListener('keydown', e=>{
+  if(learning){
+    e.preventDefault(); if(e.key==='Escape'){ learning=null; renderKeys(); return; }
+    for(const k of Object.keys(keys)) if(keys[k]===learning) delete keys[k];
+    keys[e.key]=learning; LS.set('xt.keys',keys); learning=null; renderKeys(); return;
+  }
+  if(e.key==='Escape'){ document.querySelectorAll('.ov').forEach(o=>o.classList.add('hidden')); return; }
+  const tg=e.target.tagName; if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT') return;
+  if($('#main').classList.contains('hidden')) return;
+  const a=keys[e.key]; if(!a) return;
+  e.preventDefault(); act(a);
+});
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{ $('#'+b.dataset.close).classList.add('hidden'); learning=null; });
+
+/* ===================== init ===================== */
+renderSetup();
+window.addEventListener('beforeunload', ()=>{ if(S) save(); });
+if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
