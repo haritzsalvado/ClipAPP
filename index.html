@@ -10,26 +10,26 @@
 <style>
 :root{
   --bg:#0f1317;--panel:#1a2027;--chip:#222a33;--line:#33404d;--text:#e8ecef;--muted:#9aa6b2;
-  --tam:#f59e0b;--ved:#2563eb;--ok:#4ade80;--warn:#fbbf24;--bad:#ef4444;
+  --tam:#dc2626;--ved:#2563eb;--ok:#4ade80;--warn:#fbbf24;
 }
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent;overflow:hidden}
 button{font-family:inherit;cursor:pointer;color:inherit}
 button:disabled{opacity:.35;cursor:default}
 input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px}
 .hidden{display:none!important}
 .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
 .muted{color:var(--muted)}
-.btn{height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--panel);font-size:15px;font-weight:600}
+.btn{height:42px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--panel);font-size:15px;font-weight:600;white-space:nowrap}
 .btn.primary{background:var(--text);color:#0f1317;border:none}
-.btn.danger{border-color:#7f1d1d;color:#fca5a5}
+.btn.grey{background:var(--chip);color:var(--muted)}
 .badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;letter-spacing:.03em}
-.b-TAM{background:var(--tam);color:#111418}
+.b-TAM{background:var(--tam);color:#fff}
 .b-VED{background:var(--ved);color:#fff}
 .b-none{background:var(--line);color:var(--text)}
 
 /* ---------- SETUP ---------- */
-#setup{max-width:860px;margin:0 auto;padding:24px 16px 60px}
+#setup{max-width:860px;margin:0 auto;padding:24px 16px 60px;height:100%;overflow-y:auto}
 #setup h1{font-size:26px;margin:0 0 4px}
 .card{background:var(--panel);border-radius:12px;padding:16px;margin-top:16px}
 .card h2{font-size:15px;letter-spacing:.06em;color:var(--muted);margin:0 0 12px;text-transform:uppercase}
@@ -43,74 +43,92 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 
 /* ---------- MAIN ---------- */
 #main{height:100%;display:flex;flex-direction:column}
-#topbar{height:52px;flex:none;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid #252e37}
-#topbar .title{font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#topbar{height:48px;flex:none;display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:1px solid #252e37}
+#topbar .title{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #topbar .sp{flex:1}
-#topbar .btn{height:38px;font-size:14px}
+#topbar .btn{height:36px;font-size:14px;padding:0 12px}
 #saved{font-size:12px;color:var(--muted);white-space:nowrap}
 #body{flex:1;display:flex;min-height:0}
-#left{flex:1;display:flex;flex-direction:column;gap:8px;padding:10px;min-width:0}
+#left{flex:1;display:flex;flex-direction:column;gap:6px;padding:8px;min-width:0}
 #vwrap{flex:1;position:relative;background:#05080a;border-radius:10px;overflow:hidden;min-height:160px}
 #video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
 #novideo{position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;text-align:center;padding:20px}
-#vbadge{position:absolute;left:12px;top:10px;display:flex;gap:6px;pointer-events:none}
-#vclock{position:absolute;right:12px;bottom:10px;font-size:22px;font-weight:700;background:rgba(15,19,23,.85);padding:3px 10px;border-radius:8px;pointer-events:none}
+#vbadge{position:absolute;left:10px;top:8px;display:flex;gap:6px;pointer-events:none}
+#vclock{position:absolute;right:10px;bottom:8px;font-size:20px;font-weight:700;background:rgba(15,19,23,.85);padding:3px 10px;border-radius:8px;pointer-events:none}
 #flash{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);font-size:44px;font-weight:800;padding:10px 26px;border-radius:14px;opacity:0;transition:opacity .35s;pointer-events:none}
-#timeline{height:34px;flex:none;position:relative;background:var(--panel);border-radius:6px;overflow:hidden;cursor:pointer}
-#timeline .seg{position:absolute;height:15px;border-radius:2px}
+#timeline{height:30px;flex:none;position:relative;background:var(--panel);border-radius:6px;overflow:hidden;cursor:pointer}
+#timeline .seg{position:absolute;height:13px;border-radius:2px}
 #timeline .ph{top:2px}
-#timeline .in{top:18px;height:14px}
+#timeline .in{top:16px;height:12px}
 #timeline .seg.f{outline:2px solid #fff;z-index:2}
 #playhead{position:absolute;top:0;bottom:0;width:2px;background:#fff;z-index:3;pointer-events:none}
 #seek{width:100%;margin:0;flex:none;padding:0}
-#controls{display:flex;align-items:center;gap:8px;flex:none}
-#controls .btn{height:46px;min-width:58px;font-size:15px}
+#controls{display:flex;align-items:center;gap:6px;flex:none}
+#controls .btn{height:42px;min-width:54px}
 #controls .sp{flex:1}
-#tclock{font-size:14px;color:var(--muted)}
+#tclock{font-size:13px;color:var(--muted)}
 
-#right{width:440px;flex:none;border-left:1px solid #252e37;display:flex;flex-direction:column;min-height:0}
-#starts{padding:10px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;flex:none}
-.sb{height:56px;border-radius:11px;border:none;font-size:17px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
-.sb small{font-size:11px;font-weight:600;opacity:.9}
-.sb.TAM{background:var(--tam);color:#111418}
+#right{width:350px;flex:none;border-left:1px solid #252e37;display:flex;flex-direction:column;min-height:0}
+#starts{padding:8px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;flex:none}
+.sb{height:48px;border-radius:10px;border:none;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;line-height:1}
+.sb small{font-size:11px;font-weight:600;opacity:.85}
+.sb.TAM{background:var(--tam);color:#fff}
 .sb.VED{background:var(--ved);color:#fff}
-.sb.N{background:#2a323c;border:1px solid #4a5664;color:var(--text)}
+.sb.N{background:#2a323c;border:1px solid #4a5664}
 .sb.IA{background:#2a323c;border:2px solid var(--tam)}
 .sb.ID{background:#2a323c;border:2px solid var(--ved)}
 .sb.FIN{background:var(--text);color:#0f1317}
 .sb.on{outline:3px solid #fff;outline-offset:-3px}
-#recents{display:flex;gap:6px;padding:0 10px 8px;overflow-x:auto;flex:none}
-.rc{flex:none;height:34px;padding:0 10px;border-radius:999px;border:1px solid var(--line);background:var(--chip);font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;white-space:nowrap}
+#panel{flex:1;overflow-y:auto;padding:0 8px 10px;display:flex;flex-direction:column;gap:8px}
+.cc{background:var(--panel);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:6px}
+.cc .hd{display:flex;align-items:center;gap:6px}
+.cc .hd .k{font-weight:800;font-size:15px}
+.times{display:flex;gap:6px;align-items:center;font-size:13px}
+.nud{display:flex;align-items:center;gap:3px}
+.nud button{width:30px;height:28px;border-radius:6px;border:1px solid var(--line);background:var(--chip);font-weight:700;padding:0}
+.chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center;min-height:26px}
+.chip{height:28px;padding:0 9px;border-radius:999px;border:none;background:#33404d;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px}
+.chip i{font-style:normal;color:var(--muted);font-size:11px}
+.sbtn{height:28px;padding:0 9px;font-size:12px;border-radius:6px}
+.sec{display:flex;flex-direction:column;gap:4px}
+.sec .lb{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.g{display:grid;gap:5px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g6{grid-template-columns:repeat(6,minmax(0,1fr))}
+.gt{grid-template-columns:50px repeat(4,minmax(0,1fr));align-items:center}
+.gt .rl{font-size:12px;font-weight:700;color:#c9d2db}
+.tb{min-height:38px;padding:3px 4px;border-radius:7px;border:1px solid var(--line);background:var(--chip);font-size:13px;font-weight:600;line-height:1.15}
+.tb.on{background:var(--sel,#e8ecef);border-color:var(--sel,#e8ecef);color:#fff;font-weight:800}
+.tb .n{display:block;font-size:18px;font-weight:800}
+.tb .s{display:block;font-size:10px;font-weight:600;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.empty{padding:20px 8px;text-align:center;color:var(--muted);font-size:14px;line-height:1.5}
+#footer{height:44px;flex:none;border-top:1px solid #252e37;display:flex;align-items:center;gap:6px;padding:0 8px;overflow-x:auto}
+#footer .lbl{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.06em;flex:none}
+.rc{flex:none;height:32px;padding:0 10px;border-radius:999px;border:1px solid var(--line);background:var(--chip);font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;white-space:nowrap}
 .rc.f{background:var(--text);color:#0f1317;border-color:var(--text)}
 .rc .dot{width:9px;height:9px;border-radius:50%}
 .rc.open .dot{animation:pulse 1s infinite}
 @keyframes pulse{50%{opacity:.25}}
-#panel{flex:1;overflow-y:auto;padding:0 10px 16px;display:flex;flex-direction:column;gap:12px}
-.cc{background:var(--panel);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
-.cc .hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.cc .hd .k{font-weight:800;font-size:16px}
-.times{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
-.nud{display:flex;align-items:center;gap:4px}
-.nud button{width:34px;height:32px;border-radius:7px;border:1px solid var(--line);background:var(--chip);font-weight:700}
-.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:30px}
-.chip{height:30px;padding:0 10px;border-radius:999px;border:none;background:#33404d;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
-.chip i{font-style:normal;color:var(--muted);font-size:11px}
-.out{font-size:12px;color:#c9d2db;word-break:break-word}
-.sec{display:flex;flex-direction:column;gap:6px}
-.sec .lb{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
-.g{display:grid;gap:6px}
-.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
-.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
-.gt{grid-template-columns:62px repeat(4,minmax(0,1fr));align-items:center}
-.gt .rl{font-size:13px;font-weight:700;color:#c9d2db}
-.tb{min-height:44px;padding:4px 6px;border-radius:8px;border:1px solid var(--line);background:var(--chip);font-size:14px;font-weight:600;line-height:1.15}
-.tb.on{background:var(--sel,#e8ecef);border-color:var(--sel,#e8ecef);color:var(--selt,#0f1317);font-weight:800}
-.tb .n{display:block;font-size:17px;font-weight:800}
-.tb .s{display:block;font-size:10px;font-weight:600;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.empty{padding:24px 10px;text-align:center;color:var(--muted);font-size:14px;line-height:1.5}
 
-/* ---------- OVERLAYS ---------- */
-.ov{position:fixed;inset:0;background:rgba(5,8,10,.75);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+/* ---------- INDIVIDUAL OVERLAY ---------- */
+#ovInd{position:fixed;inset:0;background:rgba(5,8,10,.6);z-index:40;display:flex;padding:10px}
+#indBox{flex:1;background:var(--bg);border:2px solid var(--line);border-radius:14px;display:flex;gap:12px;padding:12px;min-height:0}
+#indBox.TAM{border-color:var(--tam)}
+#indBox.VED{border-color:var(--ved)}
+#indL{width:300px;flex:none;display:flex;flex-direction:column;gap:8px;min-height:0}
+#pv{width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;display:block}
+#indR{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0;overflow-y:auto}
+#indR .tb{min-height:58px;font-size:15px}
+#indR{gap:14px}
+.gp{grid-template-columns:repeat(auto-fill,minmax(66px,1fr))}
+.gi{grid-template-columns:repeat(6,minmax(0,1fr))}
+.gi7{grid-template-columns:repeat(7,minmax(0,1fr))}
+.grp{display:grid;grid-template-columns:84px 1fr;gap:6px;align-items:center}
+.grp .rl{font-size:12px;font-weight:800;color:#c9d2db}
+#bFet{height:64px;font-size:20px;font-weight:800;border-radius:12px}
+
+/* ---------- OTHER OVERLAYS ---------- */
+.ov{position:fixed;inset:0;background:rgba(5,8,10,.75);display:flex;align-items:center;justify-content:center;padding:12px;z-index:50}
 .modal{background:var(--bg);border:1px solid var(--line);border-radius:14px;width:min(1100px,100%);max-height:100%;display:flex;flex-direction:column;overflow:hidden}
 .modal .mh{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #252e37}
 .modal .mh .t{font-weight:800;font-size:17px;flex:1}
@@ -127,13 +145,14 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 .keyrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #222a33}
 .keyrow .a{flex:1;font-weight:600}
 .kcap{min-width:70px;text-align:center;padding:6px 10px;border-radius:7px;background:var(--chip);border:1px solid var(--line)}
-#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--text);color:#0f1317;font-weight:700;padding:10px 16px;border-radius:10px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%}
+#toast{position:fixed;left:50%;bottom:54px;transform:translateX(-50%);background:var(--text);color:#0f1317;font-weight:700;padding:10px 16px;border-radius:10px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%}
 
 @media (max-width:900px){
   #body{flex-direction:column}
   #right{width:auto;border-left:none;border-top:1px solid #252e37;flex:1}
-  #vwrap{min-height:200px}
-  #left{flex:none;height:46vh}
+  #left{flex:none;height:44vh}
+  #indBox{flex-direction:column;overflow-y:auto}
+  #indL{width:auto}
 }
 </style>
 </head>
@@ -166,6 +185,7 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
       <label class="btn" style="display:flex;align-items:center">Importar còpia<input type="file" id="fRestore" accept=".json,application/json" class="hidden"></label>
     </div>
   </div>
+  <div class="muted" style="font-size:12px;margin-top:18px" id="scrInfo"></div>
 </section>
 
 <!-- ================= MAIN ================= -->
@@ -207,20 +227,35 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
     </div>
     <div id="right">
       <div id="starts">
-        <button class="sb TAM" data-act="ATT">ATT<small>TAM</small></button>
-        <button class="sb TAM" data-act="BAL">BAL<small>TAM</small></button>
-        <button class="sb VED" data-act="DEF">DEF<small>VED</small></button>
-        <button class="sb VED" data-act="FB">FB<small>VED</small></button>
-        <button class="sb N" data-act="TO">TO<small>time out</small></button>
-        <button class="sb IA" data-act="INDATT">IND ATT<small>TAM · 1 clic</small></button>
-        <button class="sb ID" data-act="INDDEF">IND DEF<small>VED · 1 clic</small></button>
+        <button class="sb TAM" data-act="ATT">ATT</button>
+        <button class="sb VED" data-act="DEF">DEF</button>
+        <button class="sb TAM" data-act="BAL">BAL</button>
+        <button class="sb VED" data-act="FB">FB</button>
+        <button class="sb IA" data-act="INDATT">IND ATT</button>
+        <button class="sb ID" data-act="INDDEF">IND DEF</button>
+        <button class="sb N" data-act="TO">TO</button>
         <button class="sb FIN" data-act="FINAL" id="bFinal">FINAL</button>
       </div>
-      <div id="recents"></div>
       <div id="panel"></div>
     </div>
   </div>
+  <div id="footer"><span class="lbl">TALLS</span><div id="recents" style="display:flex;gap:6px"></div></div>
 </section>
+
+<!-- ================= INDIVIDUAL ================= -->
+<div id="ovInd" class="hidden">
+  <div id="indBox">
+    <div id="indL">
+      <video id="pv" playsinline muted preload="auto"></video>
+      <button class="btn" id="bRep" style="height:46px;font-size:16px">↻ Repetir</button>
+      <div id="indInfo" class="cc"></div>
+      <div style="flex:1"></div>
+      <button class="btn grey" id="bIndDel">Esborrar aquest individual</button>
+      <button class="btn primary" id="bFet">Fet ▶</button>
+    </div>
+    <div id="indR"></div>
+  </div>
+</div>
 
 <!-- ================= EXPORT ================= -->
 <div class="ov hidden" id="ovExport">
@@ -280,6 +315,7 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 
 <script>
 'use strict';
+const APP_VERSION = 'v2';
 /* =====================================================================
    TAG DICTIONARY — exact texts as they exist in the XPS template.
    Trailing spaces matter. Lines marked (?) are not yet verified.
@@ -301,23 +337,23 @@ const IND_ATT = [
               {p:['SHOOT ','CADERA '],l:'CADERA'}, {p:['SHOOT ','RECTIFIC. '],l:'RECTIFIC.'} ]],
   ['FINTA', [ {p:['FINTA ','STRONG SIDE '],l:'STRONG SIDE'}, {p:['FINTA ','BAD SIDE '],l:'BAD SIDE'}, {p:['FINTA ','SHOOT '],l:'SHOOT'},
               {p:['FINTA ','PASS '],l:'PASS'}, {p:['FINTA ','BOUNCE'],l:'BOUNCE'}, {p:['FINTA ','TURN (GIRO)'],l:'TURN (GIRO)'} ]],
-  ['PASSADA I SENSE PILOTA', [ {p:['PASS']} /* (?) */, {p:['PASS PIV']}, {p:['PASS WING','LW'],l:'PASS WING LW'},
-              {p:['PASS WING','RW'],l:'PASS WING RW'}, {p:['WITHOUT BALL/RUN']} ]]
+  ['PASS', [ {p:['PASS']} /* (?) */, {p:['PASS PIV']}, {p:['PASS WING','LW'],l:'P. WING LW'},
+              {p:['PASS WING','RW'],l:'P. WING RW'}, {p:['WITHOUT BALL/RUN'],l:'WITHOUT BALL'} ]]
 ];
 const DECISIONS = [ {v:'LW ',l:'LW'} /* (?) */, {v:'RW ',l:'RW'} /* (?) */, {v:'LB ',l:'LB'}, {v:'RB ',l:'RB'}, {v:'PL ',l:'PL'}, {v:'PIV ',l:'PIV'} /* (?) */ ];
 const IND_DEF = [
-  ['ACCIONS DEFENSIVES', [ {p:['1X1']}, {p:['HELP']}, {p:['1X2']}, {p:['BLOCK']}, {p:['STEAL (LOP) '],l:'STEAL (LOP)'},
-     {p:['CONTROL PIVOT']}, {p:['FIGHT PIVOT']}, {p:['ATTACK FAULT']}, {p:['DISSUATION (IMPAR)'],l:'DISSUATION'},
-     {p:['DISSUATION (IMPAR)','OWN OPPONENT (PAR)'],l:'DISS. OWN OPP.'} ]],
-  ['ALTRES', [ {p:['BRUTAL '],l:'BRUTAL'}, {p:['ACTITUDS '],l:'ACTITUDS'}, {p:['OUT '],l:'OUT'} ]]
+  ['ACCIONS', [ {p:['1X1']}, {p:['HELP']}, {p:['1X2']}, {p:['BLOCK']}, {p:['STEAL (LOP) '],l:'STEAL (LOP)'},
+     {p:['CONTROL PIVOT']}, {p:['FIGHT PIVOT']} ]],
+  ['', [ {p:['ATTACK FAULT']}, {p:['DISSUATION (IMPAR)'],l:'DISSUATION'},
+     {p:['DISSUATION (IMPAR)','OWN OPPONENT (PAR)'],l:'DISS. OWN OPP.'}, {p:['BRUTAL '],l:'BRUTAL'}, {p:['ACTITUDS '],l:'ACTITUDS'}, {p:['OUT '],l:'OUT'} ]]
 ];
 const IND_FIRST = ['INDIVIDUAL'];
+const IND_BEFORE = 4, IND_AFTER = 1;
 
 const KIND_SIDE = {ATT:'TAM',BAL:'TAM',DEF:'VED',FB:'VED'};
-const PHASES = ['ATT','BAL','DEF','FB','TO'];
 const ACTIONS = [
   ['ATT','Inici ATT'],['BAL','Inici BAL'],['DEF','Inici DEF'],['FB','Inici FB'],['TO','Inici TO'],
-  ['INDATT','IND ATT'],['INDDEF','IND DEF'],['FINAL','FINAL'],
+  ['INDATT','IND ATT'],['INDDEF','IND DEF'],['FINAL','FINAL · i «Fet» als individuals'],
   ['PLAY','Play / pausa'],['BACK','−5 s'],['FWD','+5 s'],['SPEED','Velocitat'],['UNDO','Desfer']
 ];
 const DEFAULT_KEYS = {'1':'ATT','2':'BAL','3':'DEF','4':'FB','5':'TO','6':'INDATT','7':'INDDEF','Enter':'FINAL',
@@ -334,6 +370,7 @@ function hms(sec){ sec = Math.max(0, Math.round(sec)); return pad(Math.floor(sec
 function hmsF(sec){ const d=Math.round(Math.max(0,sec)*10); return hms(Math.floor(d/10)).slice(3)+'.'+(d%10); }
 const r1 = x => Math.round(x*10)/10;
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.style.opacity=1; clearTimeout(toast._t); toast._t=setTimeout(()=>t.style.opacity=0,2200); }
+const selStyle = side => side==='VED' ? '--sel:#2563eb' : '--sel:#dc2626';
 
 const LS = {
   get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -349,20 +386,20 @@ function fmtCol(paths){
   return paths.map(fmtPath).join(', ');
 }
 function labelOf(p){
-  const all=[...SYS_MAIN,...SYS_MODS];
-  for(const t of all) if(key(t.p)===key(p)) return t.l||p.join(' ');
+  for(const t of [...SYS_MAIN,...SYS_MODS]) if(key(t.p)===key(p)) return t.l||p.join(' ');
   for(const g of [...IND_ATT,...IND_DEF]) for(const t of g[1]) if(key(t.p)===key(p)) return t.l||p.join(' ');
   return p.map(s=>s.trim()).join(' ');
 }
 
 /* ===================== state ===================== */
-let S = null;            // current session
+let S = null;
 let undoStack = [];
 let keys = LS.get('xt.keys', null) || {...DEFAULT_KEYS};
 let learning = null;
-let videoReady = false;
+let videoReady = false, videoURL = null;
 let speedIdx = 0;
 let wakeLock = null;
+let indResume = false;   // resume main video when the individual screen closes
 
 function idx(){ return LS.get('xt.index', []); }
 function rosters(){ return LS.get('xt.rosters', {}); }
@@ -377,7 +414,7 @@ function save(){
   if(i>=0) list[i]=e; else list.unshift(e);
   LS.set('xt.index', list);
   $('#saved').textContent = ok ? '✓ desat · '+S.clips.length+' talls' : '⚠ NO DESAT';
-  $('#saved').style.color = ok ? 'var(--muted)' : 'var(--bad)';
+  $('#saved').style.color = ok ? 'var(--muted)' : '#ef4444';
 }
 function snapshot(){
   undoStack.push(JSON.stringify({clips:S.clips,openId:S.openId,focusId:S.focusId,counter:S.counter}));
@@ -385,8 +422,22 @@ function snapshot(){
 }
 function undo(){
   if(!undoStack.length){ toast('No hi ha res per desfer'); return; }
-  Object.assign(S, JSON.parse(undoStack.pop())); save(); renderAll(); toast('Desfet');
+  Object.assign(S, JSON.parse(undoStack.pop())); save();
+  const f=clip(S.focusId);
+  if(!indOpen() && f && f.kind==='IND') S.focusId=S.openId;
+  if(indOpen() && (!f || f.kind!=='IND')) hideInd(false);
+  renderAll(); toast('Desfet');
 }
+
+/* ===================== screen awake ===================== */
+async function keepAwake(){
+  if(!S || $('#main').classList.contains('hidden') || document.visibilityState!=='visible') return;
+  if(wakeLock || !('wakeLock' in navigator)) return;
+  try{ wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', ()=>{ wakeLock=null; }); }catch(e){}
+}
+function releaseAwake(){ if(wakeLock){ wakeLock.release().catch(()=>{}); wakeLock=null; } }
+document.addEventListener('visibilitychange', keepAwake);
+document.addEventListener('pointerdown', keepAwake);
 
 /* ===================== setup screen ===================== */
 function renderSetup(){
@@ -395,10 +446,11 @@ function renderSetup(){
     <div class="sess"><div class="info"><div class="t">${esc(s.name)}</div>
       <div class="muted" style="font-size:13px">${esc(s.team)} · ${s.count} talls · ${new Date(s.updated).toLocaleString('ca-ES')}</div></div>
       <button class="btn primary" data-open="${s.id}">Obrir</button>
-      <button class="btn danger" data-del="${s.id}">Esborrar</button></div>`).join('')
+      <button class="btn grey" data-del="${s.id}">Esborrar</button></div>`).join('')
     : '<div class="muted">Encara no hi ha cap partit.</div>';
   const teams = new Set([...Object.keys(rosters()), ...list.map(s=>s.team)]);
   $('#teamList').innerHTML = [...teams].map(t=>`<option value="${esc(t)}">`).join('');
+  $('#scrInfo').textContent = 'Tallador XPS '+APP_VERSION+' · pantalla '+innerWidth+'×'+innerHeight;
 }
 $('#sessList').addEventListener('click', e=>{
   const o=e.target.closest('[data-open]'), d=e.target.closest('[data-del]');
@@ -423,7 +475,7 @@ $('#fRestore').onchange = async e=>{
   const f=e.target.files[0]; if(!f) return;
   try{
     const d=JSON.parse(await f.text()); if(d.app!=='tallador-xps') throw 0;
-    const r={...rosters(),...(d.rosters||{})}; LS.set('xt.rosters',r);
+    LS.set('xt.rosters',{...rosters(),...(d.rosters||{})});
     for(const s of d.sessions||[]){ LS.set('xt.s.'+s.id,s); const l=idx().filter(x=>x.id!==s.id);
       l.unshift({id:s.id,name:s.name,team:s.team,updated:s.updated,count:s.clips.length}); LS.set('xt.index',l); }
     toast('Còpia importada: '+(d.sessions||[]).length+' partits'); renderSetup();
@@ -432,20 +484,22 @@ $('#fRestore').onchange = async e=>{
 };
 
 /* ===================== main screen ===================== */
-const video = $('#video');
+const video = $('#video'), pv = $('#pv');
 function showMain(){
   $('#setup').classList.add('hidden'); $('#main').classList.remove('hidden');
   $('#mTitle').innerHTML = esc(S.name)+' <span class="muted" style="font-weight:500">· '+esc(S.team)+'</span>';
   $('#novideoHint').textContent = S.videoName ? 'Últim vídeo fet servir: '+S.videoName : 'El vídeo no es puja enlloc: es llegeix des de la tauleta.';
-  save(); renderAll();
+  const f=clip(S.focusId); if(f && f.kind==='IND') S.focusId=S.openId;
+  save(); renderAll(); keepAwake();
 }
-$('#bHome').onclick = ()=>{ video.pause(); $('#main').classList.add('hidden'); $('#setup').classList.remove('hidden'); renderSetup(); };
+$('#bHome').onclick = ()=>{ video.pause(); hideInd(false); releaseAwake(); $('#main').classList.add('hidden'); $('#setup').classList.remove('hidden'); renderSetup(); };
 
 function loadVideo(f){
   if(!f) return;
   if(S.videoName && S.videoName!==f.name && !confirm('Aquest partit es va tallar amb «'+S.videoName+'». Segur que vols fer servir «'+f.name+'»?')) return;
-  if(video.src) URL.revokeObjectURL(video.src);
-  video.src = URL.createObjectURL(f); S.videoName=f.name; save();
+  if(videoURL) URL.revokeObjectURL(videoURL);
+  videoURL = URL.createObjectURL(f); video.src = videoURL; pv.src = videoURL;
+  S.videoName=f.name; save();
   videoReady = true; $('#novideo').classList.add('hidden');
   video.playbackRate = SPEEDS[speedIdx];
 }
@@ -454,8 +508,8 @@ $('#fVideo2').onchange = e=>{ loadVideo(e.target.files[0]); e.target.value=''; }
 video.addEventListener('loadedmetadata', ()=>{ $('#seek').max = video.duration||100; renderTimeline(); });
 video.addEventListener('timeupdate', tick);
 video.addEventListener('seeked', tick);
-video.addEventListener('play', ()=>{ $('#bPlay').textContent='❚❚'; try{ navigator.wakeLock && navigator.wakeLock.request('screen').then(w=>wakeLock=w).catch(()=>{}); }catch(e){} });
-video.addEventListener('pause', ()=>{ $('#bPlay').textContent='▶'; if(wakeLock){ wakeLock.release().catch(()=>{}); wakeLock=null; } });
+video.addEventListener('play', ()=>{ $('#bPlay').textContent='❚❚'; keepAwake(); });
+video.addEventListener('pause', ()=>{ $('#bPlay').textContent='▶'; });
 video.addEventListener('click', ()=>act('PLAY'));
 $('#seek').addEventListener('input', e=>{ if(videoReady) video.currentTime = +e.target.value; });
 $('#timeline').addEventListener('click', e=>{
@@ -469,12 +523,12 @@ const dur = () => (videoReady && isFinite(video.duration) && video.duration) || 
 const now = () => video.currentTime || 0;
 
 function tick(){
+  if(!S) return;
   const t=now(); $('#vclock').textContent=hms(Math.floor(t));
   $('#tclock').textContent = hms(Math.floor(t))+' / '+hms(Math.floor(dur()));
   if(document.activeElement!==$('#seek')) $('#seek').value=t;
   $('#playhead').style.left = (t/dur()*100)+'%';
-  const o=clip(S&&S.openId);
-  if(o){ const el=document.getElementById('liveEnd'); if(el) el.textContent='obert · '+hms(Math.floor(t)); }
+  const el=document.getElementById('liveEnd'); if(el && S.openId) el.textContent='obert · '+hms(Math.floor(t));
 }
 
 /* ---------- actions ---------- */
@@ -482,7 +536,7 @@ function needVideo(){ if(!videoReady){ toast('Primer obre el vídeo'); return tr
 function flash(text, side){
   const f=$('#flash'); f.textContent=text;
   f.style.background = side==='TAM'?'var(--tam)':side==='VED'?'var(--ved)':'#e8ecef';
-  f.style.color = side==='VED'?'#fff':'#0f1317'; f.style.opacity=.95;
+  f.style.color = side?'#fff':'#0f1317'; f.style.opacity=.95;
   clearTimeout(flash._t); flash._t=setTimeout(()=>f.style.opacity=0,500);
 }
 function closeOpen(t){
@@ -505,13 +559,22 @@ function finalClip(){
 }
 function startInd(side){
   if(needVideo()) return;
+  const wasPlaying = !video.paused;
+  video.pause();
   snapshot(); const t=now();
-  const c={id:uid(), n:S.counter++, kind:'IND', side, start:r1(Math.max(0,t-3)), end:r1(t+2), tags:[], player:null, decision:null};
+  const c={id:uid(), n:S.counter++, kind:'IND', side, start:r1(Math.max(0,t-IND_BEFORE)), end:r1(t+IND_AFTER), tags:[], player:null, decision:null};
   S.clips.push(c); S.focusId=c.id; save(); renderAll();
-  flash('IND '+(side==='TAM'?'ATT':'DEF'), side);
+  showInd(wasPlaying);
 }
 function act(a){
   if(!S) return;
+  // while the individual screen is open, the remote finishes it first
+  if(indOpen()){
+    if(a==='UNDO'){ undo(); return; }
+    if(a==='FINAL'||a==='PLAY'){ hideInd(true); return; }
+    if(['ATT','BAL','DEF','FB','TO','INDATT','INDDEF'].includes(a)){ hideInd(true); }
+    else return;
+  }
   switch(a){
     case 'ATT': case 'BAL': case 'DEF': case 'FB': case 'TO': startPhase(a); break;
     case 'INDATT': startInd('TAM'); break;
@@ -529,6 +592,7 @@ document.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click', (
 
 function focusClip(id, seek){
   const c=clip(id); if(!c) return;
+  if(c.kind==='IND'){ video.pause(); S.focusId=id; save(); renderAll(); showInd(false); return; }
   S.focusId=id; save(); renderAll();
   if(seek && videoReady){ video.pause(); video.currentTime=c.start; }
 }
@@ -549,11 +613,11 @@ function deleteFocused(){
   const c=clip(S.focusId); if(!c) return;
   snapshot(); S.clips=S.clips.filter(x=>x.id!==c.id);
   if(S.openId===c.id) S.openId=null;
-  const last=S.clips[S.clips.length-1]; S.focusId= last?last.id:null; save(); renderAll(); toast('Tall esborrat (pots desfer-ho)');
+  S.focusId = S.openId || null; save(); renderAll(); toast('Tall esborrat (pots desfer-ho)');
 }
 
 /* ===================== rendering ===================== */
-function renderAll(){ renderStarts(); renderRecents(); renderPanel(); renderTimeline(); renderBadge(); tick(); }
+function renderAll(){ renderStarts(); renderRecents(); renderPanel(); renderTimeline(); renderBadge(); if(indOpen()) renderInd(); tick(); }
 function renderStarts(){
   const o=clip(S.openId);
   document.querySelectorAll('#starts .sb').forEach(b=>b.classList.toggle('on', !!o && b.dataset.act===o.kind));
@@ -564,85 +628,65 @@ function renderBadge(){
   $('#vbadge').innerHTML = o ? `<span class="badge b-${o.side||'none'}">● ${o.kind}${o.side?' · '+o.side:''}</span>` : '';
 }
 function clipName(c){ return c.kind==='IND' ? 'IND '+(c.side==='TAM'?'ATT':'DEF') : c.kind; }
+const sideColor = s => s==='VED'?'var(--ved)':s==='TAM'?'var(--tam)':'#9aa6b2';
 function renderRecents(){
-  const list=S.clips.slice(-6).reverse();
+  const list=S.clips.slice(-14).reverse();
   const o=clip(S.openId);
   if(o && !list.includes(o)) list.unshift(o);
   $('#recents').innerHTML = list.map(c=>`<button class="rc ${c.id===S.focusId?'f':''} ${c.id===S.openId?'open':''}" data-fid="${c.id}">
-      <span class="dot" style="background:${c.side==='VED'?'var(--ved)':c.side==='TAM'?'var(--tam)':'#9aa6b2'}"></span>${c.n} · ${clipName(c)}</button>`).join('');
+      <span class="dot" style="background:${sideColor(c.side)}"></span>${c.n} · ${clipName(c)}</button>`).join('') ||
+      '<span class="muted" style="font-size:13px">Encara no hi ha talls</span>';
 }
 $('#recents').addEventListener('click', e=>{ const b=e.target.closest('[data-fid]'); if(b) focusClip(b.dataset.fid,false); });
 
 function tagBtn(p, label, on, side){
-  const sel = on ? (side==='VED'?'--sel:#2563eb;--selt:#fff':'--sel:#f59e0b;--selt:#111418') : '';
-  return `<button class="tb ${on?'on':''}" style="${sel}" data-tag='${esc(JSON.stringify(p))}'>${esc(label)}</button>`;
+  return `<button class="tb ${on?'on':''}" style="${on?selStyle(side):''}" data-tag='${esc(JSON.stringify(p))}'>${esc(label)}</button>`;
 }
-function renderPanel(){
-  const c=clip(S.focusId), P=$('#panel');
-  if(!c){ P.innerHTML = `<div class="empty">Prem un botó d'inici (ATT, BAL, DEF, FB, TO) per començar un tall,<br>o IND ATT / IND DEF per marcar una acció individual.</div>`; return; }
-  const has = p => c.tags.some(x=>key(x)===key(p));
-  const isOpen = c.id===S.openId;
-  let h = `<div class="cc"><div class="hd"><span class="k">#${c.n} · ${clipName(c)}</span>
-      ${c.side?`<span class="badge b-${c.side}">${c.side}</span>`:'<span class="badge b-none">tria equip</span>'}
-      <span style="flex:1"></span><button class="btn danger" style="height:34px;font-size:13px" id="bDel">Esborrar tall</button></div>
-    <div class="times mono">
-      <div class="nud"><button data-nud="s,-1" aria-label="Inici abans">−</button>${c.kind==='IND'?hmsF(c.start):hms(c.start)}<button data-nud="s,1" aria-label="Inici després">+</button></div>
-      <span>→</span>
-      ${isOpen?`<span id="liveEnd" style="color:var(--warn)">obert</span>`:
-      `<div class="nud"><button data-nud="e,-1" aria-label="Final abans">−</button>${c.kind==='IND'?hmsF(c.end):hms(c.end)}<button data-nud="e,1" aria-label="Final després">+</button></div>`}
-      ${videoReady?`<button class="btn" style="height:32px;font-size:13px" id="bGo">Veure</button>`:''}
-    </div>`;
-  // ordered chips
-  const chips = (c.kind==='IND'?[IND_FIRST,...c.tags]:c.tags).map((p,i)=>{
+function chipsHtml(c){
+  const list = c.kind==='IND' ? [IND_FIRST,...c.tags] : c.tags;
+  return list.map((p,i)=>{
     const fixed = c.kind==='TO' || (c.kind==='IND' && i===0);
     const ri = c.kind==='IND' ? i-1 : i;
     return `<button class="chip" ${fixed?'disabled style="opacity:.8"':`data-rm="${ri}"`}><i>${i+1}</i>${esc(labelOf(p))}${fixed?'':' <i>×</i>'}</button>`;
-  }).join('');
-  h += `<div class="chips">${chips||'<span class="muted" style="font-size:13px">Sense etiquetes</span>'}</div>`;
-  if(c.kind==='IND'){
-    const pl = c.player?`<div class="out mono">Jugador: ${esc(c.player)}</div>`:'';
-    h += `${pl}<div class="out mono">INDIVIDUAL: ${esc(fmtCol([IND_FIRST,...c.tags]))}${c.decision?'<br>DECISION: '+esc(c.decision):''}</div>`;
-  } else {
-    h += `<div class="out mono">SYSTEM: ${esc(fmtCol(c.tags))||'—'}</div>`;
-  }
-  h += `</div>`;
-
+  }).join('') || '<span class="muted" style="font-size:12px">Sense etiquetes</span>';
+}
+function timesHtml(c){
+  const f = c.kind==='IND' ? hmsF : hms;
+  const isOpen = c.id===S.openId;
+  return `<div class="times mono">
+      <div class="nud"><button data-nud="s,-1" aria-label="Inici abans">−</button>${f(c.start)}<button data-nud="s,1" aria-label="Inici després">+</button></div>
+      <span>→</span>
+      ${isOpen?`<span id="liveEnd" style="color:var(--warn)">obert</span>`:
+      `<div class="nud"><button data-nud="e,-1" aria-label="Final abans">−</button>${f(c.end)}<button data-nud="e,1" aria-label="Final després">+</button></div>`}
+    </div>`;
+}
+function renderPanel(){
+  const c=clip(S.focusId), P=$('#panel');
+  if(!c || c.kind==='IND'){ P.innerHTML = `<div class="empty">Prem ATT, DEF, BAL, FB o TO per començar un tall.<br>IND ATT / IND DEF aturen el vídeo i obren la pantalla d'individuals.</div>`; return; }
+  const has = p => c.tags.some(x=>key(x)===key(p));
+  let h = `<div class="cc"><div class="hd"><span class="k">#${c.n} · ${clipName(c)}</span>
+      ${c.side?`<span class="badge b-${c.side}">${c.side}</span>`:'<span class="badge b-none">tria TAM o VED</span>'}
+      <span style="flex:1"></span>
+      ${videoReady?`<button class="btn sbtn" id="bGo">Veure</button>`:''}
+      <button class="btn grey sbtn" id="bDel">Esborrar</button></div>
+    ${timesHtml(c)}
+    <div class="chips">${chipsHtml(c)}</div></div>`;
   if(c.kind==='TO'){
-    h += `<div class="sec"><div class="lb">De qui és el temps mort?</div><div class="g g3" style="grid-template-columns:1fr 1fr">
-      <button class="tb ${c.side==='TAM'?'on':''}" style="--sel:#f59e0b;--selt:#111418;min-height:56px" data-side="TAM">Nostre (TAM)</button>
-      <button class="tb ${c.side==='VED'?'on':''}" style="--sel:#2563eb;--selt:#fff;min-height:56px" data-side="VED">Rival (VED)</button></div></div>`;
-  } else if(c.kind==='IND'){
-    const R=roster();
-    if(R.length){
-      h += `<div class="sec"><div class="lb">Jugador</div><div class="g" style="grid-template-columns:repeat(auto-fill,minmax(64px,1fr))">`+
-        R.map(n=>{ const m=n.match(/^\s*(\d+)\.?\s*(.*)$/); const num=m?m[1]:'·', nm=(m?m[2]:n).split(' ')[0];
-          return `<button class="tb ${c.player===n?'on':''}" style="${c.side==='VED'?'--sel:#2563eb;--selt:#fff':'--sel:#f59e0b;--selt:#111418'}" data-player="${esc(n)}"><span class="n">${esc(num)}</span><span class="s">${esc(nm)}</span></button>`; }).join('')+
-        `</div></div>`;
-    } else {
-      h += `<div class="muted" style="font-size:13px">Sense plantilla: el tall sortirà amb NINGUNO. <button class="btn" style="height:32px;font-size:13px" id="bR2">Afegir plantilla</button></div>`;
-    }
-    const groups = c.side==='TAM'?IND_ATT:IND_DEF;
-    for(const [lb,items] of groups){
-      h += `<div class="sec"><div class="lb">${lb}</div><div class="g g3">`+items.map(t=>tagBtn(t.p,t.l||t.p.join(' '),has(t.p),c.side)).join('')+`</div></div>`;
-    }
-    if(c.side==='TAM'){
-      h += `<div class="sec"><div class="lb">Decision (només una)</div><div class="g g3">`+
-        DECISIONS.map(d=>`<button class="tb ${c.decision===d.v?'on':''}" style="--sel:#f59e0b;--selt:#111418" data-dec="${esc(d.v)}">${d.l}</button>`).join('')+`</div></div>`;
-    }
+    h += `<div class="sec"><div class="lb">Temps mort de</div><div class="g" style="grid-template-columns:1fr 1fr">
+      <button class="tb ${c.side==='TAM'?'on':''}" style="${c.side==='TAM'?selStyle('TAM'):''};min-height:54px;font-size:18px;font-weight:800" data-side="TAM">TAM</button>
+      <button class="tb ${c.side==='VED'?'on':''}" style="${c.side==='VED'?selStyle('VED'):''};min-height:54px;font-size:18px;font-weight:800" data-side="VED">VED</button></div></div>`;
   } else {
     if(c.kind==='BAL'||c.kind==='FB'){
       h += `<div class="sec"><div class="lb">Transició</div><div class="g gt">`;
-      for(const [rl,arr] of TRANS[c.kind]){
-        h += `<div class="rl">${rl}</div>` + arr.map(v=>tagBtn([v], v.replace(rl+' ',''), has([v]), c.side)).join('');
-      }
+      for(const [rl,arr] of TRANS[c.kind]) h += `<div class="rl">${rl}</div>` + arr.map(v=>tagBtn([v], v.replace(rl+' ',''), has([v]), c.side)).join('');
       h += `</div></div>`;
     }
     h += `<div class="sec"><div class="lb">Sistema</div><div class="g g4">`+SYS_MAIN.map(t=>tagBtn(t.p,t.l||t.p[0],has(t.p),c.side)).join('')+`</div></div>`;
-    h += `<div class="sec"><div class="lb">Inferioritat / superioritat</div><div class="g g3">`+SYS_MODS.map(t=>tagBtn(t.p,t.l||t.p[0],has(t.p),c.side)).join('')+`</div></div>`;
+    h += `<div class="sec"><div class="lb">Inferioritat / superioritat</div><div class="g g6">`+SYS_MODS.map(t=>tagBtn(t.p,t.l||t.p[0],has(t.p),c.side)).join('')+`</div></div>`;
   }
   P.innerHTML = h;
 }
-$('#panel').addEventListener('click', e=>{
+function panelClick(e){
   const t=e.target.closest('button'); if(!t||t.disabled) return;
   if(t.dataset.tag) toggleTag(JSON.parse(t.dataset.tag));
   else if(t.dataset.rm!=null) removeTagAt(+t.dataset.rm);
@@ -653,7 +697,10 @@ $('#panel').addEventListener('click', e=>{
   else if(t.id==='bDel') deleteFocused();
   else if(t.id==='bGo'){ const c=clip(S.focusId); video.currentTime=c.start; video.play(); }
   else if(t.id==='bR2') openRoster();
-});
+}
+$('#panel').addEventListener('click', panelClick);
+$('#indR').addEventListener('click', panelClick);
+$('#indInfo').addEventListener('click', panelClick);
 
 function renderTimeline(){
   if(!S) return;
@@ -666,18 +713,68 @@ function renderTimeline(){
     d.className='seg '+(c.kind==='IND'?'in':'ph')+(c.id===S.focusId?' f':'');
     d.dataset.id=c.id;
     d.style.left=(c.start/D*100)+'%'; d.style.width=Math.max(0.4,(end-c.start)/D*100)+'%';
-    d.style.background = c.side==='VED'?'var(--ved)':c.side==='TAM'?'var(--tam)':'#9aa6b2';
-    if(c.kind==='TO') d.style.background='repeating-linear-gradient(45deg,#9aa6b2 0 4px,#4a5664 4px 8px)';
+    d.style.background = c.kind==='TO' ? 'repeating-linear-gradient(45deg,#9aa6b2 0 4px,#4a5664 4px 8px)' : sideColor(c.side);
     frag.appendChild(d);
   }
   TL.appendChild(frag);
 }
 
+/* ===================== individual screen ===================== */
+const indOpen = () => !$('#ovInd').classList.contains('hidden');
+function showInd(resume){
+  indResume = resume;
+  $('#ovInd').classList.remove('hidden');
+  renderInd();
+  const c=clip(S.focusId);
+  if(c && videoReady){ pv.pause(); try{ pv.currentTime = Math.min(c.end, c.start+IND_BEFORE); }catch(e){} }
+}
+function hideInd(resume){
+  if(!indOpen()) return;
+  $('#ovInd').classList.add('hidden'); pv.pause();
+  if(S){ S.focusId = S.openId || null; save(); renderAll(); }
+  if(resume && indResume && videoReady) video.play();
+  indResume=false;
+}
+function renderInd(){
+  const c=clip(S.focusId); if(!c || c.kind!=='IND'){ hideInd(false); return; }
+  $('#indBox').className = c.side;
+  $('#indInfo').innerHTML = `<div class="hd"><span class="k">#${c.n} · ${clipName(c)}</span><span class="badge b-${c.side}">${c.side}</span></div>
+    ${timesHtml(c)}<div class="chips">${chipsHtml(c)}</div>
+    ${c.player?`<div class="mono" style="font-size:12px">${esc(c.player)}</div>`:''}
+    ${c.decision?`<div class="mono" style="font-size:12px">DECISION: ${esc(c.decision.trim())}</div>`:''}`;
+  const has = p => c.tags.some(x=>key(x)===key(p));
+  const R=roster();
+  let h = `<div class="sec"><div class="lb">Jugador</div>`;
+  h += R.length ? `<div class="g gp">`+R.map(n=>{ const m=n.match(/^\s*(\d+)\.?\s*(.*)$/); const num=m?m[1]:'·', nm=(m?m[2]:n).split(' ')[0];
+      return `<button class="tb ${c.player===n?'on':''}" style="${c.player===n?selStyle(c.side):''}" data-player="${esc(n)}"><span class="n">${esc(num)}</span><span class="s">${esc(nm)}</span></button>`; }).join('')+`</div>`
+    : `<div class="muted" style="font-size:13px">Sense plantilla: sortirà amb NINGUNO. <button class="btn sbtn" id="bR2">Afegir plantilla</button></div>`;
+  h += `</div>`;
+  const groups = c.side==='TAM'?IND_ATT:IND_DEF;
+  h += `<div class="sec"><div class="lb">${c.side==='TAM'?'Accions d\'atac':'Accions de defensa'}</div>`;
+  for(const [lb,items] of groups){
+    const cls = items.length>6 ? 'gi7' : 'gi';
+    h += `<div class="grp"><div class="rl">${lb}</div><div class="g ${cls}">`+items.map(t=>tagBtn(t.p,t.l||t.p.join(' '),has(t.p),c.side)).join('')+`</div></div>`;
+  }
+  h += `</div>`;
+  if(c.side==='TAM'){
+    h += `<div class="sec"><div class="lb">Decision (només una)</div><div class="g gi">`+
+      DECISIONS.map(d=>`<button class="tb ${c.decision===d.v?'on':''}" style="${c.decision===d.v?selStyle('TAM'):''}" data-dec="${esc(d.v)}">${d.l}</button>`).join('')+`</div></div>`;
+  }
+  $('#indR').innerHTML = h;
+}
+$('#bFet').onclick = ()=>hideInd(true);
+$('#bIndDel').onclick = ()=>{ deleteFocused(); hideInd(true); };
+$('#bRep').onclick = ()=>{
+  const c=clip(S.focusId); if(!c||!videoReady) return;
+  pv.currentTime=c.start; pv.play();
+};
+pv.addEventListener('timeupdate', ()=>{ const c=clip(S&&S.focusId); if(c && c.kind==='IND' && pv.currentTime>=c.end) pv.pause(); });
+
 /* ===================== export ===================== */
 function warnings(c){
   const w=[];
   if(c.end==null) w.push('obert');
-  if(c.kind==='TO' && !c.side) w.push('falta de qui és');
+  if(c.kind==='TO' && !c.side) w.push('falta TAM o VED');
   if((c.kind==='BAL'||c.kind==='FB') && !c.tags.some(p=>p.length===1 && /^(BAL|FB) /.test(p[0]))) w.push('falta l\'onada');
   if(c.kind==='IND' && !c.tags.length) w.push('sense etiquetes');
   return w;
@@ -764,7 +861,7 @@ function openRoster(){
 $('#bRoster').onclick=openRoster;
 $('#bRSave').onclick=()=>{
   const list=parseRoster($('#rText').value); const r=rosters(); r[S.team]=list; LS.set('xt.rosters',r);
-  $('#rText').value=list.join('\n'); $('#rCount').textContent=list.length+' jugadors desats'; renderPanel(); toast('Plantilla desada');
+  $('#rText').value=list.join('\n'); $('#rCount').textContent=list.length+' jugadors desats'; renderAll(); toast('Plantilla desada');
 };
 
 /* ===================== keys ===================== */
@@ -785,9 +882,13 @@ document.addEventListener('keydown', e=>{
     for(const k of Object.keys(keys)) if(keys[k]===learning) delete keys[k];
     keys[e.key]=learning; LS.set('xt.keys',keys); learning=null; renderKeys(); return;
   }
-  if(e.key==='Escape'){ document.querySelectorAll('.ov').forEach(o=>o.classList.add('hidden')); return; }
+  if(e.key==='Escape'){
+    if(indOpen()){ hideInd(true); return; }
+    document.querySelectorAll('.ov').forEach(o=>o.classList.add('hidden')); return;
+  }
   const tg=e.target.tagName; if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT') return;
   if($('#main').classList.contains('hidden')) return;
+  if([...document.querySelectorAll('.ov')].some(o=>!o.classList.contains('hidden'))) return;
   const a=keys[e.key]; if(!a) return;
   e.preventDefault(); act(a);
 });
@@ -795,6 +896,7 @@ document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{ $('#'+b.dat
 
 /* ===================== init ===================== */
 renderSetup();
+window.addEventListener('resize', ()=>{ if(!$('#setup').classList.contains('hidden')) renderSetup(); });
 window.addEventListener('beforeunload', ()=>{ if(S) save(); });
 if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>

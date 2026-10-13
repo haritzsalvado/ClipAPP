@@ -1,5 +1,5 @@
 // Tallador XPS — offline cache. Bump VERSION on every upload.
-const VERSION = 'tallador-v1';
+const VERSION = 'tallador-v2';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {
