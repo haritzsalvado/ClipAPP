@@ -27,6 +27,7 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 .b-TAM{background:var(--tam);color:#fff}
 .b-VED{background:var(--ved);color:#fff}
 .b-none{background:var(--line);color:var(--text)}
+.b-mode{background:#33404d;color:var(--text)}
 
 /* ---------- SETUP ---------- */
 #setup{max-width:860px;margin:0 auto;padding:24px 16px 60px;height:100%;overflow-y:auto}
@@ -36,6 +37,9 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .field{display:flex;flex-direction:column;gap:6px;flex:1 1 220px}
 .field label{font-size:13px;color:var(--muted);font-weight:600}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.mode{height:64px;border-radius:12px;border:2px solid var(--line);background:var(--chip);font-size:19px;font-weight:800}
+.mode.on{border-color:var(--text);background:var(--text);color:#0f1317}
 .sess{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
 .sess:first-child{border-top:none}
 .sess .info{flex:1;min-width:0}
@@ -48,14 +52,14 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 #topbar .sp{flex:1}
 #topbar .btn{height:36px;font-size:14px;padding:0 12px}
 #saved{font-size:12px;color:var(--muted);white-space:nowrap}
-#body{flex:1;display:flex;min-height:0}
+.body{flex:1;display:flex;min-height:0}
 #left{flex:1;display:flex;flex-direction:column;gap:6px;padding:8px;min-width:0}
 #vwrap{flex:1;position:relative;background:#05080a;border-radius:10px;overflow:hidden;min-height:160px}
 #video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
 #novideo{position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;text-align:center;padding:20px}
 #vbadge{position:absolute;left:10px;top:8px;display:flex;gap:6px;pointer-events:none}
 #vclock{position:absolute;right:10px;bottom:8px;font-size:20px;font-weight:700;background:rgba(15,19,23,.85);padding:3px 10px;border-radius:8px;pointer-events:none}
-#flash{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);font-size:44px;font-weight:800;padding:10px 26px;border-radius:14px;opacity:0;transition:opacity .35s;pointer-events:none}
+.flash{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);font-size:44px;font-weight:800;padding:10px 26px;border-radius:14px;opacity:0;transition:opacity .35s;pointer-events:none;z-index:30;white-space:nowrap}
 #timeline{height:30px;flex:none;position:relative;background:var(--panel);border-radius:6px;overflow:hidden;cursor:pointer}
 #timeline .seg{position:absolute;height:13px;border-radius:2px}
 #timeline .ph{top:2px}
@@ -70,7 +74,7 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 
 #right{width:350px;flex:none;border-left:1px solid #252e37;display:flex;flex-direction:column;min-height:0}
 #starts{padding:8px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;flex:none}
-.sb{height:48px;border-radius:10px;border:none;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;line-height:1}
+.sb{height:48px;border-radius:10px;border:none;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;line-height:1.05;text-align:center}
 .sb small{font-size:11px;font-weight:600;opacity:.85}
 .sb.TAM{background:var(--tam);color:#fff}
 .sb.VED{background:var(--ved);color:#fff}
@@ -79,6 +83,8 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 .sb.ID{background:#2a323c;border:2px solid var(--ved)}
 .sb.FIN{background:var(--text);color:#0f1317}
 .sb.on{outline:3px solid #fff;outline-offset:-3px}
+.sb.armed{outline:3px dashed var(--warn);outline-offset:-3px;color:var(--warn)}
+#panelHost{display:none}
 #panel{flex:1;overflow-y:auto;padding:0 8px 10px;display:flex;flex-direction:column;gap:8px}
 .cc{background:var(--panel);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:6px}
 .cc .hd{display:flex;align-items:center;gap:6px}
@@ -93,12 +99,15 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 .sec{display:flex;flex-direction:column;gap:4px}
 .sec .lb{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
 .g{display:grid;gap:5px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .g6{grid-template-columns:repeat(6,minmax(0,1fr))}
 .gt{grid-template-columns:50px repeat(4,minmax(0,1fr));align-items:center}
 .gt .rl{font-size:12px;font-weight:700;color:#c9d2db}
 .tb{min-height:38px;padding:3px 4px;border-radius:7px;border:1px solid var(--line);background:var(--chip);font-size:13px;font-weight:600;line-height:1.15}
 .tb.on{background:var(--sel,#e8ecef);border-color:var(--sel,#e8ecef);color:#fff;font-weight:800}
+.tb.none.on{background:#e8ecef;border-color:#e8ecef;color:#0f1317}
 .tb .n{display:block;font-size:18px;font-weight:800}
 .tb .s{display:block;font-size:10px;font-weight:600;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .empty{padding:20px 8px;text-align:center;color:var(--muted);font-size:14px;line-height:1.5}
@@ -110,21 +119,39 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 .rc.open .dot{animation:pulse 1s infinite}
 @keyframes pulse{50%{opacity:.25}}
 
-/* ---------- INDIVIDUAL OVERLAY ---------- */
+/* ---------- TRAINING ---------- */
+#tLeft{width:290px;flex:none;padding:10px;display:flex;flex-direction:column;gap:10px;border-right:1px solid #252e37}
+#tClock{font-size:54px;font-weight:800;text-align:center;background:var(--panel);border-radius:12px;padding:14px 0 10px;line-height:1}
+#tClock small{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:8px;font-family:system-ui,sans-serif}
+#tClock.live small{color:var(--ok)}
+#bSync{height:72px;font-size:20px;font-weight:800;border-radius:12px;border:none;background:var(--warn);color:#111418}
+#tMid{flex:1;padding:10px;display:flex;flex-direction:column;gap:10px;min-width:0;position:relative}
+.tcols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tcol{display:flex;flex-direction:column;gap:6px}
+.tcol .hdr{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--muted)}
+.tcol .sb{height:52px}
+#tMatch{border:2px dashed #4a5664;border-radius:12px;padding:8px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#tMatch .sb{height:56px}
+#tRight{width:330px;flex:none;border-left:1px solid #252e37;display:flex;flex-direction:column;min-height:0;padding-top:8px}
+
+/* ---------- INDIVIDUAL / SHOOT OVERLAY ---------- */
 #ovInd{position:fixed;inset:0;background:rgba(5,8,10,.6);z-index:40;display:flex;padding:10px}
 #indBox{flex:1;background:var(--bg);border:2px solid var(--line);border-radius:14px;display:flex;gap:12px;padding:12px;min-height:0}
 #indBox.TAM{border-color:var(--tam)}
 #indBox.VED{border-color:var(--ved)}
 #indL{width:300px;flex:none;display:flex;flex-direction:column;gap:8px;min-height:0}
 #pv{width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;display:block}
-#indR{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0;overflow-y:auto}
+#indClock{font-size:40px;font-weight:800;text-align:center;background:var(--panel);border-radius:10px;padding:10px 0}
+#indR{flex:1;display:flex;flex-direction:column;gap:14px;min-width:0;overflow-y:auto}
 #indR .tb{min-height:58px;font-size:15px}
-#indR{gap:14px}
 .gp{grid-template-columns:repeat(auto-fill,minmax(66px,1fr))}
 .gi{grid-template-columns:repeat(6,minmax(0,1fr))}
 .gi7{grid-template-columns:repeat(7,minmax(0,1fr))}
 .grp{display:grid;grid-template-columns:84px 1fr;gap:6px;align-items:center}
 .grp .rl{font-size:12px;font-weight:800;color:#c9d2db}
+#indBox.shoot #indR .tb{min-height:84px;font-size:20px}
+#indBox.shoot .gp{grid-template-columns:repeat(auto-fill,minmax(84px,1fr))}
+#indBox.shoot .tb .n{font-size:24px}
 #bFet{height:64px;font-size:20px;font-weight:800;border-radius:12px}
 
 /* ---------- OTHER OVERLAYS ---------- */
@@ -148,9 +175,10 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 #toast{position:fixed;left:50%;bottom:54px;transform:translateX(-50%);background:var(--text);color:#0f1317;font-weight:700;padding:10px 16px;border-radius:10px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%}
 
 @media (max-width:900px){
-  #body{flex-direction:column}
-  #right{width:auto;border-left:none;border-top:1px solid #252e37;flex:1}
+  .body{flex-direction:column;overflow-y:auto}
+  #right,#tRight{width:auto;border-left:none;border-top:1px solid #252e37;flex:1}
   #left{flex:none;height:44vh}
+  #tLeft{width:auto;border-right:none}
   #indBox{flex-direction:column;overflow-y:auto}
   #indL{width:auto}
 }
@@ -161,25 +189,38 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 <!-- ================= SETUP ================= -->
 <section id="setup">
   <h1>ClipAPP</h1>
-  <div class="muted">Marca les fases i els individuals d'un partit i passa-les a XPS Sideline.</div>
+  <div class="muted">Marca fases i accions de partits i entrenaments i passa-les a XPS Sideline.</div>
 
   <div class="card">
-    <h2>Nou partit</h2>
-    <div class="row">
-      <div class="field"><label for="nName">Nom del partit</label><input id="nName" placeholder="p. ex. S7.PLO-GDA"></div>
-      <div class="field"><label for="nTeam">Equip analitzat (com a XPS, sense TAM/VED)</label><input id="nTeam" list="teamList" placeholder="p. ex. GDANSK 26-27"><datalist id="teamList"></datalist></div>
+    <h2>Nou</h2>
+    <div class="modes">
+      <button class="mode on" data-mode="match">Partit</button>
+      <button class="mode" data-mode="training">Entreno</button>
     </div>
-    <div class="row" style="margin-top:12px"><button class="btn primary" id="bCreate">Crear i començar</button></div>
+    <div id="newMatch">
+      <div class="row">
+        <div class="field"><label for="nName">Codi del partit</label><input id="nName" placeholder="p. ex. S7.PLO-GDA"></div>
+        <div class="field"><label for="nTeam">Equip analitzat (com a XPS, sense TAM/VED)</label><input id="nTeam" list="teamList" placeholder="p. ex. GDANSK 26-27"><datalist id="teamList"></datalist></div>
+      </div>
+    </div>
+    <div id="newTrain" class="hidden">
+      <div class="row">
+        <div class="field"><label for="tName">Codi de l'entreno</label><input id="tName" placeholder="p. ex. E-2026-10-14"></div>
+        <div class="field"><label for="tTeam">Equip (com a XPS, sense TAM/VED)</label><input id="tTeam"></div>
+      </div>
+      <div class="row" style="margin-top:10px"><button class="btn" id="bTRoster">Plantilla de l'equip</button><span class="muted" id="tRosterInfo" style="font-size:13px"></span></div>
+    </div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="bCreate">Crear i començar</button></div>
   </div>
 
   <div class="card">
-    <h2>Partits desats en aquesta tauleta</h2>
+    <h2>Desats en aquesta tauleta</h2>
     <div id="sessList"></div>
   </div>
 
   <div class="card">
     <h2>Còpia de seguretat</h2>
-    <div class="muted" style="font-size:14px;margin-bottom:10px">Guarda tots els partits i plantilles en un fitxer, per si la tauleta perd les dades.</div>
+    <div class="muted" style="font-size:14px;margin-bottom:10px">Guarda tots els partits, entrenos i plantilles en un fitxer, per si la tauleta perd les dades.</div>
     <div class="row">
       <button class="btn" id="bBackup">Exportar còpia (.json)</button>
       <label class="btn" style="display:flex;align-items:center">Importar còpia<input type="file" id="fRestore" accept=".json,application/json" class="hidden"></label>
@@ -191,16 +232,18 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 <!-- ================= MAIN ================= -->
 <section id="main" class="hidden">
   <div id="topbar">
-    <button class="btn" id="bHome" aria-label="Tornar als partits">‹ Partits</button>
+    <button class="btn" id="bHome" aria-label="Tornar a l'inici">‹ Inici</button>
     <div class="title" id="mTitle"></div>
     <div class="sp"></div>
     <div id="saved"></div>
-    <label class="btn" style="display:flex;align-items:center">Vídeo<input type="file" id="fVideo2" accept="video/*" class="hidden"></label>
+    <label class="btn" style="display:flex;align-items:center" id="lblVideo">Vídeo<input type="file" id="fVideo2" accept="video/*" class="hidden"></label>
     <button class="btn" id="bRoster">Plantilla</button>
     <button class="btn" id="bKeys">Tecles</button>
     <button class="btn primary" id="bExport">Talls i exportar</button>
   </div>
-  <div id="body">
+
+  <!-- MATCH BODY -->
+  <div id="bodyMatch" class="body">
     <div id="left">
       <div id="vwrap">
         <video id="video" playsinline preload="auto"></video>
@@ -211,7 +254,7 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
         </div>
         <div id="vbadge"></div>
         <div id="vclock" class="mono">00:00:00</div>
-        <div id="flash"></div>
+        <div class="flash" id="flashM"></div>
       </div>
       <div id="timeline"><div id="playhead"></div></div>
       <input type="range" id="seek" min="0" max="100" step="0.1" value="0" aria-label="Posició del vídeo">
@@ -234,23 +277,47 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
         <button class="sb IA" data-act="INDATT">IND ATT</button>
         <button class="sb ID" data-act="INDDEF">IND DEF</button>
         <button class="sb N" data-act="TO">TO</button>
-        <button class="sb FIN" data-act="FINAL" id="bFinal">FINAL</button>
+        <button class="sb FIN" data-act="FINAL">FINAL</button>
       </div>
-      <div id="panel"></div>
+      <div id="panelSlotM" class="hidden"></div>
     </div>
   </div>
+
+  <!-- TRAINING BODY -->
+  <div id="bodyTrain" class="body hidden">
+    <div id="tLeft">
+      <div id="tClock" class="mono">00:00:00<small>Sense sincronitzar</small></div>
+      <button id="bSync">SINC · senyal a la càmera</button>
+      <button class="sb IA" data-act="SHOOT" style="height:84px;font-size:22px">SHOOT<small>1 clic · −4 s / +1 s</small></button>
+      <button class="sb FIN" data-act="FINAL" style="height:84px;font-size:22px">FINAL</button>
+      <div style="flex:1"></div>
+      <button class="btn" data-act="UNDO" style="height:48px">Desfer</button>
+    </div>
+    <div id="tMid">
+      <div class="tcols">
+        <div class="tcol" id="tColA"><div class="hdr">ATAC · TAM</div></div>
+        <div class="tcol" id="tColD"><div class="hdr">DEFENSA · VED</div></div>
+      </div>
+      <div id="tMatch"></div>
+      <div class="flash" id="flashT"></div>
+    </div>
+    <div id="tRight"><div id="panelSlotT" class="hidden"></div></div>
+  </div>
+
+  <div id="panelHost"><div id="panel"></div></div>
   <div id="footer"><span class="lbl">TALLS</span><div id="recents" style="display:flex;gap:6px"></div></div>
 </section>
 
-<!-- ================= INDIVIDUAL ================= -->
+<!-- ================= INDIVIDUAL / SHOOT ================= -->
 <div id="ovInd" class="hidden">
   <div id="indBox">
     <div id="indL">
       <video id="pv" playsinline muted preload="auto"></video>
       <button class="btn" id="bRep" style="height:46px;font-size:16px">↻ Repetir</button>
+      <div id="indClock" class="mono hidden"></div>
       <div id="indInfo" class="cc"></div>
       <div style="flex:1"></div>
-      <button class="btn grey" id="bIndDel">Esborrar aquest individual</button>
+      <button class="btn grey" id="bIndDel">Esborrar aquest tall</button>
       <button class="btn primary" id="bFet">Fet ▶</button>
     </div>
     <div id="indR"></div>
@@ -271,16 +338,22 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
           </table>
         </div>
         <div class="r">
-          <div class="sec"><div class="lb">1 · Fases → Importar Eventos desde el portapapeles</div>
-            <pre id="exTxt"></pre>
-            <div class="row"><button class="btn primary" id="bCopyTxt">Copiar</button><button class="btn" id="bDlTxt">Descarregar .txt</button></div>
+          <div id="exMatch">
+            <div class="sec"><div class="lb">1 · Fases → Importar Eventos desde el portapapeles</div>
+              <pre id="exTxt"></pre>
+              <div class="row"><button class="btn primary" id="bCopyTxt">Copiar</button><button class="btn" id="bDlTxt">Descarregar .txt</button></div>
+            </div>
           </div>
-          <div class="sec"><div class="lb">2 · Individuals → Importar XML/XLS › SportsCode</div>
+          <div id="exTrain" class="sec">
+            <div class="lb">Segon del vídeo on es veu el senyal</div>
+            <div class="row"><input id="exOffset" class="mono" style="width:150px" placeholder="00:00:00"><span class="muted" style="font-size:13px">Es suma a tots els talls. Deixa-ho a 0 si ho ajustes a XPS.</span></div>
+          </div>
+          <div class="sec"><div class="lb" id="exXmlLbl">2 · Individuals → Importar XML/XLS › SportsCode</div>
             <pre id="exXml"></pre>
             <div class="row"><button class="btn" id="bDlXml">Descarregar .xml</button></div>
           </div>
-          <button class="btn primary" id="bShare" style="height:52px">Compartir els dos fitxers</button>
-          <div class="muted" style="font-size:13px;line-height:1.5">Al PC: obre el .txt, Ctrl+A, Ctrl+C, i a XPS botó dret al partit › Avanzado › Importar Eventos desde el portapapeles. Després, Importar XML/XLS › SportsCode amb el .xml.</div>
+          <button class="btn primary" id="bShare" style="height:52px">Compartir</button>
+          <div class="muted" style="font-size:13px;line-height:1.5" id="exHelp"></div>
         </div>
       </div>
     </div>
@@ -315,14 +388,14 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 
 <script>
 'use strict';
-const APP_VERSION = 'v4';
+const APP_VERSION = 'v5';
 /* =====================================================================
    TAG DICTIONARY — exact texts as they exist in the XPS template.
-   Trailing spaces matter. Lines marked (?) are not yet verified.
+   Trailing spaces matter. All verified against XPS imports.
    ===================================================================== */
 const TRANS = {
   BAL: [['BAL',   ['BAL 1W','BAL FLASH','BAL 2W','BAL 3W']],
-        ['BAL AG',['BAL AG 1W','BAL AG FLASH','BAL AG 2W','BAL AG 3W']]],   // BAL AG (?)
+        ['BAL AG',['BAL AG 1W','BAL AG FLASH','BAL AG 2W','BAL AG 3W']]],
   FB:  [['FB',    ['FB 1W','FB FLASH','FB 2W','FB 3W']],
         ['FB AG', ['FB AG 1W','FB AG FLASH','FB AG 2W','FB AG 3W']]]
 };
@@ -337,10 +410,10 @@ const IND_ATT = [
               {p:['SHOOT ','CADERA '],l:'CADERA'}, {p:['SHOOT ','RECTIFIC. '],l:'RECTIFIC.'} ]],
   ['FINTA', [ {p:['FINTA ','STRONG SIDE '],l:'STRONG SIDE'}, {p:['FINTA ','BAD SIDE '],l:'BAD SIDE'}, {p:['FINTA ','SHOOT '],l:'SHOOT'},
               {p:['FINTA ','PASS '],l:'PASS'}, {p:['FINTA ','BOUNCE'],l:'BOUNCE'}, {p:['FINTA ','TURN (GIRO)'],l:'TURN (GIRO)'} ]],
-  ['PASS', [ {p:['PASS']} /* (?) */, {p:['PASS PIV']}, {p:['PASS WING','LW'],l:'P. WING LW'},
-              {p:['PASS WING','RW'],l:'P. WING RW'}, {p:['WITHOUT BALL/RUN'],l:'WITHOUT BALL'} ]]
+  ['PASS', [ {p:['PASS']}, {p:['PASS PIV']}, {p:['PASS WING','LW'],l:'P. WING LW'},
+              {p:['PASS WING','RW'],l:'P. WING RW'}, {p:['WITHOUT BALL/RUN'],l:'WITHOUT BALL'}, {p:['ATTACK FAULT']} ]]
 ];
-const DECISIONS = [ {v:'LW ',l:'LW'} /* (?) */, {v:'RW ',l:'RW'} /* (?) */, {v:'LB ',l:'LB'}, {v:'RB ',l:'RB'}, {v:'PL ',l:'PL'}, {v:'PIV ',l:'PIV'} /* (?) */ ];
+const DECISIONS = [ {v:'LW ',l:'LW'}, {v:'RW ',l:'RW'}, {v:'LB ',l:'LB'}, {v:'RB ',l:'RB'}, {v:'PL ',l:'PL'}, {v:'PIV ',l:'PIV'} ];
 const IND_DEF = [
   ['ACCIONS', [ {p:['1X1']}, {p:['HELP']}, {p:['1X2']}, {p:['BLOCK']}, {p:['STEAL (LOP) '],l:'STEAL (LOP)'},
      {p:['CONTROL PIVOT']}, {p:['FIGHT PIVOT']} ]],
@@ -350,11 +423,49 @@ const IND_DEF = [
 const IND_FIRST = ['INDIVIDUAL'];
 const IND_BEFORE = 4, IND_AFTER = 1;
 
+/* ---------- TRAINING ---------- */
+const DEFAULT_TRAIN_TEAM = 'PLOCK 26-27';
+const DEFAULT_TRAIN_ROSTER = ['01. MARTINEZ Jorge','03. DASZEK Michał','07. KANIA Karol','08. JANC Mitja','09. SZYSZKO Jakub',
+ '16. VUJOVIC Miljan','17. SERDIO Abel','18. MACIEJEWSKI Jakub','19. SUŠNJA Leon','20. REY Oriol','21. SZITA Zoltan',
+ '22. RICHARDSON Melvin','23. ZARABEC Miha','24. FAZEKAS Gergo','26. KRAJEWSKI Przemysław','30. TERZIĆ Mak',
+ '31. ZENKTELER Aleks','32. ALILOVIĆ Mirko','33. DAWYDZIK Dawid','34. MIHIĆ Lovro','43. ILIC Zoran',
+ '53. MATYSZCZYK Maksym','66. BJERRE Frederik','99. KOSOROTOV Sergei'];
+// pre = seconds before the click that the clip starts
+const TBTN = {
+  A60:{side:'TAM',l:'ATTACK 6:0',tags:[['6:0']]},
+  A51:{side:'TAM',l:'ATTACK 5:1',tags:[['5:1']]},
+  A76:{side:'TAM',l:'7x6',tags:[['7X6'],['6:0']]},
+  AP1:{side:'TAM',l:'+1',tags:[['+1']]},
+  AM1:{side:'TAM',l:'−1',tags:[['-1']]},
+  ABAL:{side:'TAM',l:'BALANCE',tags:[['BAL 2W']],pre:1},
+  D60:{side:'VED',l:'DEFENSE 6:0',tags:[['6:0']]},
+  D51:{side:'VED',l:'DEFENSE 5:1',tags:[['5:1']]},
+  D76:{side:'VED',l:'7x6',tags:[['7X6'],['6:0']]},
+  DP1:{side:'VED',l:'+1',tags:[['+1']]},
+  DM1:{side:'VED',l:'−1',tags:[['-1']]},
+  DFB:{side:'VED',l:'FASTBREAK',tags:[['FB 2W']],pre:1},
+  MATT:{side:'TAM',l:'ATT',tags:[['6:0']]},
+  MBAL:{side:'TAM',l:'BAL',tags:[['BAL 2W']],pre:1},
+  MDEF:{side:'VED',l:'DEF',tags:[['6:0']]},
+  MFB:{side:'VED',l:'FB',tags:[['FB 2W']],pre:1},
+};
+const T_COL_A = ['A60','A51','A76','AP1','AM1','ABAL'];
+const T_COL_D = ['D60','D51','D76','DP1','DM1','DFB'];
+const T_MATCH = ['MATT','MBAL','MDEF','MFB'];
+const T_EDIT = { TAM:[['6:0'],['5:1'],['7X6'],['+1'],['-1'],['BAL 2W']], VED:[['6:0'],['5:1'],['7X6'],['+1'],['-1'],['FB 2W']] };
+const BLOCK_NOTE = { TAM:'BLOCK ATT', VED:'BLOCK DEF' };
+const SHOOT_BEFORE = 4, SHOOT_AFTER = 1;
+
 const KIND_SIDE = {ATT:'TAM',BAL:'TAM',DEF:'VED',FB:'VED'};
-const ACTIONS = [
+const ACTIONS_M = [
   ['ATT','Inici ATT'],['BAL','Inici BAL'],['DEF','Inici DEF'],['FB','Inici FB'],['TO','Inici TO'],
   ['INDATT','IND ATT'],['INDDEF','IND DEF'],['FINAL','FINAL · i «Fet» als individuals'],
   ['PLAY','Play / pausa'],['BACK','−3 s'],['FWD','+3 s'],['SPEED','Velocitat'],['UNDO','Desfer']
+];
+const ACTIONS_T = [
+  ...T_COL_A.map(k=>['T:'+k,'Entreno · '+TBTN[k].l+' (atac)']), ['T:BLKA','Entreno · BLOCK ATT'],
+  ...T_COL_D.map(k=>['T:'+k,'Entreno · '+TBTN[k].l+' (defensa)']), ['T:BLKD','Entreno · BLOCK DEF'],
+  ...T_MATCH.map(k=>['T:'+k,'Entreno · zona match '+TBTN[k].l]), ['SHOOT','Entreno · SHOOT']
 ];
 const DEFAULT_KEYS = {'1':'ATT','2':'BAL','3':'DEF','4':'FB','5':'TO','6':'INDATT','7':'INDDEF','Enter':'FINAL',
   '0':'PLAY',' ':'PLAY','-':'BACK','ArrowLeft':'BACK','+':'FWD','ArrowRight':'FWD','*':'SPEED','/':'UNDO'};
@@ -369,6 +480,9 @@ const key = p => p.join('\u0001');
 const pad = n => String(n).padStart(2,'0');
 function hms(sec){ sec = Math.max(0, Math.round(sec)); return pad(Math.floor(sec/3600))+':'+pad(Math.floor(sec%3600/60))+':'+pad(sec%60); }
 function hmsF(sec){ const d=Math.round(Math.max(0,sec)*10); return hms(Math.floor(d/10)).slice(3)+'.'+(d%10); }
+function hmsT(sec){ const d=Math.round(Math.max(0,sec)*10); return hms(Math.floor(d/10))+'.'+(d%10); }
+function parseTime(s){ s=String(s||'').trim().replace(',','.'); if(!s) return 0;
+  const p=s.split(':').map(Number); if(p.some(isNaN)) return NaN; return p.reduce((a,b)=>a*60+b,0); }
 const r1 = x => Math.round(x*10)/10;
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.style.opacity=1; clearTimeout(toast._t); toast._t=setTimeout(()=>t.style.opacity=0,2200); }
 const selStyle = side => side==='VED' ? '--sel:#2563eb' : '--sel:#dc2626';
@@ -389,6 +503,7 @@ function fmtCol(paths){
 function labelOf(p){
   for(const t of [...SYS_MAIN,...SYS_MODS]) if(key(t.p)===key(p)) return t.l||p.join(' ');
   for(const g of [...IND_ATT,...IND_DEF]) for(const t of g[1]) if(key(t.p)===key(p)) return t.l||p.join(' ');
+  if(p.length===1 && p[0]==='-1') return '−1';
   return p.map(s=>s.trim()).join(' ');
 }
 
@@ -400,10 +515,18 @@ let learning = null;
 let videoReady = false, videoURL = null;
 let speedIdx = 0;
 let wakeLock = null;
-let indResume = false;   // resume main video when the individual screen closes
+let indResume = false;
+let newMode = 'match';
+let clockTimer = null;
 
+const isT = () => S && S.mode==='training';
 function idx(){ return LS.get('xt.index', []); }
-function rosters(){ return LS.get('xt.rosters', {}); }
+function rosters(){
+  const r = LS.get('xt.rosters', {});
+  if(!r[trainTeam()]){ r[trainTeam()] = DEFAULT_TRAIN_ROSTER.slice(); LS.set('xt.rosters', r); }
+  return r;
+}
+function trainTeam(){ return LS.get('xt.trainTeam', DEFAULT_TRAIN_TEAM); }
 function roster(){ return (S && rosters()[S.team]) || []; }
 function clip(id){ return S && S.clips.find(c=>c.id===id) || null; }
 function save(){
@@ -411,22 +534,23 @@ function save(){
   S.updated = Date.now();
   const ok = LS.set('xt.s.'+S.id, S);
   const list = idx(); const i = list.findIndex(x=>x.id===S.id);
-  const e = {id:S.id,name:S.name,team:S.team,updated:S.updated,count:S.clips.length};
+  const e = {id:S.id,name:S.name,team:S.team,mode:S.mode||'match',updated:S.updated,count:S.clips.length};
   if(i>=0) list[i]=e; else list.unshift(e);
   LS.set('xt.index', list);
   $('#saved').textContent = ok ? '✓ desat · '+S.clips.length+' talls' : '⚠ NO DESAT';
   $('#saved').style.color = ok ? 'var(--muted)' : '#ef4444';
 }
 function snapshot(){
-  undoStack.push(JSON.stringify({clips:S.clips,openId:S.openId,focusId:S.focusId,counter:S.counter}));
+  undoStack.push(JSON.stringify({clips:S.clips,openId:S.openId,focusId:S.focusId,counter:S.counter,blockArm:S.blockArm}));
   if(undoStack.length>60) undoStack.shift();
 }
 function undo(){
   if(!undoStack.length){ toast('No hi ha res per desfer'); return; }
   Object.assign(S, JSON.parse(undoStack.pop())); save();
   const f=clip(S.focusId);
-  if(!indOpen() && f && f.kind==='IND') S.focusId=S.openId;
-  if(indOpen() && (!f || f.kind!=='IND')) hideInd(false);
+  const pop = c => c && (c.kind==='IND' || c.kind==='SHOOT');
+  if(!indOpen() && pop(f)) S.focusId=S.openId;
+  if(indOpen() && !pop(f)) hideInd(false);
   renderAll(); toast('Desfet');
 }
 
@@ -437,39 +561,62 @@ async function keepAwake(){
   try{ wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', ()=>{ wakeLock=null; }); }catch(e){}
 }
 function releaseAwake(){ if(wakeLock){ wakeLock.release().catch(()=>{}); wakeLock=null; } }
-document.addEventListener('visibilitychange', keepAwake);
+document.addEventListener('visibilitychange', ()=>{ keepAwake(); if(isT()) tick(); });
 document.addEventListener('pointerdown', keepAwake);
 
 /* ===================== setup screen ===================== */
+function setNewMode(m){
+  newMode=m;
+  document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('on', b.dataset.mode===m));
+  $('#newMatch').classList.toggle('hidden', m!=='match');
+  $('#newTrain').classList.toggle('hidden', m!=='training');
+  if(m==='training'){
+    $('#tTeam').value = trainTeam();
+    if(!$('#tName').value) $('#tName').value = 'E-'+new Date().toISOString().slice(0,10);
+    $('#tRosterInfo').textContent = (rosters()[trainTeam()]||[]).length+' jugadors';
+  }
+}
+document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>setNewMode(b.dataset.mode));
 function renderSetup(){
   const list = idx();
   $('#sessList').innerHTML = list.length ? list.map(s=>`
-    <div class="sess"><div class="info"><div class="t">${esc(s.name)}</div>
+    <div class="sess"><div class="info"><div class="t"><span class="badge b-mode">${s.mode==='training'?'Entreno':'Partit'}</span> ${esc(s.name)}</div>
       <div class="muted" style="font-size:13px">${esc(s.team)} · ${s.count} talls · ${new Date(s.updated).toLocaleString('ca-ES')}</div></div>
       <button class="btn primary" data-open="${s.id}">Obrir</button>
       <button class="btn grey" data-del="${s.id}">Esborrar</button></div>`).join('')
-    : '<div class="muted">Encara no hi ha cap partit.</div>';
-  const teams = new Set([...Object.keys(rosters()), ...list.map(s=>s.team)]);
+    : '<div class="muted">Encara no hi ha res desat.</div>';
+  const teams = new Set([...Object.keys(rosters()), ...list.filter(s=>s.mode!=='training').map(s=>s.team)]);
+  teams.delete(trainTeam());
   $('#teamList').innerHTML = [...teams].map(t=>`<option value="${esc(t)}">`).join('');
   $('#scrInfo').textContent = 'ClipAPP '+APP_VERSION+' · pantalla '+innerWidth+'×'+innerHeight;
+  setNewMode(newMode);
 }
 $('#sessList').addEventListener('click', e=>{
   const o=e.target.closest('[data-open]'), d=e.target.closest('[data-del]');
   if(o) openSession(o.dataset.open);
   if(d){ const s=idx().find(x=>x.id===d.dataset.del);
-    if(confirm('Esborrar el partit «'+s.name+'» i tots els seus talls?')){ LS.del('xt.s.'+s.id); LS.set('xt.index', idx().filter(x=>x.id!==s.id)); renderSetup(); } }
+    if(confirm('Esborrar «'+s.name+'» i tots els seus talls?')){ LS.del('xt.s.'+s.id); LS.set('xt.index', idx().filter(x=>x.id!==s.id)); renderSetup(); } }
 });
 $('#bCreate').onclick = ()=>{
+  if(newMode==='training'){
+    const name=$('#tName').value.trim(), team=$('#tTeam').value.trim().replace(/\s+(TAM|VED)$/i,'');
+    if(!name||!team){ toast('Omple el codi de l\'entreno i l\'equip'); return; }
+    if(team!==trainTeam()){ const r=rosters(); if(!r[team]) { r[team]=(r[trainTeam()]||DEFAULT_TRAIN_ROSTER).slice(); LS.set('xt.rosters',r); } LS.set('xt.trainTeam', team); }
+    S = {id:uid(), mode:'training', name, team, created:Date.now(), updated:Date.now(), clips:[], openId:null, focusId:null, counter:1,
+         t0:null, offset:0, blockArm:{TAM:false,VED:false}};
+    save(); $('#tName').value=''; showMain(); return;
+  }
   const name=$('#nName').value.trim(), team=$('#nTeam').value.trim().replace(/\s+(TAM|VED)$/i,'');
-  if(!name||!team){ toast('Omple el nom del partit i l\'equip'); return; }
-  S = {id:uid(), name, team, created:Date.now(), updated:Date.now(), clips:[], openId:null, focusId:null, counter:1, videoName:null};
+  if(!name||!team){ toast('Omple el codi del partit i l\'equip'); return; }
+  S = {id:uid(), mode:'match', name, team, created:Date.now(), updated:Date.now(), clips:[], openId:null, focusId:null, counter:1, videoName:null};
   save(); $('#nName').value=''; showMain();
   if(!roster().length) setTimeout(()=>openRoster(),300);
 };
-function openSession(id){ const s=LS.get('xt.s.'+id,null); if(!s){ toast('No s\'ha trobat'); return; } S=s; undoStack=[]; showMain(); }
+$('#bTRoster').onclick = ()=>{ const t=$('#tTeam').value.trim()||trainTeam(); openRosterFor(t); };
+function openSession(id){ const s=LS.get('xt.s.'+id,null); if(!s){ toast('No s\'ha trobat'); return; } S=s; if(!S.mode) S.mode='match'; undoStack=[]; showMain(); }
 
 $('#bBackup').onclick = ()=>{
-  const data = {app:'tallador-xps',v:1,date:new Date().toISOString(),rosters:rosters(),keys,sessions:idx().map(x=>LS.get('xt.s.'+x.id,null)).filter(Boolean)};
+  const data = {app:'tallador-xps',v:1,date:new Date().toISOString(),rosters:rosters(),trainTeam:trainTeam(),keys,sessions:idx().map(x=>LS.get('xt.s.'+x.id,null)).filter(Boolean)};
   download('clipapp_copia_'+new Date().toISOString().slice(0,10)+'.json', JSON.stringify(data), 'application/json');
 };
 $('#fRestore').onchange = async e=>{
@@ -477,10 +624,12 @@ $('#fRestore').onchange = async e=>{
   try{
     const d=JSON.parse(await f.text()); if(d.app!=='tallador-xps') throw 0;
     LS.set('xt.rosters',{...rosters(),...(d.rosters||{})});
+    if(d.trainTeam) LS.set('xt.trainTeam', d.trainTeam);
     for(const s of d.sessions||[]){ LS.set('xt.s.'+s.id,s); const l=idx().filter(x=>x.id!==s.id);
-      l.unshift({id:s.id,name:s.name,team:s.team,updated:s.updated,count:s.clips.length}); LS.set('xt.index',l); }
-    toast('Còpia importada: '+(d.sessions||[]).length+' partits'); renderSetup();
-  }catch(err){ toast('Aquest fitxer no és una còpia vàlida'); }
+      l.unshift({id:s.id,name:s.name,team:s.team,mode:s.mode||'match',updated:s.updated,count:s.clips.length}); LS.set('xt.index',l); }
+    const nR=Object.keys(d.rosters||{}).length, nS=(d.sessions||[]).length;
+    toast('Importat: '+nS+' partits/entrenos · '+nR+' plantilles'); renderSetup();
+  }catch(err){ toast('Aquest fitxer no és vàlid'); }
   e.target.value='';
 };
 
@@ -488,12 +637,23 @@ $('#fRestore').onchange = async e=>{
 const video = $('#video'), pv = $('#pv');
 function showMain(){
   $('#setup').classList.add('hidden'); $('#main').classList.remove('hidden');
-  $('#mTitle').innerHTML = esc(S.name)+' <span class="muted" style="font-weight:500">· '+esc(S.team)+'</span>';
-  $('#novideoHint').textContent = S.videoName ? 'Últim vídeo fet servir: '+S.videoName : 'El vídeo no es puja enlloc: es llegeix des de la tauleta.';
-  const f=clip(S.focusId); if(f && f.kind==='IND') S.focusId=S.openId;
+  const t=isT();
+  $('#bodyMatch').classList.toggle('hidden', t);
+  $('#bodyTrain').classList.toggle('hidden', !t);
+  $('#lblVideo').classList.toggle('hidden', t);
+  // move the shared tag panel into the right column of the active mode
+  const host = t ? $('#tRight') : $('#right');
+  host.appendChild($('#panel'));
+  $('#mTitle').innerHTML = (t?'<span class="badge b-mode">Entreno</span> ':'')+esc(S.name)+' <span class="muted" style="font-weight:500">· '+esc(S.team)+'</span>';
+  if(!t) $('#novideoHint').textContent = S.videoName ? 'Últim vídeo fet servir: '+S.videoName : 'El vídeo no es puja enlloc: es llegeix des de la tauleta.';
+  const f=clip(S.focusId); if(f && (f.kind==='IND'||f.kind==='SHOOT')) S.focusId=S.openId;
+  if(t){ buildTrainButtons(); clearInterval(clockTimer); clockTimer=setInterval(tick,200); }
   save(); renderAll(); keepAwake();
 }
-$('#bHome').onclick = ()=>{ video.pause(); hideInd(false); releaseAwake(); $('#main').classList.add('hidden'); $('#setup').classList.remove('hidden'); renderSetup(); };
+$('#bHome').onclick = ()=>{
+  video.pause(); hideInd(false); releaseAwake(); clearInterval(clockTimer);
+  $('#main').classList.add('hidden'); $('#setup').classList.remove('hidden'); S=null; renderSetup();
+};
 
 function loadVideo(f){
   if(!f) return;
@@ -521,32 +681,56 @@ $('#timeline').addEventListener('click', e=>{
   video.currentTime = (e.clientX-r.left)/r.width * dur();
 });
 const dur = () => (videoReady && isFinite(video.duration) && video.duration) || Math.max(60, ...(S?S.clips.map(c=>c.end||c.start):[0]));
-const now = () => video.currentTime || 0;
+const now = () => isT() ? (S.t0 ? (Date.now()-S.t0)/1000 : 0) : (video.currentTime || 0);
 
 function tick(){
   if(!S) return;
-  const t=now(); $('#vclock').textContent=hms(Math.floor(t));
-  $('#tclock').textContent = hms(Math.floor(t))+' / '+hms(Math.floor(dur()));
-  if(document.activeElement!==$('#seek')) $('#seek').value=t;
-  $('#playhead').style.left = (t/dur()*100)+'%';
-  const el=document.getElementById('liveEnd'); if(el && S.openId) el.textContent='obert · '+hms(Math.floor(t));
+  const t=now();
+  if(isT()){
+    const c=$('#tClock');
+    c.innerHTML = hms(Math.floor(t))+`<small>${S.t0?'● en marxa':'Sense sincronitzar'}</small>`;
+    c.classList.toggle('live', !!S.t0);
+    const ic=$('#indClock'); if(!ic.classList.contains('hidden')) ic.textContent=hms(Math.floor(t));
+  } else {
+    $('#vclock').textContent=hms(Math.floor(t));
+    $('#tclock').textContent = hms(Math.floor(t))+' / '+hms(Math.floor(dur()));
+    if(document.activeElement!==$('#seek')) $('#seek').value=t;
+    $('#playhead').style.left = (t/dur()*100)+'%';
+  }
+  const el=document.getElementById('liveEnd'); if(el && S.openId) el.textContent='obert · '+(isT()?hms(Math.floor(t)):hms(Math.floor(t)));
+}
+
+/* ---------- training: sync & buttons ---------- */
+$('#bSync').onclick = ()=>{
+  if(S.t0 && S.clips.length && !confirm('Ja hi ha talls marcats amb la sincronització actual. Si tornes a sincronitzar, el cronòmetre tornarà a 0 i els talls anteriors quedaran desquadrats. Continuar?')) return;
+  S.t0 = Date.now(); save(); renderAll(); flash('SINC');
+};
+function buildTrainButtons(){
+  const mk = k => `<button class="sb ${TBTN[k].side}" data-act="T:${k}">${TBTN[k].l}</button>`;
+  $('#tColA').innerHTML = '<div class="hdr">ATAC · TAM</div>'+T_COL_A.map(mk).join('')+`<button class="sb N" data-act="T:BLKA" id="bBlkA">BLOCK ATT</button>`;
+  $('#tColD').innerHTML = '<div class="hdr">DEFENSA · VED</div>'+T_COL_D.map(mk).join('')+`<button class="sb N" data-act="T:BLKD" id="bBlkD">BLOCK DEF</button>`;
+  $('#tMatch').innerHTML = T_MATCH.map(mk).join('');
+  document.querySelectorAll('#bodyTrain [data-act^="T:"]').forEach(b=>b.addEventListener('click', ()=>act(b.dataset.act)));
 }
 
 /* ---------- actions ---------- */
-function needVideo(){ if(!videoReady){ toast('Primer obre el vídeo'); return true; } return false; }
+function needTime(){
+  if(isT()){ if(!S.t0){ toast('Primer prem SINC quan facis el senyal a la càmera'); return true; } return false; }
+  if(!videoReady){ toast('Primer obre el vídeo'); return true; } return false;
+}
 function flash(text, side){
-  const f=$('#flash'); f.textContent=text;
+  const f = isT() ? $('#flashT') : $('#flashM'); f.textContent=text;
   f.style.background = side==='TAM'?'var(--tam)':side==='VED'?'var(--ved)':'#e8ecef';
   f.style.color = side?'#fff':'#0f1317'; f.style.opacity=.95;
   clearTimeout(flash._t); flash._t=setTimeout(()=>f.style.opacity=0,500);
 }
 function closeOpen(t){
   const o=clip(S.openId);
-  if(o){ o.end = Math.max(o.start+1, Math.ceil(t)); }
+  if(o){ o.end = isT() ? Math.max(r1(o.start+0.5), r1(t)) : Math.max(o.start+1, Math.ceil(t)); }
   S.openId=null; return o;
 }
 function startPhase(kind){
-  if(needVideo()) return;
+  if(needTime()) return;
   snapshot();
   const t=now(); closeOpen(t);
   const c={id:uid(), n:S.counter++, kind, side:KIND_SIDE[kind]||null, start:Math.max(0,Math.floor(t-1)), end:null,
@@ -554,12 +738,27 @@ function startPhase(kind){
   S.clips.push(c); S.openId=c.id; S.focusId=c.id; save(); renderAll();
   flash(kind, c.side);
 }
+function startTrain(k){
+  if(needTime()) return;
+  const b=TBTN[k]; snapshot();
+  const t=now(); closeOpen(t);
+  const c={id:uid(), n:S.counter++, kind:'T', btn:k, label:b.l, side:b.side, start:r1(Math.max(0,t-(b.pre||0))), end:null,
+           tags:b.tags.map(p=>p.slice()), note:null, player:null, decision:null};
+  if(S.blockArm && S.blockArm[b.side]){ c.note = BLOCK_NOTE[b.side]; S.blockArm[b.side]=false; }
+  S.clips.push(c); S.openId=c.id; S.focusId=c.id; save(); renderAll();
+  flash(b.l+(c.note?' · '+c.note:''), b.side);
+}
+function armBlock(side){
+  if(!S.blockArm) S.blockArm={TAM:false,VED:false};
+  snapshot(); S.blockArm[side]=!S.blockArm[side]; save(); renderAll();
+  toast(S.blockArm[side] ? BLOCK_NOTE[side]+': s\'afegirà al pròxim tall '+side : BLOCK_NOTE[side]+' anul·lat');
+}
 function finalClip(){
   if(!S.openId){ toast('No hi ha cap tall obert'); return; }
   snapshot(); const o=closeOpen(now()); S.focusId=o.id; save(); renderAll(); flash('FINAL');
 }
 function startInd(side){
-  if(needVideo()) return;
+  if(needTime()) return;
   const wasPlaying = !video.paused;
   video.pause();
   snapshot(); const t=now();
@@ -567,21 +766,36 @@ function startInd(side){
   S.clips.push(c); S.focusId=c.id; save(); renderAll();
   showInd(wasPlaying);
 }
+function startShoot(){
+  if(needTime()) return;
+  snapshot(); const t=now();
+  const c={id:uid(), n:S.counter++, kind:'SHOOT', side:'TAM', start:r1(Math.max(0,t-SHOOT_BEFORE)), end:r1(t+SHOOT_AFTER), tags:[], player:null, decision:null};
+  S.clips.push(c); S.focusId=c.id; save(); renderAll();
+  showInd(false);
+}
 function act(a){
   if(!S) return;
-  // while the individual screen is open, the remote finishes it first
   if(indOpen()){
     if(a==='UNDO'){ undo(); return; }
-    if(a==='FINAL'||a==='PLAY'){ hideInd(true); return; }
-    if(['ATT','BAL','DEF','FB','TO','INDATT','INDDEF'].includes(a)){ hideInd(true); }
+    if(a==='FINAL'||a==='PLAY'){ hideInd(true); if(!(isT() && a==='FINAL')) return; }
+    else if(['ATT','BAL','DEF','FB','TO','INDATT','INDDEF','SHOOT'].includes(a) || a.startsWith('T:')) hideInd(true);
     else return;
   }
+  if(a.startsWith('T:')){
+    if(!isT()) return;
+    const k=a.slice(2);
+    if(k==='BLKA') armBlock('TAM'); else if(k==='BLKD') armBlock('VED'); else startTrain(k);
+    return;
+  }
+  if(isT() && ['ATT','BAL','DEF','FB','TO','INDATT','INDDEF','PLAY','BACK','FWD','SPEED'].includes(a)) return;
+  if(!isT() && a==='SHOOT') return;
   switch(a){
     case 'ATT': case 'BAL': case 'DEF': case 'FB': case 'TO': startPhase(a); break;
     case 'INDATT': startInd('TAM'); break;
     case 'INDDEF': startInd('VED'); break;
+    case 'SHOOT': startShoot(); break;
     case 'FINAL': finalClip(); break;
-    case 'PLAY': if(needVideo()) return; video.paused ? video.play() : video.pause(); break;
+    case 'PLAY': if(needTime()) return; video.paused ? video.play() : video.pause(); break;
     case 'BACK': if(videoReady) video.currentTime=Math.max(0,now()-SEEK_STEP); break;
     case 'FWD': if(videoReady) video.currentTime=Math.min(dur(),now()+SEEK_STEP); break;
     case 'SPEED': speedIdx=(speedIdx+1)%SPEEDS.length; video.playbackRate=SPEEDS[speedIdx];
@@ -589,13 +803,13 @@ function act(a){
     case 'UNDO': undo(); break;
   }
 }
-document.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click', ()=>act(b.dataset.act)));
+document.querySelectorAll('[data-act]').forEach(b=>{ if(!b.dataset.act.startsWith('T:')) b.addEventListener('click', ()=>act(b.dataset.act)); });
 
 function focusClip(id, seek){
   const c=clip(id); if(!c) return;
-  if(c.kind==='IND'){ video.pause(); S.focusId=id; save(); renderAll(); showInd(false); return; }
+  if(c.kind==='IND'||c.kind==='SHOOT'){ video.pause(); S.focusId=id; save(); renderAll(); showInd(false); return; }
   S.focusId=id; save(); renderAll();
-  if(seek && videoReady){ video.pause(); video.currentTime=c.start; }
+  if(seek && videoReady && !isT()){ video.pause(); video.currentTime=c.start; }
 }
 
 /* ---------- edits on focused clip ---------- */
@@ -604,7 +818,7 @@ function toggleTag(p){ edit(c=>{ const i=c.tags.findIndex(x=>key(x)===key(p)); i
 function removeTagAt(i){ edit(c=>{ if(c.kind==='TO') return; c.tags.splice(i,1); }); }
 function nudge(which, d){
   edit(c=>{
-    const step = c.kind==='IND' ? 0.5 : 1;
+    const step = (c.kind==='IND'||isT()) ? 0.5 : 1;
     if(which==='s') c.start = Math.max(0, r1(c.start + d*step));
     else if(c.end!=null) c.end = r1(c.end + d*step);
     if(c.end!=null && c.end<=c.start) c.end = r1(c.start+step);
@@ -618,24 +832,46 @@ function deleteFocused(){
 }
 
 /* ===================== rendering ===================== */
-function renderAll(){ renderStarts(); renderRecents(); renderPanel(); renderTimeline(); renderBadge(); if(indOpen()) renderInd(); tick(); }
+function renderAll(){
+  renderStarts(); renderRecents(); renderPanel(); if(!isT()){ renderTimeline(); renderBadge(); }
+  if(indOpen()) renderInd(); tick();
+}
 function renderStarts(){
   const o=clip(S.openId);
-  document.querySelectorAll('#starts .sb').forEach(b=>b.classList.toggle('on', !!o && b.dataset.act===o.kind));
-  $('#bFinal').disabled = !o;
+  document.querySelectorAll('#main .sb[data-act]').forEach(b=>{
+    const a=b.dataset.act;
+    const on = !!o && (a===o.kind || (o.kind==='T' && a==='T:'+o.btn));
+    b.classList.toggle('on', on);
+    if(a==='FINAL') b.disabled = !o;
+  });
+  if(isT()){
+    const arm=S.blockArm||{};
+    $('#bBlkA').classList.toggle('armed', !!arm.TAM); $('#bBlkD').classList.toggle('armed', !!arm.VED);
+    $('#bBlkA').innerHTML = 'BLOCK ATT'+(arm.TAM?'<small>al pròxim tall</small>':'');
+    $('#bBlkD').innerHTML = 'BLOCK DEF'+(arm.VED?'<small>al pròxim tall</small>':'');
+    $('#bSync').textContent = S.t0 ? 'Tornar a sincronitzar' : 'SINC · senyal a la càmera';
+    $('#bSync').style.height = S.t0 ? '44px' : '72px';
+    $('#bSync').style.fontSize = S.t0 ? '14px' : '20px';
+    $('#bSync').style.background = S.t0 ? 'var(--chip)' : 'var(--warn)';
+    $('#bSync').style.color = S.t0 ? 'var(--muted)' : '#111418';
+  }
 }
 function renderBadge(){
   const o=clip(S.openId);
   $('#vbadge').innerHTML = o ? `<span class="badge b-${o.side||'none'}">● ${o.kind}${o.side?' · '+o.side:''}</span>` : '';
 }
-function clipName(c){ return c.kind==='IND' ? 'IND '+(c.side==='TAM'?'ATT':'DEF') : c.kind; }
+function clipName(c){
+  if(c.kind==='IND') return 'IND '+(c.side==='TAM'?'ATT':'DEF');
+  if(c.kind==='T') return c.label;
+  return c.kind;
+}
 const sideColor = s => s==='VED'?'var(--ved)':s==='TAM'?'var(--tam)':'#9aa6b2';
 function renderRecents(){
   const list=S.clips.slice(-14).reverse();
   const o=clip(S.openId);
   if(o && !list.includes(o)) list.unshift(o);
   $('#recents').innerHTML = list.map(c=>`<button class="rc ${c.id===S.focusId?'f':''} ${c.id===S.openId?'open':''}" data-fid="${c.id}">
-      <span class="dot" style="background:${sideColor(c.side)}"></span>${c.n} · ${clipName(c)}</button>`).join('') ||
+      <span class="dot" style="background:${sideColor(c.side)}"></span>${c.n} · ${esc(clipName(c))}</button>`).join('') ||
       '<span class="muted" style="font-size:13px">Encara no hi ha talls</span>';
 }
 $('#recents').addEventListener('click', e=>{ const b=e.target.closest('[data-fid]'); if(b) focusClip(b.dataset.fid,false); });
@@ -645,14 +881,15 @@ function tagBtn(p, label, on, side){
 }
 function chipsHtml(c){
   const list = c.kind==='IND' ? [IND_FIRST,...c.tags] : c.tags;
-  return list.map((p,i)=>{
+  const html = list.map((p,i)=>{
     const fixed = c.kind==='TO' || (c.kind==='IND' && i===0);
     const ri = c.kind==='IND' ? i-1 : i;
     return `<button class="chip" ${fixed?'disabled style="opacity:.8"':`data-rm="${ri}"`}><i>${i+1}</i>${esc(labelOf(p))}${fixed?'':' <i>×</i>'}</button>`;
-  }).join('') || '<span class="muted" style="font-size:12px">Sense etiquetes</span>';
+  }).join('') + (c.note?`<button class="chip" data-note="1" style="background:#3b3412;color:var(--warn)">${esc(c.note)} <i>×</i></button>`:'');
+  return html || '<span class="muted" style="font-size:12px">Sense etiquetes</span>';
 }
 function timesHtml(c){
-  const f = c.kind==='IND' ? hmsF : hms;
+  const f = (c.kind==='IND'||c.kind==='SHOOT') ? hmsF : (isT()?hmsT:hms);
   const isOpen = c.id===S.openId;
   return `<div class="times mono">
       <div class="nud"><button data-nud="s,-1" aria-label="Inici abans">−</button>${f(c.start)}<button data-nud="s,1" aria-label="Inici després">+</button></div>
@@ -663,17 +900,26 @@ function timesHtml(c){
 }
 function renderPanel(){
   const c=clip(S.focusId), P=$('#panel');
-  if(!c || c.kind==='IND'){ P.innerHTML = `<div class="empty">Prem ATT, DEF, BAL, FB o TO per començar un tall.<br>IND ATT / IND DEF aturen el vídeo i obren la pantalla d'individuals.</div>`; return; }
+  if(!c || c.kind==='IND' || c.kind==='SHOOT'){
+    P.innerHTML = isT()
+      ? `<div class="empty">${S.t0?'Prem un botó per començar un tall i FINAL per acabar-lo.<br>SHOOT marca un llançament d\'un sol clic.':'Prem <b>SINC</b> just quan facis el senyal a la càmera.'}</div>`
+      : `<div class="empty">Prem ATT, DEF, BAL, FB o TO per començar un tall.<br>IND ATT / IND DEF aturen el vídeo i obren la pantalla d'individuals.</div>`;
+    return;
+  }
   const has = p => c.tags.some(x=>key(x)===key(p));
-  let h = `<div class="cc"><div class="hd"><span class="k">#${c.n} · ${clipName(c)}</span>
+  let h = `<div class="cc"><div class="hd"><span class="k">#${c.n} · ${esc(clipName(c))}</span>
       ${c.side?`<span class="badge b-${c.side}">${c.side}</span>`:'<span class="badge b-none">tria TAM o VED</span>'}
       <span style="flex:1"></span>
-      ${videoReady?`<button class="btn sbtn" id="bGo">Veure</button>`:''}
+      ${videoReady&&!isT()?`<button class="btn sbtn" id="bGo">Veure</button>`:''}
       <button class="btn grey sbtn" id="bDel">Esborrar</button></div>
     ${timesHtml(c)}
     <div class="chips">${chipsHtml(c)}</div></div>`;
-  if(c.kind==='TO'){
-    h += `<div class="sec"><div class="lb">Temps mort de</div><div class="g" style="grid-template-columns:1fr 1fr">
+  if(c.kind==='T'){
+    h += `<div class="sec"><div class="lb">Etiquetes (SYSTEM)</div><div class="g g3">`+T_EDIT[c.side].map(p=>tagBtn(p,labelOf(p),has(p),c.side)).join('')+`</div></div>`;
+    const bn=BLOCK_NOTE[c.side];
+    h += `<div class="sec"><div class="lb">Notes</div><div class="g g2"><button class="tb ${c.note===bn?'on':''}" style="${c.note===bn?selStyle(c.side):''}" data-setnote="${bn}">${bn}</button></div></div>`;
+  } else if(c.kind==='TO'){
+    h += `<div class="sec"><div class="lb">Temps mort de</div><div class="g g2">
       <button class="tb ${c.side==='TAM'?'on':''}" style="${c.side==='TAM'?selStyle('TAM'):''};min-height:54px;font-size:18px;font-weight:800" data-side="TAM">TAM</button>
       <button class="tb ${c.side==='VED'?'on':''}" style="${c.side==='VED'?selStyle('VED'):''};min-height:54px;font-size:18px;font-weight:800" data-side="VED">VED</button></div></div>`;
   } else {
@@ -691,9 +937,11 @@ function panelClick(e){
   const t=e.target.closest('button'); if(!t||t.disabled) return;
   if(t.dataset.tag) toggleTag(JSON.parse(t.dataset.tag));
   else if(t.dataset.rm!=null) removeTagAt(+t.dataset.rm);
+  else if(t.dataset.note) edit(c=>{ c.note=null; });
+  else if(t.dataset.setnote) edit(c=>{ c.note = c.note===t.dataset.setnote?null:t.dataset.setnote; });
   else if(t.dataset.side) edit(c=>{ c.side=t.dataset.side; });
-  else if(t.dataset.player) edit(c=>{ c.player = c.player===t.dataset.player?null:t.dataset.player; });
-  else if(t.dataset.dec) edit(c=>{ c.decision = c.decision===t.dataset.dec?null:t.dataset.dec; });
+  else if(t.dataset.player!=null){ edit(c=>{ c.player = t.dataset.player===''?null:t.dataset.player; c.pChosen=true; }); autoCloseShoot(); }
+  else if(t.dataset.dec) { edit(c=>{ c.decision = c.decision===t.dataset.dec?null:t.dataset.dec; }); autoCloseShoot(); }
   else if(t.dataset.nud){ const [w,d]=t.dataset.nud.split(','); nudge(w,+d); }
   else if(t.id==='bDel') deleteFocused();
   else if(t.id==='bGo'){ const c=clip(S.focusId); video.currentTime=c.start; video.play(); }
@@ -704,7 +952,7 @@ $('#indR').addEventListener('click', panelClick);
 $('#indInfo').addEventListener('click', panelClick);
 
 function renderTimeline(){
-  if(!S) return;
+  if(!S || isT()) return;
   const D=dur(), TL=$('#timeline');
   TL.querySelectorAll('.seg').forEach(x=>x.remove());
   const frag=document.createDocumentFragment();
@@ -720,46 +968,64 @@ function renderTimeline(){
   TL.appendChild(frag);
 }
 
-/* ===================== individual screen ===================== */
+/* ===================== individual / shoot screen ===================== */
 const indOpen = () => !$('#ovInd').classList.contains('hidden');
 function showInd(resume){
   indResume = resume;
   $('#ovInd').classList.remove('hidden');
+  const t=isT();
+  pv.classList.toggle('hidden', t); $('#bRep').classList.toggle('hidden', t); $('#indClock').classList.toggle('hidden', !t);
   renderInd();
   const c=clip(S.focusId);
-  if(c && videoReady){ pv.pause(); try{ pv.currentTime = Math.min(c.end, c.start+IND_BEFORE); }catch(e){} }
+  if(!t && c && videoReady){ pv.pause(); try{ pv.currentTime = Math.min(c.end, c.start+IND_BEFORE); }catch(e){} }
 }
 function hideInd(resume){
   if(!indOpen()) return;
   $('#ovInd').classList.add('hidden'); pv.pause();
   if(S){ S.focusId = S.openId || null; save(); renderAll(); }
-  if(resume && indResume && videoReady) video.play();
+  if(resume && indResume && videoReady && !isT()) video.play();
   indResume=false;
 }
-function renderInd(){
-  const c=clip(S.focusId); if(!c || c.kind!=='IND'){ hideInd(false); return; }
-  $('#indBox').className = c.side;
-  $('#indInfo').innerHTML = `<div class="hd"><span class="k">#${c.n} · ${clipName(c)}</span><span class="badge b-${c.side}">${c.side}</span></div>
-    ${timesHtml(c)}<div class="chips">${chipsHtml(c)}</div>
-    ${c.player?`<div class="mono" style="font-size:12px">${esc(c.player)}</div>`:''}
-    ${c.decision?`<div class="mono" style="font-size:12px">DECISION: ${esc(c.decision.trim())}</div>`:''}`;
-  const has = p => c.tags.some(x=>key(x)===key(p));
+function autoCloseShoot(){
+  const c=clip(S.focusId);
+  if(isT() && c && c.kind==='SHOOT' && c.decision && c.pChosen) setTimeout(()=>{ if(indOpen()) hideInd(false); }, 250);
+}
+function playerGrid(c){
   const R=roster();
+  const noneOn = !c.player;
   let h = `<div class="sec"><div class="lb">Jugador</div>`;
-  h += R.length ? `<div class="g gp">`+R.map(n=>{ const m=n.match(/^\s*(\d+)\.?\s*(.*)$/); const num=m?m[1]:'·', nm=(m?m[2]:n).split(' ')[0];
-      return `<button class="tb ${c.player===n?'on':''}" style="${c.player===n?selStyle(c.side):''}" data-player="${esc(n)}"><span class="n">${esc(num)}</span><span class="s">${esc(nm)}</span></button>`; }).join('')+`</div>`
-    : `<div class="muted" style="font-size:13px">Sense plantilla: sortirà amb NINGUNO. <button class="btn sbtn" id="bR2">Afegir plantilla</button></div>`;
-  h += `</div>`;
-  const groups = c.side==='TAM'?IND_ATT:IND_DEF;
-  h += `<div class="sec"><div class="lb">${c.side==='TAM'?'Accions d\'atac':'Accions de defensa'}</div>`;
-  for(const [lb,items] of groups){
-    const cls = items.length>6 ? 'gi7' : 'gi';
-    h += `<div class="grp"><div class="rl">${lb}</div><div class="g ${cls}">`+items.map(t=>tagBtn(t.p,t.l||t.p.join(' '),has(t.p),c.side)).join('')+`</div></div>`;
-  }
-  h += `</div>`;
-  if(c.side==='TAM'){
-    h += `<div class="sec"><div class="lb">Decision (només una)</div><div class="g gi">`+
-      DECISIONS.map(d=>`<button class="tb ${c.decision===d.v?'on':''}" style="${c.decision===d.v?selStyle('TAM'):''}" data-dec="${esc(d.v)}">${d.l}</button>`).join('')+`</div></div>`;
+  h += `<div class="g gp">`+
+    `<button class="tb none ${noneOn?'on':''}" data-player=""><span class="n" style="font-size:13px">NINGUNO</span><span class="s">sense jugador</span></button>`+
+    R.map(n=>{ const m=n.match(/^\s*(\d+)\.?\s*(.*)$/); const num=m?m[1]:'·', nm=(m?m[2]:n).split(' ')[0];
+      return `<button class="tb ${c.player===n?'on':''}" style="${c.player===n?selStyle(c.side):''}" data-player="${esc(n)}"><span class="n">${esc(num)}</span><span class="s">${esc(nm)}</span></button>`; }).join('')+`</div>`;
+  if(!R.length) h += `<div class="muted" style="font-size:13px">Sense plantilla. <button class="btn sbtn" id="bR2">Afegir plantilla</button></div>`;
+  return h + `</div>`;
+}
+function decisionGrid(c){
+  return `<div class="sec"><div class="lb">${c.kind==='SHOOT'?'Zona (decision)':'Decision (només una)'}</div><div class="g gi">`+
+    DECISIONS.map(d=>`<button class="tb ${c.decision===d.v?'on':''}" style="${c.decision===d.v?selStyle('TAM'):''}" data-dec="${esc(d.v)}">${d.l}</button>`).join('')+`</div></div>`;
+}
+function renderInd(){
+  const c=clip(S.focusId); if(!c || (c.kind!=='IND' && c.kind!=='SHOOT')){ hideInd(false); return; }
+  $('#indBox').className = c.side + (c.kind==='SHOOT'?' shoot':'');
+  $('#indInfo').innerHTML = `<div class="hd"><span class="k">#${c.n} · ${esc(clipName(c))}</span><span class="badge b-${c.side}">${c.side}</span></div>
+    ${timesHtml(c)}${c.kind==='IND'?`<div class="chips">${chipsHtml(c)}</div>`:''}
+    <div class="mono" style="font-size:12px">${esc(c.player||'NINGUNO')}</div>
+    ${c.decision?`<div class="mono" style="font-size:12px">DECISION: ${esc(c.decision.trim())}</div>`:''}`;
+  $('#bFet').textContent = isT() ? 'Fet' : 'Fet ▶';
+  let h = playerGrid(c);
+  if(c.kind==='IND'){
+    const has = p => c.tags.some(x=>key(x)===key(p));
+    const groups = c.side==='TAM'?IND_ATT:IND_DEF;
+    h += `<div class="sec"><div class="lb">${c.side==='TAM'?'Accions d\'atac':'Accions de defensa'}</div>`;
+    for(const [lb,items] of groups){
+      const cls = items.length>6 ? 'gi7' : 'gi';
+      h += `<div class="grp"><div class="rl">${lb}</div><div class="g ${cls}">`+items.map(t=>tagBtn(t.p,t.l||t.p.join(' '),has(t.p),c.side)).join('')+`</div></div>`;
+    }
+    h += `</div>`;
+    if(c.side==='TAM') h += decisionGrid(c);
+  } else {
+    h += decisionGrid(c);
   }
   $('#indR').innerHTML = h;
 }
@@ -778,6 +1044,7 @@ function warnings(c){
   if(c.kind==='TO' && !c.side) w.push('falta TAM o VED');
   if((c.kind==='BAL'||c.kind==='FB') && !c.tags.some(p=>p.length===1 && /^(BAL|FB) /.test(p[0]))) w.push('falta l\'onada');
   if(c.kind==='IND' && !c.tags.length) w.push('sense etiquetes');
+  if(c.kind==='SHOOT' && !c.decision) w.push('falta la zona');
   return w;
 }
 const sorted = arr => arr.slice().sort((a,b)=>a.start-b.start || a.n-b.n);
@@ -788,41 +1055,82 @@ function phasesTxt(){
   return {text:L.join('\r\n'), n:rows.length};
 }
 const xesc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
+const xlabel = (group, text) => `      <label><group>${xesc(group)}</group><text>${xesc(text)}</text></label>`;
+const ptext = p => p.length===1 ? p[0] : fmtPath(p);
+function xmlDoc(inst){ return `<?xml version="1.0" encoding="utf-8"?>\n<file>\n  <ALL_INSTANCES>\n${inst.join('\n')}\n  </ALL_INSTANCES>\n</file>\n`; }
+function xinst(i, c, labels, off){
+  const code = S.team+' '+c.side+(c.player?' '+c.player:'');
+  return `    <instance>\n      <ID>${i}</ID>\n      <start>${r1(c.start+off)}</start>\n      <end>${r1(c.end+off)}</end>\n      <code>${xesc(code)}</code>\n${labels.join('\n')}${labels.length?'\n':''}    </instance>`;
+}
 function indXml(){
   const rows = sorted(S.clips.filter(c=>c.kind==='IND'));
   const inst = rows.map((c,i)=>{
-    const code = S.team+' '+c.side+(c.player?' '+c.player:'');
-    const labels = [IND_FIRST,...c.tags].map(p=>`      <label><group>INDIVIDUAL </group><text>${xesc(p.length===1?p[0]:fmtPath(p))}</text></label>`);
-    if(c.decision) labels.push(`      <label><group>DECISION </group><text>${xesc(c.decision)}</text></label>`);
-    return `    <instance>\n      <ID>${i+1}</ID>\n      <start>${c.start}</start>\n      <end>${c.end}</end>\n      <code>${xesc(code)}</code>\n${labels.join('\n')}\n    </instance>`;
+    const labels = [IND_FIRST,...c.tags].map(p=>xlabel('INDIVIDUAL ', ptext(p)));
+    if(c.decision) labels.push(xlabel('DECISION ', c.decision));
+    return xinst(i+1, c, labels, 0);
   });
-  return {text:`<?xml version="1.0" encoding="utf-8"?>\n<file>\n  <ALL_INSTANCES>\n${inst.join('\n')}\n  </ALL_INSTANCES>\n</file>\n`, n:rows.length};
+  return {text:xmlDoc(inst), n:rows.length};
 }
-function safeName(){ return (S.name||'partit').replace(/[^\w.\-]+/g,'_'); }
+function trainXml(){
+  const off = S.offset||0;
+  const rows = sorted(S.clips.filter(c=>c.end!=null));
+  const inst = rows.map((c,i)=>{
+    const labels = (c.tags||[]).map(p=>xlabel('SYSTEM', ptext(p)));
+    if(c.note) labels.push(xlabel('NOTES ', c.note));
+    if(c.decision) labels.push(xlabel('DECISION ', c.decision));
+    return xinst(i+1, c, labels, off);
+  });
+  return {text:xmlDoc(inst), n:rows.length};
+}
+function safeName(){ return (S.name||'clips').replace(/[^\w.\-]+/g,'_'); }
 function download(name, text, type){
   const b=new Blob([text],{type}); const a=document.createElement('a');
   a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click();
   setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1000);
 }
+function tagsCell(c){
+  if(c.kind==='IND') return (c.player?esc(c.player)+'<br>':'')+esc(fmtCol([IND_FIRST,...c.tags]))+(c.decision?' · '+esc(c.decision):'');
+  if(c.kind==='SHOOT') return esc(c.player||'NINGUNO')+(c.decision?' · '+esc(c.decision):'');
+  return esc(fmtCol(c.tags))+(c.note?' · <span style="color:var(--warn)">'+esc(c.note)+'</span>':'');
+}
+function refreshExportText(){
+  if(isT()){
+    const X=trainXml(); $('#exXml').textContent = X.n ? X.text : '(cap tall tancat)'; $('#bDlXml').disabled=!X.n;
+  } else {
+    const T=phasesTxt(), X=indXml();
+    $('#exTxt').textContent = T.text; $('#exXml').textContent = X.n ? X.text : '(cap individual)'; $('#bDlXml').disabled = !X.n;
+  }
+}
 function openExport(){
+  const t=isT();
   const all=sorted(S.clips);
   const wn = all.filter(c=>warnings(c).length).length;
-  const ph = all.filter(c=>c.kind!=='IND').length, ind = all.length-ph;
-  $('#exSummary').innerHTML = `${all.length} talls · ${ph} de fase · ${ind} individuals`+(wn?` · <span style="color:var(--warn)">${wn} amb avisos</span>`:'')+
+  $('#exMatch').classList.toggle('hidden', t); $('#exTrain').classList.toggle('hidden', !t);
+  $('#exXmlLbl').textContent = t ? 'Tots els talls → Importar XML/XLS › SportsCode' : '2 · Individuals → Importar XML/XLS › SportsCode';
+  $('#bShare').textContent = t ? 'Compartir el fitxer' : 'Compartir els dos fitxers';
+  $('#exHelp').textContent = t
+    ? 'Al PC: a XPS, botó dret a l\'entreno › Avanzado › Importar XML/XLS › SportsCode, i tria el .xml.'
+    : 'Al PC: obre el .txt, Ctrl+A, Ctrl+C, i a XPS botó dret al partit › Avanzado › Importar Eventos desde el portapapeles. Després, Importar XML/XLS › SportsCode amb el .xml.';
+  if(t) $('#exOffset').value = S.offset ? hmsT(S.offset) : '';
+  const cnt = t ? `${all.length} talls` : (()=>{ const ph=all.filter(c=>c.kind!=='IND').length; return `${all.length} talls · ${ph} de fase · ${all.length-ph} individuals`; })();
+  $('#exSummary').innerHTML = cnt+(wn?` · <span style="color:var(--warn)">${wn} amb avisos</span>`:'')+
     (S.openId?` · <span style="color:var(--warn)">hi ha un tall obert: no s'exportarà fins que el tanquis</span>`:'');
+  const tf = c => (c.kind==='IND'||c.kind==='SHOOT') ? hmsF : (t?hmsT:hms);
   $('#exRows').innerHTML = all.map(c=>{
     const w=warnings(c);
-    const tags = c.kind==='IND' ? (c.player?esc(c.player)+'<br>':'')+esc(fmtCol([IND_FIRST,...c.tags]))+(c.decision?' · '+esc(c.decision):'') : esc(fmtCol(c.tags));
     return `<tr class="${w.length?'w':''}" data-go="${c.id}"><td class="muted">${c.n}</td>
-      <td><span class="badge b-${c.side||'none'}">${clipName(c)}${c.side?' · '+c.side:''}</span></td>
-      <td class="mono" style="white-space:nowrap">${c.kind==='IND'?hmsF(c.start):hms(c.start)} → ${c.end==null?'obert':(c.kind==='IND'?hmsF(c.end):hms(c.end))}</td>
-      <td class="mono" style="font-size:12px">${tags||'—'}${w.length?`<div style="color:var(--warn);font-family:system-ui;font-size:12px;font-weight:600">${w.join(' · ')}</div>`:''}</td></tr>`;
+      <td><span class="badge b-${c.side||'none'}">${esc(clipName(c))}${c.side?' · '+c.side:''}</span></td>
+      <td class="mono" style="white-space:nowrap">${tf(c)(c.start)} → ${c.end==null?'obert':tf(c)(c.end)}</td>
+      <td class="mono" style="font-size:12px">${tagsCell(c)||'—'}${w.length?`<div style="color:var(--warn);font-family:system-ui;font-size:12px;font-weight:600">${w.join(' · ')}</div>`:''}</td></tr>`;
   }).join('') || '<tr><td colspan="4" class="muted">Encara no hi ha talls.</td></tr>';
-  const T=phasesTxt(), X=indXml();
-  $('#exTxt').textContent = T.text; $('#exXml').textContent = X.n ? X.text : '(cap individual)';
-  $('#bDlXml').disabled = !X.n;
+  refreshExportText();
   $('#ovExport').classList.remove('hidden');
 }
+$('#exOffset').addEventListener('input', e=>{
+  const v=parseTime(e.target.value);
+  if(isNaN(v)){ e.target.style.borderColor='#ef4444'; return; }
+  e.target.style.borderColor=''; S.offset=v; save(); refreshExportText();
+});
 $('#bExport').onclick = ()=>{ video.pause(); openExport(); };
 $('#exRows').addEventListener('click', e=>{ const r=e.target.closest('[data-go]'); if(r){ $('#ovExport').classList.add('hidden'); focusClip(r.dataset.go,true); } });
 $('#bCopyTxt').onclick = async ()=>{
@@ -831,18 +1139,22 @@ $('#bCopyTxt').onclick = async ()=>{
   catch(e){ const a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); toast('Copiat'); }
 };
 $('#bDlTxt').onclick = ()=> download(safeName()+'_fases.txt', phasesTxt().text, 'text/plain;charset=utf-8');
-$('#bDlXml').onclick = ()=> download(safeName()+'_individuals.xml', indXml().text, 'application/xml');
+$('#bDlXml').onclick = ()=> isT() ? download(safeName()+'_entreno.xml', trainXml().text, 'application/xml')
+                                  : download(safeName()+'_individuals.xml', indXml().text, 'application/xml');
 $('#bShare').onclick = async ()=>{
-  const files=[new File([phasesTxt().text], safeName()+'_fases.txt', {type:'text/plain'})];
-  const X=indXml(); if(X.n) files.push(new File([X.text], safeName()+'_individuals.xml', {type:'text/xml'}));
+  let files;
+  if(isT()){ const X=trainXml(); if(!X.n){ toast('No hi ha talls tancats'); return; } files=[new File([X.text], safeName()+'_entreno.xml', {type:'text/xml'})]; }
+  else { files=[new File([phasesTxt().text], safeName()+'_fases.txt', {type:'text/plain'})];
+    const X=indXml(); if(X.n) files.push(new File([X.text], safeName()+'_individuals.xml', {type:'text/xml'})); }
   try{
     if(navigator.canShare && navigator.canShare({files})){ await navigator.share({files, title:S.name}); return; }
   }catch(e){ if(e && e.name==='AbortError') return; }
   toast('Aquest dispositiu no permet compartir: es descarreguen');
-  $('#bDlTxt').click(); if(X.n) setTimeout(()=>$('#bDlXml').click(),400);
+  if(isT()) $('#bDlXml').click(); else { $('#bDlTxt').click(); if(files.length>1) setTimeout(()=>$('#bDlXml').click(),400); }
 };
 
 /* ===================== roster ===================== */
+let rosterTeam = null;
 function parseRoster(text){
   const lines=text.split(/\r?\n/);
   let names=[];
@@ -850,27 +1162,32 @@ function parseRoster(text){
   if(hi>=0){
     const col=lines[hi].split('\t').findIndex(x=>x.trim()==='Deportista');
     for(const l of lines.slice(hi+1)){ const v=(l.split('\t')[col]||'').trim(); if(v) names.push(v); }
-  } else names=lines.map(l=>l.trim()).filter(Boolean);
+  } else names=lines.map(l=>l.replace(/^\s*[*•\-–]\s+/,'').trim()).filter(Boolean);
   names=[...new Set(names)].filter(n=>n.toUpperCase()!=='NINGUNO');
   const num=n=>{ const m=n.match(/^\s*(\d+)/); return m?+m[1]:999; };
   return names.sort((a,b)=>num(a)-num(b)||a.localeCompare(b));
 }
-function openRoster(){
-  $('#rTitle').textContent='Plantilla · '+S.team; $('#rText').value=roster().join('\n'); $('#rCount').textContent=roster().length+' jugadors';
+function openRosterFor(team){
+  rosterTeam=team; const R=rosters()[team]||[];
+  $('#rTitle').textContent='Plantilla · '+team; $('#rText').value=R.join('\n'); $('#rCount').textContent=R.length+' jugadors';
   $('#ovRoster').classList.remove('hidden');
 }
+function openRoster(){ openRosterFor(S.team); }
 $('#bRoster').onclick=openRoster;
 $('#bRSave').onclick=()=>{
-  const list=parseRoster($('#rText').value); const r=rosters(); r[S.team]=list; LS.set('xt.rosters',r);
-  $('#rText').value=list.join('\n'); $('#rCount').textContent=list.length+' jugadors desats'; renderAll(); toast('Plantilla desada');
+  const list=parseRoster($('#rText').value); const r=rosters(); r[rosterTeam]=list; LS.set('xt.rosters',r);
+  $('#rText').value=list.join('\n'); $('#rCount').textContent=list.length+' jugadors desats';
+  if(S) renderAll(); else setNewMode(newMode);
+  toast('Plantilla desada');
 };
 
 /* ===================== keys ===================== */
 function keyName(k){ return k===' '?'Espai':k; }
 function renderKeys(){
-  $('#kList').innerHTML = ACTIONS.map(([a,l])=>{
+  const list = (S && isT()) ? [['FINAL','FINAL'],['UNDO','Desfer'],...ACTIONS_T] : ACTIONS_M;
+  $('#kList').innerHTML = list.map(([a,l])=>{
     const ks=Object.keys(keys).filter(k=>keys[k]===a);
-    return `<div class="keyrow"><div class="a">${l}</div><div class="kcap mono">${learning===a?'prem una tecla…':(ks.map(keyName).join(' · ')||'—')}</div>
+    return `<div class="keyrow"><div class="a">${esc(l)}</div><div class="kcap mono">${learning===a?'prem una tecla…':(ks.map(keyName).join(' · ')||'—')}</div>
       <button class="btn" data-learn="${a}">Canviar</button></div>`;
   }).join('');
 }
@@ -896,8 +1213,9 @@ document.addEventListener('keydown', e=>{
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{ $('#'+b.dataset.close).classList.add('hidden'); learning=null; });
 
 /* ===================== init ===================== */
+rosters();
 renderSetup();
-window.addEventListener('resize', ()=>{ if(!$('#setup').classList.contains('hidden')) renderSetup(); });
+window.addEventListener('resize', ()=>{ if(!$('#setup').classList.contains('hidden')) $('#scrInfo').textContent='ClipAPP '+APP_VERSION+' · pantalla '+innerWidth+'×'+innerHeight; });
 window.addEventListener('beforeunload', ()=>{ if(S) save(); });
 if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
