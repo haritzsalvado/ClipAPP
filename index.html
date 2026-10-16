@@ -376,15 +376,15 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
           </table>
         </div>
         <div class="r">
-          <div id="exMatch">
-            <div class="sec"><div class="lb">1 · Fases → Importar Eventos desde el portapapeles</div>
-              <pre id="exTxt"></pre>
-              <div class="row"><button class="btn" id="bCopyTxt">Copiar</button><button class="btn" id="bDlTxt">Descarregar .txt</button></div>
-            </div>
-          </div>
           <div class="sec"><div class="lb" id="exXmlLbl">2 · Individuals → Importar XML/XLS › SportsCode</div>
             <pre id="exXml"></pre>
             <div class="row"><button class="btn" id="bDlXml">Descarregar .xml</button></div>
+          </div>
+          <div id="exMatch">
+            <div class="sec"><div class="lb" id="exTxtLbl">1 · Fases → Importar Eventos desde el portapapeles</div>
+              <pre id="exTxt"></pre>
+              <div class="row"><button class="btn" id="bCopyTxt">Copiar</button><button class="btn" id="bDlTxt">Descarregar .txt</button></div>
+            </div>
           </div>
           <div class="muted" style="font-size:13px;line-height:1.5" id="exHelp"></div>
         </div>
@@ -421,7 +421,8 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 
 <script>
 'use strict';
-const APP_VERSION = 'v6';
+const APP_VERSION = 'v9';
+const SYNC_LEN = 2;
 /* =====================================================================
    TAG DICTIONARY — exact texts as they exist in the XPS template.
    Trailing spaces matter. All verified against XPS imports.
@@ -490,6 +491,8 @@ const T_MATCH = ['MATT','MBAL','MDEF','MFB'];
 const T_EDIT = { TAM:[['6:0'],['5:1'],['7X6'],['+1'],['-1'],['BAL 2W']], VED:[['6:0'],['5:1'],['7X6'],['+1'],['-1'],['FB 2W']] };
 const BLOCK_NOTE = { TAM:'BLOCK ATT', VED:'BLOCK DEF' };
 const SHOOT_BEFORE = 4, SHOOT_AFTER = 1;
+const ZONE_7M = '7M';   // exported as SITUATION "7m"
+const decLabel = d => d===ZONE_7M ? '7m' : String(d||'').trim();
 
 const KIND_SIDE = {ATT:'TAM',BAL:'TAM',DEF:'VED',FB:'VED'};
 const ACTIONS_M = [
@@ -757,7 +760,12 @@ function tick(){
 /* ---------- training: sync & buttons ---------- */
 document.querySelectorAll('[data-sync]').forEach(b=>b.onclick=()=>{
   if(S.t0 && S.clips.length && !confirm('Ja hi ha talls marcats amb la sincronització actual. Si tornes a sincronitzar, el cronòmetre tornarà a 0 i els talls anteriors quedaran desquadrats. Continuar?')) return;
-  S.t0 = Date.now(); S.tEnd=null; save(); renderAll(); flash('SINC');
+  snapshot();
+  S.t0 = Date.now(); S.tEnd=null;
+  S.clips = S.clips.filter(c=>c.kind!=='SYNC');
+  const sc={id:uid(), n:S.counter++, kind:'SYNC', side:'TAM', start:0, end:SYNC_LEN, tags:[], note:'SYNC', player:null, decision:null};
+  S.clips.push(sc); S.focusId=sc.id;
+  save(); renderAll(); flash('SINC');
 });
 document.querySelectorAll('[data-finish]').forEach(b=>b.onclick=()=>{
   if(!S.t0){ toast('Encara no has sincronitzat'); return; }
@@ -913,6 +921,7 @@ function renderBadge(){
 function clipName(c){
   if(c.kind==='IND') return 'IND '+(c.side==='TAM'?'ATT':'DEF');
   if(c.kind==='T') return c.label;
+  if(c.kind==='SYNC') return 'SYNC';
   return c.kind;
 }
 const sideColor = s => s==='VED'?'var(--ved)':s==='TAM'?'var(--tam)':'#9aa6b2';
@@ -965,7 +974,9 @@ function renderPanel(){
       <button class="btn grey sbtn" id="bDel">Esborrar</button></div>
     ${timesHtml(c)}
     <div class="chips">${chipsHtml(c)}</div></div>`;
-  if(c.kind==='T'){
+  if(c.kind==='SYNC'){
+    h += `<div class="muted" style="font-size:13px;line-height:1.5">Tall de sincronització: comença a 00:00:00, el moment en què has premut SINC. A XPS, quadra aquest tall amb el moment del senyal a la càmera.</div>`;
+  } else if(c.kind==='T'){
     h += `<div class="sec"><div class="lb">Etiquetes (SYSTEM)</div><div class="g g3">`+T_EDIT[c.side].map(p=>tagBtn(p,labelOf(p),has(p),c.side)).join('')+`</div></div>`;
     const bn=BLOCK_NOTE[c.side];
     h += `<div class="sec"><div class="lb">Notes</div><div class="g g2"><button class="tb ${c.note===bn?'on':''}" style="${c.note===bn?selStyle(c.side):''}" data-setnote="${bn}">${bn}</button></div></div>`;
@@ -1053,8 +1064,9 @@ function playerGrid(c){
   return h + `</div>`;
 }
 function decisionGrid(c){
-  return `<div class="sec"><div class="lb">${c.kind==='SHOOT'?'Zona (decision)':'Decision (només una)'}</div><div class="g gi">`+
-    DECISIONS.map(d=>`<button class="tb ${c.decision===d.v?'on':''}" style="${c.decision===d.v?selStyle('TAM'):''}" data-dec="${esc(d.v)}">${d.l}</button>`).join('')+`</div></div>`;
+  const opts = c.kind==='SHOOT' ? [...DECISIONS, {v:ZONE_7M,l:'7m'}] : DECISIONS;
+  return `<div class="sec"><div class="lb">${c.kind==='SHOOT'?'Zona (opcional)':'Decision (només una)'}</div><div class="g ${opts.length>6?'gi7':'gi'}">`+
+    opts.map(d=>`<button class="tb ${c.decision===d.v?'on':''}" style="${c.decision===d.v?selStyle('TAM'):''}" data-dec="${esc(d.v)}">${d.l}</button>`).join('')+`</div></div>`;
 }
 function renderInd(){
   const c=clip(S.focusId); if(!c || (c.kind!=='IND' && c.kind!=='SHOOT')){ hideInd(false); return; }
@@ -1062,7 +1074,7 @@ function renderInd(){
   $('#indInfo').innerHTML = `<div class="hd"><span class="k">#${c.n} · ${esc(clipName(c))}</span><span class="badge b-${c.side}">${c.side}</span></div>
     ${timesHtml(c)}${c.kind==='IND'?`<div class="chips">${chipsHtml(c)}</div>`:''}
     <div class="mono" style="font-size:12px">${esc(c.player||'NINGUNO')}</div>
-    ${c.decision?`<div class="mono" style="font-size:12px">DECISION: ${esc(c.decision.trim())}</div>`:''}`;
+    ${c.decision?`<div class="mono" style="font-size:12px">${c.decision===ZONE_7M?'SITUATION':'DECISION'}: ${esc(decLabel(c.decision))}</div>`:''}`;
   $('#bFet').textContent = (clocked()||!indResume) ? 'Fet' : 'Fet ▶';
   let h = playerGrid(c);
   if(c.kind==='IND'){
@@ -1095,13 +1107,13 @@ function warnings(c){
   if(c.kind==='TO' && !c.side) w.push('falta TAM o VED');
   if((c.kind==='BAL'||c.kind==='FB') && !c.tags.some(p=>p.length===1 && /^(BAL|FB) /.test(p[0]))) w.push('falta l\'onada');
   if(c.kind==='IND' && !c.tags.length) w.push('sense etiquetes');
-  if(c.kind==='SHOOT' && !c.decision) w.push('falta la zona');
+  if(c.kind==='SHOOT' && !c.decision) w.push('sense zona (s\'exporta amb NOTES «SHOOT»)');
   return w;
 }
 const sorted = arr => arr.slice().sort((a,b)=>a.start-b.start || a.n-b.n);
 function phasesTxt(){
   const off = clocked() ? (S.offset||0) : 0;
-  const rows = sorted(S.clips.filter(c=>c.kind!=='IND' && c.end!=null));
+  const rows = sorted(S.clips.filter(c=>c.end!=null && (isT() ? (c.kind==='T' && !c.note) : (c.kind!=='IND' && c.kind!=='SYNC'))));
   const L=['Partido\tNr\tStart\tEnd\tEquipo\tDeportista\tSYSTEM'];
   rows.forEach((c,i)=>L.push([S.name, i+1, hms(Math.floor(c.start+off+1e-6)), hms(Math.ceil(c.end+off-1e-6)), S.team+' '+(c.side||'TAM'), 'NINGUNO', fmtCol(c.tags)].join('\t')));
   return {text:L.join('\r\n'), n:rows.length};
@@ -1115,8 +1127,9 @@ function xinst(i, c, labels, off){
   return `    <instance>\n      <ID>${i}</ID>\n      <start>${r1(c.start+off)}</start>\n      <end>${r1(c.end+off)}</end>\n      <code>${xesc(code)}</code>\n${labels.join('\n')}${labels.length?'\n':''}    </instance>`;
 }
 function indXml(){
-  const rows = sorted(S.clips.filter(c=>c.kind==='IND'));
+  const rows = sorted(S.clips.filter(c=>c.kind==='IND' || c.kind==='SYNC'));
   const inst = rows.map((c,i)=>{
+    if(c.kind==='SYNC') return xinst(i+1, c, [xlabel('NOTES ', 'SYNC')], clocked() ? (S.offset||0) : 0);
     const labels = [IND_FIRST,...c.tags].map(p=>xlabel('INDIVIDUAL ', ptext(p)));
     if(c.decision) labels.push(xlabel('DECISION ', c.decision));
     return xinst(i+1, c, labels, clocked() ? (S.offset||0) : 0);
@@ -1125,12 +1138,29 @@ function indXml(){
 }
 function trainXml(){
   const off = S.offset||0;
-  const rows = sorted(S.clips.filter(c=>c.end!=null));
+  const rows = sorted(S.clips.filter(c=>c.end!=null && (c.kind!=='T' || c.note)));
   const inst = rows.map((c,i)=>{
     const labels = (c.tags||[]).map(p=>xlabel('SYSTEM', ptext(p)));
     if(c.note) labels.push(xlabel('NOTES ', c.note));
     if(c.decision) labels.push(xlabel('DECISION ', c.decision));
     return xinst(i+1, c, labels, off);
+  });
+  return {text:xmlDoc(inst), n:rows.length};
+}
+function allXml(){
+  const off = clocked() ? (S.offset||0) : 0;
+  const rows = S.clips.filter(c=>c.end!=null).slice().sort((a,b)=>a.start-b.start || a.end-b.end || a.n-b.n);
+  const inst = rows.map((c,i)=>{
+    const labels=[];
+    if(c.kind==='IND') labels.push(xlabel('INDIVIDUAL ', fmtCol([IND_FIRST,...c.tags])));
+    else if(c.tags && c.tags.length) labels.push(xlabel('SYSTEM', fmtCol(c.tags)));
+    if(c.decision===ZONE_7M) labels.push(xlabel('SITUATION ', '7m'));
+    else if(c.decision) labels.push(xlabel('DECISION ', c.decision));
+    if(c.note) labels.push(xlabel('NOTES ', c.note));
+    // XPS drops clips without any label: give them a NOTES so they always import
+    if(!labels.length) labels.push(xlabel('NOTES ', c.kind==='SHOOT' ? 'SHOOT' : clipName(c)));
+    const code = S.team+' '+(c.side||'TAM')+' '+(c.player||'NINGUNO');
+    return `    <instance>\n      <ID>${i+1}</ID>\n      <start>${r1(c.start+off)}</start>\n      <end>${r1(c.end+off)}</end>\n      <code>${xesc(code)}</code>\n${labels.join('\n')}${labels.length?'\n':''}    </instance>`;
   });
   return {text:xmlDoc(inst), n:rows.length};
 }
@@ -1142,32 +1172,27 @@ function download(name, text, type){
 }
 function tagsCell(c){
   if(c.kind==='IND') return (c.player?esc(c.player)+'<br>':'')+esc(fmtCol([IND_FIRST,...c.tags]))+(c.decision?' · '+esc(c.decision):'');
-  if(c.kind==='SHOOT') return esc(c.player||'NINGUNO')+(c.decision?' · '+esc(c.decision):'');
+  if(c.kind==='SHOOT') return esc(c.player||'NINGUNO')+(c.decision?' · '+esc(decLabel(c.decision)):'');
   return esc(fmtCol(c.tags))+(c.note?' · <span style="color:var(--warn)">'+esc(c.note)+'</span>':'');
 }
 function refreshExportText(){
-  if(isT()){
-    const X=trainXml(); $('#exXml').textContent = X.n ? X.text : '(cap tall tancat)'; $('#bDlXml').disabled=!X.n;
-  } else {
-    const T=phasesTxt(), X=indXml();
-    $('#exTxt').textContent = T.text; $('#exXml').textContent = X.n ? X.text : '(cap individual)'; $('#bDlXml').disabled = !X.n;
-  }
+  const T=phasesTxt(), X=allXml();
+  $('#exTxt').textContent = T.text; $('#exXml').textContent = X.n ? X.text : '(cap tall tancat)'; $('#bDlXml').disabled=!X.n;
 }
 function openExport(){
   const t=isT();
   const all=sorted(S.clips);
   const wn = all.filter(c=>warnings(c).length).length;
-  $('#exMatch').classList.toggle('hidden', t); $('#exOffBox').classList.toggle('hidden', !clocked());
-  $('#exXmlLbl').textContent = t ? 'Tots els talls → Importar XML/XLS › SportsCode' : '2 · Individuals → Importar XML/XLS › SportsCode';
-  $('#exHelp').textContent = t
-    ? 'Al PC: a XPS, botó dret a l\'entreno › Avanzado › Importar XML/XLS › SportsCode, i tria el .xml.'
-    : 'Al PC: obre el .txt, Ctrl+A, Ctrl+C, i a XPS botó dret al partit › Avanzado › Importar Eventos desde el portapapeles. Després, Importar XML/XLS › SportsCode amb el .xml.';
+  $('#exOffBox').classList.toggle('hidden', !clocked());
+  $('#exTxtLbl').textContent = 'Alternativa · només talls amb SYSTEM → Importar Eventos desde el portapapeles';
+  $('#exXmlLbl').textContent = 'Tots els talls en un sol fitxer → Importar XML/XLS › SportsCode';
+  $('#exHelp').textContent = 'Al PC: a XPS, botó dret › Avanzado › Importar XML/XLS › SportsCode i tria el .xml. A l\'assistent, assigna les combinacions noves (en vermell) clicant les etiquetes en l\'ordre correcte: XPS les recordarà per a les properes importacions.';
   if(clocked()) $('#exOffset').value = S.offset ? hmsT(S.offset) : '';
-  $('#bDlAll').textContent = t ? '⬇ Descarregar l\'XML' : '⬇ Descarregar tot (.txt + .xml)';
+  $('#bDlAll').textContent = '⬇ Descarregar XML (tots els talls)';
   const cnt = t ? `${all.length} talls` : (()=>{ const ph=all.filter(c=>c.kind!=='IND').length; return `${all.length} talls · ${ph} de fase · ${all.length-ph} individuals`; })();
   $('#exSummary').innerHTML = cnt+(wn?` · <span style="color:var(--warn)">${wn} amb avisos</span>`:'')+
     (S.openId?` · <span style="color:var(--warn)">hi ha un tall obert: no s'exportarà fins que el tanquis</span>`:'');
-  const tf = c => (c.kind==='IND'||c.kind==='SHOOT') ? hmsF : (clocked()?hmsT:hms);
+  const tf = c => (c.kind==='IND'||c.kind==='SHOOT'||c.kind==='SYNC') ? hmsF : (clocked()?hmsT:hms);
   $('#exRows').innerHTML = all.map(c=>{
     const w=warnings(c);
     return `<tr class="${w.length?'w':''}" data-go="${c.id}"><td class="muted">${c.n}</td>
@@ -1190,16 +1215,12 @@ $('#bCopyTxt').onclick = async ()=>{
   try{ await navigator.clipboard.writeText(t); toast('Copiat'); }
   catch(e){ const a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); toast('Copiat'); }
 };
-$('#bDlTxt').onclick = ()=> download(safeName()+'_fases.txt', phasesTxt().text, 'text/plain;charset=utf-8');
-$('#bDlXml').onclick = ()=> isT() ? download(safeName()+'_entreno.xml', trainXml().text, 'application/xml')
-                                  : download(safeName()+'_individuals.xml', indXml().text, 'application/xml');
+$('#bDlTxt').onclick = ()=> download(safeName()+(isT()?'_entreno.txt':'_fases.txt'), phasesTxt().text, 'text/plain;charset=utf-8');
+$('#bDlXml').onclick = ()=> download(safeName()+'.xml', allXml().text, 'application/xml');
 $('#bDlAll').onclick = ()=>{
-  if(isT()){ const X=trainXml(); if(!X.n){ toast('No hi ha talls tancats'); return; } download(safeName()+'_entreno.xml', X.text, 'application/xml'); return; }
-  const T=phasesTxt(), X=indXml();
-  if(!T.n && !X.n){ toast('No hi ha talls tancats'); return; }
-  if(T.n) download(safeName()+'_fases.txt', T.text, 'text/plain;charset=utf-8');
-  if(X.n) setTimeout(()=>download(safeName()+'_individuals.xml', X.text, 'application/xml'), T.n?700:0);
-  toast(T.n&&X.n ? 'Descarregant 2 fitxers' : 'Descarregant 1 fitxer');
+  const X=allXml();
+  if(!X.n){ toast('No hi ha talls tancats'); return; }
+  download(safeName()+'.xml', X.text, 'application/xml'); toast('Descarregant '+X.n+' talls');
 };
 
 /* ===================== roster ===================== */
