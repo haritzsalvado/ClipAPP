@@ -28,6 +28,9 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 .b-VED{background:var(--ved);color:#fff}
 .b-none{background:var(--line);color:var(--text)}
 .b-mode{background:#33404d;color:var(--text)}
+.b-train{background:#15803d;color:#fff}
+.b-mvid{background:#6d28d9;color:#fff}
+.b-mlive{background:#c2410c;color:#fff}
 
 /* ---------- SETUP ---------- */
 #setup{max-width:860px;margin:0 auto;padding:24px 16px 60px;height:100%;overflow-y:auto}
@@ -126,9 +129,9 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 .tcols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .tcol{display:flex;flex-direction:column;gap:6px}
 .tcol .hdr{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--muted)}
-.tcol .sb{height:52px}
+.tcol .sb{height:62px;font-size:18px}
 #tMatch{border:2px dashed #4a5664;border-radius:12px;padding:8px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-#tMatch .sb{height:56px}
+#tMatch .sb{height:70px;font-size:19px}
 #tRight{width:330px;flex:none;border-left:1px solid #252e37;display:flex;flex-direction:column;min-height:0;padding-top:8px}
 
 /* ---------- INDIVIDUAL / SHOOT OVERLAY ---------- */
@@ -162,9 +165,11 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 .srcs{display:flex;gap:8px;margin-top:12px}
 .src{height:44px;padding:0 16px;border-radius:10px;border:2px solid var(--line);background:var(--chip);font-weight:700;font-size:15px}
 .src.on{border-color:var(--text);background:var(--text);color:#0f1317}
-.sb.BLK{background:#2a323c;border:2px dashed currentColor;font-size:15px}
-.sb.BLK.TAM{color:#fca5a5}
-.sb.BLK.VED{color:#93c5fd}
+.sb.BLK{background:transparent;color:#fff}
+.sb.BLK.TAM{border:3px solid var(--tam)}
+.sb.BLK.VED{border:3px solid var(--ved)}
+.sb.NB{background:#2a323c;border:2px solid #fbbf24;color:#fde68a}
+.notechips{display:flex;flex-wrap:wrap;gap:6px}
 #exTop{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px;border-radius:12px;background:var(--panel)}
 #bDlAll{height:56px;font-size:18px;font-weight:800;padding:0 22px}
 #bFet{height:64px;font-size:20px;font-weight:800;border-radius:12px}
@@ -217,7 +222,7 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
         <div class="field"><label for="nName">Codi del partit</label><input id="nName" placeholder="p. ex. S7.PLO-GDA"></div>
         <div class="field"><label for="nTeam">Equip analitzat (com a XPS, sense TAM/VED)</label><input id="nTeam" list="teamList" placeholder="p. ex. GDANSK 26-27"><datalist id="teamList"></datalist></div>
       </div>
-      <div class="srcs"><button class="src on" data-src="video">Amb vídeo</button><button class="src" data-src="live">En directe (crono)</button></div>
+      <div class="srcs"><button class="src on" data-src="video">Amb vídeo</button><button class="src" data-src="live">En directe (sense vídeo)</button></div>
     </div>
     <div id="newTrain" class="hidden">
       <div class="row">
@@ -243,8 +248,8 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
     <h2>Còpia de seguretat i plantilles</h2>
     <div class="muted" style="font-size:14px;margin-bottom:10px">Exporta tots els partits, entrenos i plantilles en un fitxer. Per importar, pots fer servir tant una còpia completa com un fitxer de plantilles d'equips.</div>
     <div class="row">
-      <button class="btn" id="bBackup">Exportar còpia (.json)</button>
-      <label class="btn" style="display:flex;align-items:center">Importar fitxer (còpia o plantilles)<input type="file" id="fRestore" accept=".json,application/json" class="hidden"></label>
+      <button class="btn" id="bBackup">Backup (.json)</button>
+      <label class="btn" style="display:flex;align-items:center">Importar (.json · backup o plantilles)<input type="file" id="fRestore" accept=".json,application/json" class="hidden"></label>
     </div>
   </div>
   <div class="muted" style="font-size:12px;margin-top:18px" id="scrInfo"></div>
@@ -319,6 +324,7 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
       <div id="tClock" class="mono">00:00:00<small>Sense sincronitzar</small></div>
       <button class="bsync" data-sync="1">SINC · senyal a la càmera</button>
       <button class="sb IA" data-act="SHOOT" style="height:84px;font-size:22px">SHOOT<small>1 clic · −4 s / +1 s</small></button>
+      <button class="sb NB" data-act="T:NBLK" style="height:64px;font-size:19px">NEW BLOCK<small>text a NOTES</small></button>
       <button class="sb FIN" data-act="FINAL" style="height:84px;font-size:22px">FINAL</button>
       <div style="flex:1"></div>
       <button class="bfin" data-finish="1">Acabar entreno</button>
@@ -355,6 +361,19 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
   </div>
 </div>
 
+<!-- ================= NOTE ================= -->
+<div class="ov hidden" id="ovNote">
+  <div class="modal" style="width:min(640px,100%)">
+    <div class="mh"><div class="t">NEW BLOCK · text a NOTES</div></div>
+    <div class="mb">
+      <input id="noteText" maxlength="80" placeholder="Escriu el text del bloc" style="font-size:20px;height:56px">
+      <div class="notechips" id="noteRecent"></div>
+      <div class="row"><button class="btn primary" id="bNoteOk" style="height:52px;font-size:17px;flex:1">Desar</button><button class="btn" id="bNoteNo" style="height:52px">Sense text</button></div>
+      <div class="muted" style="font-size:13px">El tall ja ha començat en prémer NEW BLOCK. Es tanca amb FINAL o amb el pròxim botó.</div>
+    </div>
+  </div>
+</div>
+
 <!-- ================= EXPORT ================= -->
 <div class="ov hidden" id="ovExport">
   <div class="modal">
@@ -378,7 +397,6 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
         <div class="r">
           <div class="sec"><div class="lb" id="exXmlLbl">2 · Individuals → Importar XML/XLS › SportsCode</div>
             <pre id="exXml"></pre>
-            <div class="row"><button class="btn" id="bDlXml">Descarregar .xml</button></div>
           </div>
           <div id="exMatch">
             <div class="sec"><div class="lb" id="exTxtLbl">1 · Fases → Importar Eventos desde el portapapeles</div>
@@ -421,7 +439,7 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 
 <script>
 'use strict';
-const APP_VERSION = 'v9';
+const APP_VERSION = 'v11';
 const SYNC_LEN = 2;
 /* =====================================================================
    TAG DICTIONARY — exact texts as they exist in the XPS template.
@@ -482,8 +500,9 @@ const TBTN = {
   MBAL:{side:'TAM',l:'BAL',tags:[['BAL 2W']],pre:1},
   MDEF:{side:'VED',l:'DEF',tags:[['6:0']]},
   MFB:{side:'VED',l:'FB',tags:[['FB 2W']],pre:1},
-  BLKA:{side:'TAM',l:'BLOCK ATT',tags:[],note:'BLOCK ATT',blk:true},
-  BLKD:{side:'VED',l:'BLOCK DEF',tags:[],note:'BLOCK DEF',blk:true},
+  BLKA:{side:'TAM',l:'BLOCK ATT',tags:[],note:'A',blk:true},
+  BLKD:{side:'VED',l:'BLOCK DEF',tags:[],note:'D',blk:true},
+  NBLK:{side:'TAM',l:'NEW BLOCK',tags:[],note:'',nb:true},
 };
 const T_COL_A = ['A60','A51','A76','AP1','AM1','ABAL','BLKA'];
 const T_COL_D = ['D60','D51','D76','DP1','DM1','DFB','BLKD'];
@@ -503,7 +522,7 @@ const ACTIONS_M = [
 const ACTIONS_T = [
   ...T_COL_A.map(k=>['T:'+k,'Entreno · '+TBTN[k].l+' (atac)']),
   ...T_COL_D.map(k=>['T:'+k,'Entreno · '+TBTN[k].l+' (defensa)']),
-  ...T_MATCH.map(k=>['T:'+k,'Entreno · zona match '+TBTN[k].l]), ['SHOOT','Entreno · SHOOT']
+  ...T_MATCH.map(k=>['T:'+k,'Entreno · zona match '+TBTN[k].l]), ['SHOOT','Entreno · SHOOT'], ['T:NBLK','Entreno · NEW BLOCK']
 ];
 const DEFAULT_KEYS = {'1':'ATT','2':'BAL','3':'DEF','4':'FB','5':'TO','6':'INDATT','7':'INDDEF','Enter':'FINAL',
   '0':'PLAY',' ':'PLAY','-':'BACK','ArrowLeft':'BACK','+':'FWD','ArrowRight':'FWD','*':'SPEED','/':'UNDO'};
@@ -627,10 +646,14 @@ function updTName(){ $('#tName').textContent = trainCode(); }
 document.querySelectorAll('[data-tt]').forEach(b=>b.onclick=()=>{ newTT=b.dataset.tt; document.querySelectorAll('[data-tt]').forEach(x=>x.classList.toggle('on',x===b)); updTName(); });
 document.querySelectorAll('[data-src]').forEach(b=>b.onclick=()=>{ newSrc=b.dataset.src; document.querySelectorAll('[data-src]').forEach(x=>x.classList.toggle('on',x===b)); });
 document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>setNewMode(b.dataset.mode));
+function modeBadge(s){
+  if(s.mode==='training') return '<span class="badge b-train">Entreno</span>';
+  return s.live ? '<span class="badge b-mlive">● Partit · directe</span>' : '<span class="badge b-mvid">Partit · vídeo</span>';
+}
 function renderSetup(){
   const list = idx();
   $('#sessList').innerHTML = list.length ? list.map(s=>`
-    <div class="sess"><div class="info"><div class="t"><span class="badge b-mode">${s.mode==='training'?'Entreno':(s.live?'Partit · directe':'Partit')}</span> ${esc(s.name)}</div>
+    <div class="sess"><div class="info"><div class="t">${modeBadge(s)} ${esc(s.name)}</div>
       <div class="muted" style="font-size:13px">${esc(s.team)} · ${s.count} talls · ${new Date(s.updated).toLocaleString('ca-ES')}</div></div>
       <button class="btn primary" data-open="${s.id}">Obrir</button>
       <button class="btn grey" data-del="${s.id}">Esborrar</button></div>`).join('')
@@ -667,10 +690,14 @@ $('#bCreate').onclick = ()=>{
 $('#bTRoster').onclick = ()=>{ const t=$('#tTeam').value.trim()||trainTeam(); openRosterFor(t); };
 function openSession(id){ const s=LS.get('xt.s.'+id,null); if(!s){ toast('No s\'ha trobat'); return; } S=s; if(!S.mode) S.mode='match'; undoStack=[]; showMain(); }
 
-$('#bBackup').onclick = ()=>{
+function offerBackup(why){
+  setTimeout(()=>{ if(confirm((why?why+'\n\n':'')+'Vols baixar ara un backup (.json) de tots els partits, entrenos i plantilles? Així no depens només de la memòria de la tauleta.')) doBackup(); }, 400);
+}
+$('#bBackup').onclick = ()=>doBackup();
+function doBackup(){
   const data = {app:'tallador-xps',v:1,date:new Date().toISOString(),rosters:rosters(),trainTeam:trainTeam(),keys,sessions:idx().map(x=>LS.get('xt.s.'+x.id,null)).filter(Boolean)};
-  download('clipapp_copia_'+new Date().toISOString().slice(0,10)+'.json', JSON.stringify(data), 'application/json');
-};
+  download('clipapp_backup_'+new Date().toISOString().slice(0,10)+'.json', JSON.stringify(data), 'application/json');
+}
 $('#fRestore').onchange = async e=>{
   const f=e.target.files[0]; if(!f) return;
   try{
@@ -700,7 +727,7 @@ function showMain(){
   // move the shared tag panel into the right column of the active mode
   const host = t ? $('#tRight') : $('#right');
   host.appendChild($('#panel'));
-  $('#mTitle').innerHTML = (t?'<span class="badge b-mode">Entreno</span> ':(lv?'<span class="badge b-mode">Directe</span> ':''))+esc(S.name)+' <span class="muted" style="font-weight:500">· '+esc(S.team)+'</span>';
+  $('#mTitle').innerHTML = modeBadge(S)+' '+esc(S.name)+' <span class="muted" style="font-weight:500">· '+esc(S.team)+'</span>';
   if(!t) $('#novideoHint').textContent = S.videoName ? 'Últim vídeo fet servir: '+S.videoName : 'El vídeo no es puja enlloc: es llegeix des de la tauleta.';
   const f=clip(S.focusId); if(f && (f.kind==='IND'||f.kind==='SHOOT')) S.focusId=S.openId;
   if(t) buildTrainButtons();
@@ -708,6 +735,11 @@ function showMain(){
   save(); renderAll(); keepAwake();
 }
 $('#bHome').onclick = ()=>{
+  const o=clip(S.openId);
+  if(o){
+    if(!confirm('Hi ha un tall obert (#'+o.n+' · '+clipName(o)+').\n\nPrem «Acceptar» per tancar-lo ara i sortir, o «Cancel·lar» per quedar-te.')) return;
+    snapshot(); closeOpen(now()); save();
+  }
   video.pause(); hideInd(false); releaseAwake(); clearInterval(clockTimer);
   $('#main').classList.add('hidden'); $('#setup').classList.remove('hidden'); S=null; renderSetup();
 };
@@ -775,6 +807,7 @@ document.querySelectorAll('[data-finish]').forEach(b=>b.onclick=()=>{
   }
   if(!confirm(isT()?'Acabar l\'entreno? El cronòmetre s\'aturarà.':'Acabar el partit? El cronòmetre s\'aturarà.')) return;
   snapshot(); const t=now(); closeOpen(t); S.tEnd=Date.now(); save(); renderAll(); toast('Cronòmetre aturat. Ja pots exportar.');
+  offerBackup(isT()?'Entreno acabat.':'Partit acabat.');
 });
 function buildTrainButtons(){
   const mk = k => `<button class="sb ${TBTN[k].blk?'BLK ':''}${TBTN[k].side}" data-act="T:${k}">${TBTN[k].l}</button>`;
@@ -816,8 +849,10 @@ function startTrain(k){
   const t=now(); closeOpen(t);
   const c={id:uid(), n:S.counter++, kind:'T', btn:k, label:b.l, side:b.side, start:r1(Math.max(0,t-(b.pre||0))), end:null,
            tags:b.tags.map(p=>p.slice()), note:b.note||null, player:null, decision:null};
+  if(b.nb) c.note=null;
   S.clips.push(c); S.openId=c.id; S.focusId=c.id; save(); renderAll();
-  flash(b.l+(c.note?' · '+c.note:''), b.side);
+  flash(b.l, b.nb?null:b.side);
+  if(b.nb) openNote(c.id);
 }
 function finalClip(){
   if(!S.openId){ toast('No hi ha cap tall obert'); return; }
@@ -944,7 +979,7 @@ function chipsHtml(c){
     const fixed = c.kind==='TO' || (c.kind==='IND' && i===0);
     const ri = c.kind==='IND' ? i-1 : i;
     return `<button class="chip" ${fixed?'disabled style="opacity:.8"':`data-rm="${ri}"`}><i>${i+1}</i>${esc(labelOf(p))}${fixed?'':' <i>×</i>'}</button>`;
-  }).join('') + (c.note?`<button class="chip" data-note="1" style="background:#3b3412;color:var(--warn)">${esc(c.note)} <i>×</i></button>`:'');
+  }).join('') + (c.note && c.kind==='T' ?`<span class="chip" style="background:#3b3412;color:var(--warn)">NOTES: ${esc(c.note)}</span>`:'');
   return html || '<span class="muted" style="font-size:12px">Sense etiquetes</span>';
 }
 function timesHtml(c){
@@ -976,10 +1011,12 @@ function renderPanel(){
     <div class="chips">${chipsHtml(c)}</div></div>`;
   if(c.kind==='SYNC'){
     h += `<div class="muted" style="font-size:13px;line-height:1.5">Tall de sincronització: comença a 00:00:00, el moment en què has premut SINC. A XPS, quadra aquest tall amb el moment del senyal a la càmera.</div>`;
+  } else if(c.kind==='T' && c.btn==='NBLK'){
+    h += `<div class="sec"><div class="lb">Text a NOTES</div><button class="tb" style="min-height:52px;font-size:17px;text-align:left;padding:0 12px" id="bEditNote">${c.note?esc(c.note):'<span class="muted">(sense text) · toca per escriure</span>'}</button></div>`;
+  } else if(c.kind==='T' && TBTN[c.btn] && TBTN[c.btn].blk){
+    h += `<div class="muted" style="font-size:13px;line-height:1.5">Bloc ${c.side==='TAM'?'d\'atac':'de defensa'}: s'exporta amb «${esc(c.note||'')}» a NOTES i SYSTEM buit.</div>`;
   } else if(c.kind==='T'){
     h += `<div class="sec"><div class="lb">Etiquetes (SYSTEM)</div><div class="g g3">`+T_EDIT[c.side].map(p=>tagBtn(p,labelOf(p),has(p),c.side)).join('')+`</div></div>`;
-    const bn=BLOCK_NOTE[c.side];
-    h += `<div class="sec"><div class="lb">Notes</div><div class="g g2"><button class="tb ${c.note===bn?'on':''}" style="${c.note===bn?selStyle(c.side):''}" data-setnote="${bn}">${bn}</button></div></div>`;
   } else if(c.kind==='TO'){
     h += `<div class="sec"><div class="lb">Temps mort de</div><div class="g g2">
       <button class="tb ${c.side==='TAM'?'on':''}" style="${c.side==='TAM'?selStyle('TAM'):''};min-height:54px;font-size:18px;font-weight:800" data-side="TAM">TAM</button>
@@ -1000,7 +1037,7 @@ function panelClick(e){
   if(t.dataset.tag) toggleTag(JSON.parse(t.dataset.tag));
   else if(t.dataset.rm!=null) removeTagAt(+t.dataset.rm);
   else if(t.dataset.note) edit(c=>{ c.note=null; });
-  else if(t.dataset.setnote) edit(c=>{ c.note = c.note===t.dataset.setnote?null:t.dataset.setnote; });
+  else if(t.id==='bEditNote') openNote(S.focusId);
   else if(t.dataset.side) edit(c=>{ c.side=t.dataset.side; });
   else if(t.dataset.player!=null){ edit(c=>{ c.player = t.dataset.player===''?null:t.dataset.player; c.pChosen=true; }); autoCloseShoot(); }
   else if(t.dataset.dec) { edit(c=>{ c.decision = c.decision===t.dataset.dec?null:t.dataset.dec; }); autoCloseShoot(); }
@@ -1100,6 +1137,28 @@ $('#bRep').onclick = ()=>{
 };
 pv.addEventListener('timeupdate', ()=>{ const c=clip(S&&S.focusId); if(c && c.kind==='IND' && pv.currentTime>=c.end) pv.pause(); });
 
+/* ===================== NEW BLOCK note ===================== */
+let noteFor=null;
+function openNote(id){
+  const c=clip(id); if(!c) return; noteFor=id;
+  $('#noteText').value = c.note||'';
+  const rec=LS.get('xt.recentNotes',[]);
+  $('#noteRecent').innerHTML = rec.map(n=>`<button class="chip" data-rn="${esc(n)}" style="height:40px;font-size:15px">${esc(n)}</button>`).join('');
+  $('#ovNote').classList.remove('hidden'); setTimeout(()=>$('#noteText').focus(),50);
+}
+function closeNote(text){
+  const c=clip(noteFor); $('#ovNote').classList.add('hidden'); $('#noteText').blur();
+  if(!c) return;
+  const v=(text||'').trim();
+  edit(x=>{ x.note = v||null; });
+  if(v){ const rec=[v,...LS.get('xt.recentNotes',[]).filter(x=>x!==v)].slice(0,8); LS.set('xt.recentNotes',rec); }
+  noteFor=null;
+}
+$('#bNoteOk').onclick=()=>closeNote($('#noteText').value);
+$('#bNoteNo').onclick=()=>closeNote('');
+$('#noteText').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); closeNote($('#noteText').value); } });
+$('#noteRecent').addEventListener('click',e=>{ const b=e.target.closest('[data-rn]'); if(b) closeNote(b.dataset.rn); });
+
 /* ===================== export ===================== */
 function warnings(c){
   const w=[];
@@ -1177,7 +1236,7 @@ function tagsCell(c){
 }
 function refreshExportText(){
   const T=phasesTxt(), X=allXml();
-  $('#exTxt').textContent = T.text; $('#exXml').textContent = X.n ? X.text : '(cap tall tancat)'; $('#bDlXml').disabled=!X.n;
+  $('#exTxt').textContent = T.text; $('#exXml').textContent = X.n ? X.text : '(cap tall tancat)';
 }
 function openExport(){
   const t=isT();
@@ -1216,11 +1275,11 @@ $('#bCopyTxt').onclick = async ()=>{
   catch(e){ const a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); toast('Copiat'); }
 };
 $('#bDlTxt').onclick = ()=> download(safeName()+(isT()?'_entreno.txt':'_fases.txt'), phasesTxt().text, 'text/plain;charset=utf-8');
-$('#bDlXml').onclick = ()=> download(safeName()+'.xml', allXml().text, 'application/xml');
 $('#bDlAll').onclick = ()=>{
   const X=allXml();
   if(!X.n){ toast('No hi ha talls tancats'); return; }
   download(safeName()+'.xml', X.text, 'application/xml'); toast('Descarregant '+X.n+' talls');
+  if(!clocked() || !S.tEnd) offerBackup('XML descarregat.');
 };
 
 /* ===================== roster ===================== */
