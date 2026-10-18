@@ -439,7 +439,9 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 
 <script>
 'use strict';
-const APP_VERSION = 'v11';
+const APP_VERSION = 'v13';
+const FAULT_TXT = 'FAULT';      // FIGURÁK, as XPS exports it alone (no trailing space)
+const FAULT_PASTE = '[FAULT]';  // FAULT is a folder: clipboard import needs brackets (like TIME OUT)
 const SYNC_LEN = 2;
 /* =====================================================================
    TAG DICTIONARY — exact texts as they exist in the XPS template.
@@ -484,21 +486,21 @@ const DEFAULT_TRAIN_ROSTER = ['01. MARTINEZ Jorge','03. DASZEK Michał','07. KAN
  '53. MATYSZCZYK Maksym','66. BJERRE Frederik','99. KOSOROTOV Sergei'];
 // pre = seconds before the click that the clip starts
 const TBTN = {
-  A60:{side:'TAM',l:'ATTACK 6:0',tags:[['6:0']]},
-  A51:{side:'TAM',l:'ATTACK 5:1',tags:[['5:1']]},
+  A60:{side:'TAM',l:'ATTACK 6:0',tags:[['6:0']],fault:true},
+  A51:{side:'TAM',l:'ATTACK 5:1',tags:[['5:1']],fault:true},
   A76:{side:'TAM',l:'7x6',tags:[['7X6'],['6:0']]},
   AP1:{side:'TAM',l:'+1',tags:[['+1']]},
   AM1:{side:'TAM',l:'−1',tags:[['-1']]},
   ABAL:{side:'TAM',l:'BALANCE',tags:[['BAL 2W']],pre:1},
-  D60:{side:'VED',l:'DEFENSE 6:0',tags:[['6:0']]},
-  D51:{side:'VED',l:'DEFENSE 5:1',tags:[['5:1']]},
+  D60:{side:'VED',l:'DEFENSE 6:0',tags:[['6:0']],fault:true},
+  D51:{side:'VED',l:'DEFENSE 5:1',tags:[['5:1']],fault:true},
   D76:{side:'VED',l:'7x6',tags:[['7X6'],['6:0']]},
   DP1:{side:'VED',l:'+1',tags:[['+1']]},
   DM1:{side:'VED',l:'−1',tags:[['-1']]},
   DFB:{side:'VED',l:'FASTBREAK',tags:[['FB 2W']],pre:1},
-  MATT:{side:'TAM',l:'ATT',tags:[['6:0']]},
+  MATT:{side:'TAM',l:'ATT',tags:[['6:0']],fault:true},
   MBAL:{side:'TAM',l:'BAL',tags:[['BAL 2W']],pre:1},
-  MDEF:{side:'VED',l:'DEF',tags:[['6:0']]},
+  MDEF:{side:'VED',l:'DEF',tags:[['6:0']],fault:true},
   MFB:{side:'VED',l:'FB',tags:[['FB 2W']],pre:1},
   BLKA:{side:'TAM',l:'BLOCK ATT',tags:[],note:'A',blk:true},
   BLKD:{side:'VED',l:'BLOCK DEF',tags:[],note:'D',blk:true},
@@ -979,7 +981,7 @@ function chipsHtml(c){
     const fixed = c.kind==='TO' || (c.kind==='IND' && i===0);
     const ri = c.kind==='IND' ? i-1 : i;
     return `<button class="chip" ${fixed?'disabled style="opacity:.8"':`data-rm="${ri}"`}><i>${i+1}</i>${esc(labelOf(p))}${fixed?'':' <i>×</i>'}</button>`;
-  }).join('') + (c.note && c.kind==='T' ?`<span class="chip" style="background:#3b3412;color:var(--warn)">NOTES: ${esc(c.note)}</span>`:'');
+  }).join('') + (c.fault?`<button class="chip" data-fault="1" style="background:#3a2a44;color:#e9d5ff">FIGURÁK: FAULT <i>×</i></button>`:'') + (c.note && c.kind==='T' ?`<span class="chip" style="background:#3b3412;color:var(--warn)">NOTES: ${esc(c.note)}</span>`:'');
   return html || '<span class="muted" style="font-size:12px">Sense etiquetes</span>';
 }
 function timesHtml(c){
@@ -1014,9 +1016,15 @@ function renderPanel(){
   } else if(c.kind==='T' && c.btn==='NBLK'){
     h += `<div class="sec"><div class="lb">Text a NOTES</div><button class="tb" style="min-height:52px;font-size:17px;text-align:left;padding:0 12px" id="bEditNote">${c.note?esc(c.note):'<span class="muted">(sense text) · toca per escriure</span>'}</button></div>`;
   } else if(c.kind==='T' && TBTN[c.btn] && TBTN[c.btn].blk){
-    h += `<div class="muted" style="font-size:13px;line-height:1.5">Bloc ${c.side==='TAM'?'d\'atac':'de defensa'}: s'exporta amb «${esc(c.note||'')}» a NOTES i SYSTEM buit.</div>`;
+    const onA=c.note==='A', onD=c.note==='D';
+    h += `<div class="sec"><div class="lb">Bloc (NOTES)</div><div class="g g2">
+      <button class="tb ${onA?'on':''}" style="${onA?selStyle('TAM'):''};min-height:54px;font-size:16px;font-weight:800" data-blk="A">A · BLOCK ATT</button>
+      <button class="tb ${onD?'on':''}" style="${onD?selStyle('VED'):''};min-height:54px;font-size:16px;font-weight:800" data-blk="D">D · BLOCK DEF</button></div>
+      <div class="muted" style="font-size:12px">SYSTEM queda buit. Canviar-lo també canvia el costat (TAM / VED).</div></div>`;
   } else if(c.kind==='T'){
     h += `<div class="sec"><div class="lb">Etiquetes (SYSTEM)</div><div class="g g3">`+T_EDIT[c.side].map(p=>tagBtn(p,labelOf(p),has(p),c.side)).join('')+`</div></div>`;
+    if(TBTN[c.btn] && TBTN[c.btn].fault)
+      h += `<div class="sec"><div class="lb">Figurák</div><div class="g g3"><button class="tb ${c.fault?'on':''}" style="${c.fault?selStyle(c.side):''}" data-fault="1">FAULT</button></div></div>`;
   } else if(c.kind==='TO'){
     h += `<div class="sec"><div class="lb">Temps mort de</div><div class="g g2">
       <button class="tb ${c.side==='TAM'?'on':''}" style="${c.side==='TAM'?selStyle('TAM'):''};min-height:54px;font-size:18px;font-weight:800" data-side="TAM">TAM</button>
@@ -1038,6 +1046,8 @@ function panelClick(e){
   else if(t.dataset.rm!=null) removeTagAt(+t.dataset.rm);
   else if(t.dataset.note) edit(c=>{ c.note=null; });
   else if(t.id==='bEditNote') openNote(S.focusId);
+  else if(t.dataset.blk) edit(c=>{ c.note=t.dataset.blk; c.side = t.dataset.blk==='A'?'TAM':'VED'; c.btn = t.dataset.blk==='A'?'BLKA':'BLKD'; c.label = TBTN[c.btn].l; });
+  else if(t.dataset.fault) edit(c=>{ c.fault=!c.fault; });
   else if(t.dataset.side) edit(c=>{ c.side=t.dataset.side; });
   else if(t.dataset.player!=null){ edit(c=>{ c.player = t.dataset.player===''?null:t.dataset.player; c.pChosen=true; }); autoCloseShoot(); }
   else if(t.dataset.dec) { edit(c=>{ c.decision = c.decision===t.dataset.dec?null:t.dataset.dec; }); autoCloseShoot(); }
@@ -1173,8 +1183,8 @@ const sorted = arr => arr.slice().sort((a,b)=>a.start-b.start || a.n-b.n);
 function phasesTxt(){
   const off = clocked() ? (S.offset||0) : 0;
   const rows = sorted(S.clips.filter(c=>c.end!=null && (isT() ? (c.kind==='T' && !c.note) : (c.kind!=='IND' && c.kind!=='SYNC'))));
-  const L=['Partido\tNr\tStart\tEnd\tEquipo\tDeportista\tSYSTEM'];
-  rows.forEach((c,i)=>L.push([S.name, i+1, hms(Math.floor(c.start+off+1e-6)), hms(Math.ceil(c.end+off-1e-6)), S.team+' '+(c.side||'TAM'), 'NINGUNO', fmtCol(c.tags)].join('\t')));
+  const L=['Partido\tNr\tStart\tEnd\tEquipo\tDeportista\tSYSTEM\tFIGURÁK'];
+  rows.forEach((c,i)=>L.push([S.name, i+1, hms(Math.floor(c.start+off+1e-6)), hms(Math.ceil(c.end+off-1e-6)), S.team+' '+(c.side||'TAM'), 'NINGUNO', fmtCol(c.tags), c.fault?FAULT_PASTE:''].join('\t')));
   return {text:L.join('\r\n'), n:rows.length};
 }
 const xesc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
@@ -1213,6 +1223,7 @@ function allXml(){
     const labels=[];
     if(c.kind==='IND') labels.push(xlabel('INDIVIDUAL ', fmtCol([IND_FIRST,...c.tags])));
     else if(c.tags && c.tags.length) labels.push(xlabel('SYSTEM', fmtCol(c.tags)));
+    if(c.fault) labels.push(xlabel('FIGURÁK', FAULT_TXT));
     if(c.decision===ZONE_7M) labels.push(xlabel('SITUATION ', '7m'));
     else if(c.decision) labels.push(xlabel('DECISION ', c.decision));
     if(c.note) labels.push(xlabel('NOTES ', c.note));
@@ -1232,7 +1243,7 @@ function download(name, text, type){
 function tagsCell(c){
   if(c.kind==='IND') return (c.player?esc(c.player)+'<br>':'')+esc(fmtCol([IND_FIRST,...c.tags]))+(c.decision?' · '+esc(c.decision):'');
   if(c.kind==='SHOOT') return esc(c.player||'NINGUNO')+(c.decision?' · '+esc(decLabel(c.decision)):'');
-  return esc(fmtCol(c.tags))+(c.note?' · <span style="color:var(--warn)">'+esc(c.note)+'</span>':'');
+  return esc(fmtCol(c.tags))+(c.fault?' · FAULT':'')+(c.note?' · <span style="color:var(--warn)">'+esc(c.note)+'</span>':'');
 }
 function refreshExportText(){
   const T=phasesTxt(), X=allXml();

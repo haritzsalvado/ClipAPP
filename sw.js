@@ -1,5 +1,5 @@
 // ClipAPP — offline cache. Bump VERSION on every upload.
-const VERSION = 'clipapp-v11';
+const VERSION = 'clipapp-v13';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {
