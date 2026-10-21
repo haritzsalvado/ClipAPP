@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ca">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -27,22 +27,32 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 .b-TAM{background:var(--tam);color:#fff}
 .b-VED{background:var(--ved);color:#fff}
 .b-none{background:var(--line);color:var(--text)}
-.b-mode{background:#33404d;color:var(--text)}
 .b-train{background:#15803d;color:#fff}
-.b-mvid{background:#6d28d9;color:#fff}
-.b-mlive{background:#c2410c;color:#fff}
+.b-mvid{background:#fca5a5;color:#3b0a0a}
+.b-mlive{background:#991b1b;color:#fff}
 
 /* ---------- SETUP ---------- */
-#setup{max-width:860px;margin:0 auto;padding:24px 16px 60px;height:100%;overflow-y:auto}
+#setup{max-width:880px;margin:0 auto;padding:24px 16px 60px;height:100%;overflow-y:auto}
 #setup h1{font-size:26px;margin:0 0 4px}
 .card{background:var(--panel);border-radius:12px;padding:16px;margin-top:16px}
 .card h2{font-size:15px;letter-spacing:.06em;color:var(--muted);margin:0 0 12px;text-transform:uppercase}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .field{display:flex;flex-direction:column;gap:6px;flex:1 1 220px}
-.field label{font-size:13px;color:var(--muted);font-weight:600}
+.field label,.flabel{font-size:13px;color:var(--muted);font-weight:600}
 .modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .mode{height:64px;border-radius:12px;border:2px solid var(--line);background:var(--chip);font-size:19px;font-weight:800}
 .mode.on{border-color:var(--text);background:var(--text);color:#0f1317}
+.srcs{display:flex;gap:8px;flex-wrap:wrap}
+.src{height:44px;padding:0 16px;border-radius:10px;border:2px solid var(--line);background:var(--chip);font-weight:700;font-size:15px}
+.src.on{border-color:var(--text);background:var(--text);color:#0f1317}
+.code{font-size:18px;font-weight:700;padding:8px 0}
+.teams{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.team{min-height:58px;border-radius:10px;border:2px solid var(--line);background:var(--chip);text-align:left;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.team b{font-size:15px}
+.team span{font-size:12px;color:var(--muted)}
+.team.on{border-color:var(--text);background:#2f3a46}
+.team.on span{color:var(--text)}
+.team.new{border-style:dashed;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
 .sess{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
 .sess:first-child{border-top:none}
 .sess .info{flex:1;min-width:0}
@@ -74,6 +84,14 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 #controls .btn{height:42px;min-width:54px}
 #controls .sp{flex:1}
 #tclock{font-size:13px;color:var(--muted)}
+#liveBox{flex:1;display:flex;flex-direction:column;gap:12px;align-items:stretch;justify-content:center;padding:20px}
+#mClock{font-size:96px;font-weight:800;text-align:center;line-height:1}
+#mClock small,#tClock small{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-top:8px;font-family:system-ui,sans-serif}
+.live small{color:var(--ok)!important}
+.ended small{color:var(--warn)!important}
+.bsync{height:64px;font-size:19px;font-weight:800;border-radius:12px;border:none;background:var(--warn);color:#111418}
+.bsync.done{height:44px;font-size:14px;background:var(--chip);color:var(--muted)}
+.bfin{height:52px;font-size:16px;font-weight:800;border-radius:12px;border:2px solid var(--warn);background:transparent;color:var(--warn)}
 
 #right{width:350px;flex:none;border-left:1px solid #252e37;display:flex;flex-direction:column;min-height:0}
 #starts{padding:8px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;flex:none}
@@ -86,7 +104,13 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 .sb.ID{background:#2a323c;border:2px solid var(--ved)}
 .sb.FIN{background:var(--text);color:#0f1317}
 .sb.on{outline:3px solid #fff;outline-offset:-3px}
-.sb.armed{outline:3px dashed var(--warn);outline-offset:-3px;color:var(--warn)}
+.sb.BLK{background:transparent;color:#fff}
+.sb.BLK.TAM{border:3px solid var(--tam)}
+.sb.BLK.VED{border:3px solid var(--ved)}
+.sb.NB{background:#2a323c;border:2px solid #fbbf24;color:#fde68a}
+.span2{grid-column:span 2}
+#transport{flex:none;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:8px;border-top:1px solid #252e37}
+#transport .btn{height:64px;font-size:20px;font-weight:800;border-radius:12px}
 #panelHost{display:none}
 #panel{flex:1;overflow-y:auto;padding:0 8px 10px;display:flex;flex-direction:column;gap:8px}
 .cc{background:var(--panel);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:6px}
@@ -134,7 +158,7 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 #tMatch .sb{height:70px;font-size:19px}
 #tRight{width:330px;flex:none;border-left:1px solid #252e37;display:flex;flex-direction:column;min-height:0;padding-top:8px}
 
-/* ---------- INDIVIDUAL / SHOOT OVERLAY ---------- */
+/* ---------- POP-UP SCREEN (IND / SHOT / 7m) ---------- */
 #ovInd{position:fixed;inset:0;background:rgba(5,8,10,.6);z-index:40;display:flex;padding:10px}
 #indBox{flex:1;background:var(--bg);border:2px solid var(--line);border-radius:14px;display:flex;gap:12px;padding:12px;min-height:0}
 #indBox.TAM{border-color:var(--tam)}
@@ -144,34 +168,15 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 #indClock{font-size:40px;font-weight:800;text-align:center;background:var(--panel);border-radius:10px;padding:10px 0}
 #indR{flex:1;display:flex;flex-direction:column;gap:14px;min-width:0;overflow-y:auto}
 #indR .tb{min-height:58px;font-size:15px}
+#indBox.big #indR .tb{min-height:76px;font-size:20px}
+#indBox.big .gp{grid-template-columns:repeat(auto-fill,minmax(84px,1fr))}
+#indBox.big .tb .n{font-size:24px}
 .gp{grid-template-columns:repeat(auto-fill,minmax(66px,1fr))}
 .gi{grid-template-columns:repeat(6,minmax(0,1fr))}
 .gi7{grid-template-columns:repeat(7,minmax(0,1fr))}
+.gz{grid-template-columns:repeat(3,minmax(0,1fr));max-width:620px}
 .grp{display:grid;grid-template-columns:84px 1fr;gap:6px;align-items:center}
 .grp .rl{font-size:12px;font-weight:800;color:#c9d2db}
-#indBox.shoot #indR .tb{min-height:84px;font-size:20px}
-#indBox.shoot .gp{grid-template-columns:repeat(auto-fill,minmax(84px,1fr))}
-#indBox.shoot .tb .n{font-size:24px}
-#transport{flex:none;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:8px;border-top:1px solid #252e37}
-#transport .btn{height:64px;font-size:20px;font-weight:800;border-radius:12px}
-#liveBox{flex:1;display:flex;flex-direction:column;gap:12px;align-items:stretch;justify-content:center;padding:20px}
-#mClock{font-size:96px;font-weight:800;text-align:center;line-height:1}
-#mClock small,#tClock small{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-top:8px;font-family:system-ui,sans-serif}
-.live small{color:var(--ok)!important}
-.ended small{color:var(--warn)!important}
-.bsync{height:72px;font-size:20px;font-weight:800;border-radius:12px;border:none;background:var(--warn);color:#111418}
-.bsync.done{height:44px;font-size:14px;background:var(--chip);color:var(--muted)}
-.bfin{height:52px;font-size:16px;font-weight:800;border-radius:12px;border:2px solid var(--warn);background:transparent;color:var(--warn)}
-.srcs{display:flex;gap:8px;margin-top:12px}
-.src{height:44px;padding:0 16px;border-radius:10px;border:2px solid var(--line);background:var(--chip);font-weight:700;font-size:15px}
-.src.on{border-color:var(--text);background:var(--text);color:#0f1317}
-.sb.BLK{background:transparent;color:#fff}
-.sb.BLK.TAM{border:3px solid var(--tam)}
-.sb.BLK.VED{border:3px solid var(--ved)}
-.sb.NB{background:#2a323c;border:2px solid #fbbf24;color:#fde68a}
-.notechips{display:flex;flex-wrap:wrap;gap:6px}
-#exTop{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px;border-radius:12px;background:var(--panel)}
-#bDlAll{height:56px;font-size:18px;font-weight:800;padding:0 22px}
 #bFet{height:64px;font-size:20px;font-weight:800;border-radius:12px}
 
 /* ---------- OTHER OVERLAYS ---------- */
@@ -183,6 +188,8 @@ input,textarea,select{font-family:inherit;font-size:16px;background:var(--chip);
 .ex{display:flex;gap:16px;flex-wrap:wrap}
 .ex .l{flex:1 1 520px;min-width:0}
 .ex .r{flex:1 1 340px;display:flex;flex-direction:column;gap:10px}
+#exTop{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px;border-radius:12px;background:var(--panel)}
+#bDlAll{height:56px;font-size:18px;font-weight:800;padding:0 22px}
 table{width:100%;border-collapse:collapse;font-size:14px}
 th{text-align:left;font-size:12px;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
 td{padding:9px 8px;border-bottom:1px solid #222a33;vertical-align:top}
@@ -192,6 +199,7 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 .keyrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #222a33}
 .keyrow .a{flex:1;font-weight:600}
 .kcap{min-width:70px;text-align:center;padding:6px 10px;border-radius:7px;background:var(--chip);border:1px solid var(--line)}
+.notechips{display:flex;flex-wrap:wrap;gap:6px}
 #toast{position:fixed;left:50%;bottom:54px;transform:translateX(-50%);background:var(--text);color:#0f1317;font-weight:700;padding:10px 16px;border-radius:10px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%}
 
 @media (max-width:900px){
@@ -209,47 +217,58 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 <!-- ================= SETUP ================= -->
 <section id="setup">
   <h1>ClipAPP</h1>
-  <div class="muted">Neteja de partits i talls d'entrenaments</div>
+  <div class="muted">Game and training cuts</div>
 
   <div class="card">
-    <h2>Nou</h2>
+    <h2>New</h2>
     <div class="modes">
-      <button class="mode on" data-mode="match">Partit</button>
-      <button class="mode" data-mode="training">Entreno</button>
+      <button class="mode on" data-mode="match">Game</button>
+      <button class="mode" data-mode="training">Training</button>
     </div>
+
     <div id="newMatch">
       <div class="row">
-        <div class="field"><label for="nName">Codi del partit</label><input id="nName" placeholder="p. ex. S7.PLO-GDA"></div>
-        <div class="field"><label for="nTeam">Equip analitzat (com a XPS, sense TAM/VED)</label><input id="nTeam" list="teamList" placeholder="p. ex. GDANSK 26-27"><datalist id="teamList"></datalist></div>
+        <div class="field" style="flex:0 1 190px"><label for="mDate">Date</label><input id="mDate" type="date"></div>
+        <div class="field"><label for="mCode">Game code (after the date)</label><input id="mCode" placeholder="e.g. S7.PLO-GDA"></div>
       </div>
-      <div class="srcs"><button class="src on" data-src="video">Amb vídeo</button><button class="src" data-src="live">En directe (sense vídeo)</button></div>
+      <div class="field" style="margin-top:10px"><label>Resulting code</label><div id="mName" class="mono code"></div></div>
+      <div class="flabel" style="margin:6px 0 8px">Analysed team · tap to select</div>
+      <div class="teams" id="teamPick"></div>
+      <div class="row hidden" id="newTeamRow" style="margin-top:10px">
+        <input id="newTeamName" placeholder="Team name exactly as in XPS, without TAM/VED (e.g. GDANSK 26-27)" style="flex:1">
+        <button class="btn primary" id="bNewTeamOk">Create</button><button class="btn" id="bNewTeamNo">Cancel</button>
+      </div>
+      <div class="row" style="margin-top:10px"><span class="muted" id="teamInfo" style="font-size:13px;flex:1"></span><button class="btn" id="bTeamEdit">Edit roster</button></div>
+      <div class="flabel" style="margin:14px 0 8px">Source</div>
+      <div class="srcs"><button class="src on" data-src="video">With video</button><button class="src" data-src="live">Live (no video)</button></div>
     </div>
+
     <div id="newTrain" class="hidden">
       <div class="row">
-        <div class="field" style="flex:1 1 170px"><label for="tDate">Data</label><input id="tDate" type="date"></div>
-        <div class="field" style="flex:0 1 110px"><label for="tMicro">Microcicle</label><input id="tMicro" inputmode="numeric" placeholder="13"></div>
-        <div class="field" style="flex:1 1 200px"><label>Tipus</label><div class="srcs" style="margin-top:0"><button class="src on" data-tt="ATT">ATT</button><button class="src" data-tt="DEF">DEF</button><button class="src" data-tt="MIX">MIX</button></div></div>
+        <div class="field" style="flex:0 1 190px"><label for="tDate">Date</label><input id="tDate" type="date"></div>
+        <div class="field" style="flex:0 1 120px"><label for="tMicro">Microcycle</label><input id="tMicro" inputmode="numeric" placeholder="13"></div>
+        <div class="field" style="flex:1 1 200px"><label>Type</label><div class="srcs"><button class="src on" data-tt="ATT">ATT</button><button class="src" data-tt="DEF">DEF</button><button class="src" data-tt="MIX">MIX</button></div></div>
       </div>
       <div class="row" style="margin-top:10px">
-        <div class="field"><label>Codi resultant</label><div id="tName" class="mono" style="font-size:18px;font-weight:700;padding:8px 0"></div></div>
-        <div class="field"><label for="tTeam">Equip (com a XPS, sense TAM/VED)</label><input id="tTeam"></div>
+        <div class="field"><label>Resulting code</label><div id="tName" class="mono code"></div></div>
+        <div class="field"><label for="tTeam">Team (as in XPS, without TAM/VED)</label><input id="tTeam"></div>
       </div>
-      <div class="row" style="margin-top:10px"><button class="btn" id="bTRoster">Plantilla de l'equip</button><span class="muted" id="tRosterInfo" style="font-size:13px"></span></div>
+      <div class="row" style="margin-top:10px"><button class="btn" id="bTRoster">Team roster</button><span class="muted" id="tRosterInfo" style="font-size:13px"></span></div>
     </div>
-    <div class="row" style="margin-top:14px"><button class="btn primary" id="bCreate">Crear i començar</button></div>
+    <div class="row" style="margin-top:16px"><button class="btn primary" id="bCreate" style="height:50px;font-size:17px">Create and start</button></div>
   </div>
 
   <div class="card">
-    <h2>Desats en aquesta tauleta</h2>
+    <h2>Saved on this tablet</h2>
     <div id="sessList"></div>
   </div>
 
   <div class="card">
-    <h2>Còpia de seguretat i plantilles</h2>
-    <div class="muted" style="font-size:14px;margin-bottom:10px">Exporta tots els partits, entrenos i plantilles en un fitxer. Per importar, pots fer servir tant una còpia completa com un fitxer de plantilles d'equips.</div>
+    <h2>Backup and rosters</h2>
+    <div class="muted" style="font-size:14px;margin-bottom:10px">Export all games, trainings and rosters to one file. To import, you can use a full backup or a team rosters file.</div>
     <div class="row">
       <button class="btn" id="bBackup">Backup (.json)</button>
-      <label class="btn" style="display:flex;align-items:center">Importar (.json · backup o plantilles)<input type="file" id="fRestore" accept=".json,application/json" class="hidden"></label>
+      <label class="btn" style="display:flex;align-items:center">Import (.json · backup or rosters)<input type="file" id="fRestore" accept=".json,application/json" class="hidden"></label>
     </div>
   </div>
   <div class="muted" style="font-size:12px;margin-top:18px" id="scrInfo"></div>
@@ -258,42 +277,42 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 <!-- ================= MAIN ================= -->
 <section id="main" class="hidden">
   <div id="topbar">
-    <button class="btn" id="bHome" aria-label="Tornar a l'inici">‹ Inici</button>
+    <button class="btn" id="bHome" aria-label="Back to start">‹ Home</button>
     <div class="title" id="mTitle"></div>
     <div class="sp"></div>
     <div id="saved"></div>
-    <label class="btn" style="display:flex;align-items:center" id="lblVideo">Vídeo<input type="file" id="fVideo2" accept="video/*" class="hidden"></label>
-    <button class="btn" id="bRoster">Plantilla</button>
-    <button class="btn" id="bKeys">Tecles</button>
-    <button class="btn primary" id="bExport">Talls i exportar</button>
+    <label class="btn" style="display:flex;align-items:center" id="lblVideo">Video<input type="file" id="fVideo2" accept="video/*" class="hidden"></label>
+    <button class="btn" id="bRoster">Roster</button>
+    <button class="btn" id="bKeys">Keys</button>
+    <button class="btn primary" id="bExport">Clips &amp; export</button>
   </div>
 
-  <!-- MATCH BODY -->
+  <!-- GAME BODY -->
   <div id="bodyMatch" class="body">
     <div id="left">
-      <div id="liveBox" class="hidden">
-        <div id="mClock" class="mono">00:00:00<small>Sense sincronitzar</small></div>
-        <button class="bsync" data-sync="1">SINC · senyal a la càmera</button>
-        <button class="bfin" data-finish="1">Acabar partit</button>
-        <div class="muted" style="text-align:center;font-size:13px">Mode directe: el temps surt del cronòmetre, no d'un vídeo.</div>
-      </div>
       <div class="flash" id="flashT2"></div>
+      <div id="liveBox" class="hidden">
+        <div id="mClock" class="mono">00:00:00<small>Not synced</small></div>
+        <button class="bsync" data-sync="1">SYNC · 1st half kick-off</button>
+        <button class="bsync" data-sync2="1">SYNC · 2nd half kick-off</button>
+        <button class="bfin" data-finish="1">End game</button>
+      </div>
       <div id="vwrap">
         <video id="video" playsinline preload="auto"></video>
         <div id="novideo">
-          <div style="font-size:18px;font-weight:700">Tria el vídeo del partit</div>
-          <div class="muted" id="novideoHint" style="font-size:14px">El vídeo no es puja enlloc: es llegeix des de la tauleta.</div>
-          <label class="btn primary" style="display:flex;align-items:center;height:52px;font-size:16px">Obrir vídeo (mp4)<input type="file" id="fVideo" accept="video/*" class="hidden"></label>
+          <div style="font-size:18px;font-weight:700">Choose the game video</div>
+          <div class="muted" id="novideoHint" style="font-size:14px">The video is not uploaded anywhere: it is read from the tablet.</div>
+          <label class="btn primary" style="display:flex;align-items:center;height:52px;font-size:16px">Open video (mp4)<input type="file" id="fVideo" accept="video/*" class="hidden"></label>
         </div>
         <div id="vbadge"></div>
         <div id="vclock" class="mono">00:00:00</div>
         <div class="flash" id="flashM"></div>
       </div>
       <div id="timeline"><div id="playhead"></div></div>
-      <input type="range" id="seek" min="0" max="100" step="0.1" value="0" aria-label="Posició del vídeo">
+      <input type="range" id="seek" min="0" max="100" step="0.1" value="0" aria-label="Video position">
       <div id="controls">
         <button class="btn" data-act="SPEED" id="bSpeed">x1</button>
-        <button class="btn" data-act="UNDO">Desfer</button>
+        <button class="btn" data-act="UNDO">Undo</button>
         <div class="sp"></div>
         <div id="tclock" class="mono">00:00:00 / 00:00:00</div>
       </div>
@@ -304,12 +323,12 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
         <button class="sb VED" data-act="DEF">DEF</button>
         <button class="sb TAM" data-act="BAL">BAL</button>
         <button class="sb VED" data-act="FB">FB</button>
-        <button class="sb IA" data-act="INDATT">IND ATT</button>
-        <button class="sb ID" data-act="INDDEF">IND DEF</button>
+        <button class="sb IA vidOnly" data-act="INDATT">IND ATT</button>
+        <button class="sb ID vidOnly" data-act="INDDEF">IND DEF</button>
         <button class="sb N" data-act="TO">TO</button>
-        <button class="sb FIN" data-act="FINAL">FINAL</button>
+        <button class="sb N liveOnly" data-act="P7">7m<small>1 tap</small></button>
+        <button class="sb FIN" data-act="FINAL" id="bFinalM">FINAL</button>
       </div>
-      <div id="panelSlotM" class="hidden"></div>
       <div id="transport">
         <button class="btn" data-act="BACK">−3 s</button>
         <button class="btn primary" data-act="PLAY" id="bPlay">▶</button>
@@ -321,55 +340,55 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
   <!-- TRAINING BODY -->
   <div id="bodyTrain" class="body hidden">
     <div id="tLeft">
-      <div id="tClock" class="mono">00:00:00<small>Sense sincronitzar</small></div>
-      <button class="bsync" data-sync="1">SINC · senyal a la càmera</button>
-      <button class="sb IA" data-act="SHOOT" style="height:84px;font-size:22px">SHOOT<small>1 clic · −4 s / +1 s</small></button>
-      <button class="sb NB" data-act="T:NBLK" style="height:64px;font-size:19px">NEW BLOCK<small>text a NOTES</small></button>
+      <div id="tClock" class="mono">00:00:00<small>Not synced</small></div>
+      <button class="bsync" data-sync="1">SYNC · signal to camera</button>
+      <button class="sb IA" data-act="SHOOT" style="height:84px;font-size:22px">SHOT<small>1 tap · −4 s / +1 s</small></button>
+      <button class="sb NB" data-act="T:NBLK" style="height:64px;font-size:19px">NEW BLOCK<small>1 s · text in NOTES</small></button>
       <button class="sb FIN" data-act="FINAL" style="height:84px;font-size:22px">FINAL</button>
       <div style="flex:1"></div>
-      <button class="bfin" data-finish="1">Acabar entreno</button>
-      <button class="btn" data-act="UNDO" style="height:48px">Desfer</button>
+      <button class="bfin" data-finish="1">End training</button>
+      <button class="btn" data-act="UNDO" style="height:48px">Undo</button>
     </div>
     <div id="tMid">
       <div class="tcols">
-        <div class="tcol" id="tColA"><div class="hdr">ATAC · TAM</div></div>
-        <div class="tcol" id="tColD"><div class="hdr">DEFENSA · VED</div></div>
+        <div class="tcol" id="tColA"></div>
+        <div class="tcol" id="tColD"></div>
       </div>
       <div id="tMatch"></div>
       <div class="flash" id="flashT"></div>
     </div>
-    <div id="tRight"><div id="panelSlotT" class="hidden"></div></div>
+    <div id="tRight"></div>
   </div>
 
   <div id="panelHost"><div id="panel"></div></div>
-  <div id="footer"><span class="lbl">TALLS</span><div id="recents" style="display:flex;gap:6px"></div></div>
+  <div id="footer"><span class="lbl">CLIPS</span><div id="recents" style="display:flex;gap:6px"></div></div>
 </section>
 
-<!-- ================= INDIVIDUAL / SHOOT ================= -->
+<!-- ================= POP-UP (IND / SHOT / 7m) ================= -->
 <div id="ovInd" class="hidden">
   <div id="indBox">
     <div id="indL">
       <video id="pv" playsinline muted preload="auto"></video>
-      <button class="btn" id="bRep" style="height:46px;font-size:16px">↻ Repetir</button>
+      <button class="btn" id="bRep" style="height:46px;font-size:16px">↻ Replay</button>
       <div id="indClock" class="mono hidden"></div>
       <div id="indInfo" class="cc"></div>
       <div style="flex:1"></div>
-      <button class="btn grey" id="bIndDel">Esborrar aquest tall</button>
-      <button class="btn primary" id="bFet">Fet ▶</button>
+      <button class="btn grey" id="bIndDel">Delete this clip</button>
+      <button class="btn primary" id="bFet">Done ▶</button>
     </div>
     <div id="indR"></div>
   </div>
 </div>
 
-<!-- ================= NOTE ================= -->
+<!-- ================= NEW BLOCK NOTE ================= -->
 <div class="ov hidden" id="ovNote">
   <div class="modal" style="width:min(640px,100%)">
-    <div class="mh"><div class="t">NEW BLOCK · text a NOTES</div></div>
+    <div class="mh"><div class="t">NEW BLOCK · text in NOTES</div></div>
     <div class="mb">
-      <input id="noteText" maxlength="80" placeholder="Escriu el text del bloc" style="font-size:20px;height:56px">
+      <input id="noteText" maxlength="80" placeholder="Type the block text" style="font-size:20px;height:56px">
       <div class="notechips" id="noteRecent"></div>
-      <div class="row"><button class="btn primary" id="bNoteOk" style="height:52px;font-size:17px;flex:1">Desar</button><button class="btn" id="bNoteNo" style="height:52px">Sense text</button></div>
-      <div class="muted" style="font-size:13px">El tall ja ha començat en prémer NEW BLOCK. Es tanca amb FINAL o amb el pròxim botó.</div>
+      <div class="row"><button class="btn primary" id="bNoteOk" style="height:52px;font-size:17px;flex:1">Save</button><button class="btn" id="bNoteNo" style="height:52px">No text</button></div>
+      <div class="muted" style="font-size:13px">A 1-second clip was created when you pressed NEW BLOCK. Other clips are not affected.</div>
     </div>
   </div>
 </div>
@@ -377,34 +396,33 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 <!-- ================= EXPORT ================= -->
 <div class="ov hidden" id="ovExport">
   <div class="modal">
-    <div class="mh"><div class="t">Talls i exportar a XPS</div><button class="btn" data-close="ovExport">Tancar</button></div>
+    <div class="mh"><div class="t">Clips &amp; export to XPS</div><button class="btn" data-close="ovExport">Close</button></div>
     <div class="mb">
       <div id="exTop">
-        <button class="btn primary" id="bDlAll">⬇ Descarregar tot</button>
+        <button class="btn primary" id="bDlAll">⬇ Download XML (all clips)</button>
         <div class="muted" id="exSummary" style="font-size:14px;flex:1"></div>
       </div>
-      <div id="exOffBox" class="sec">
-        <div class="lb">Segon del vídeo on es veu el senyal</div>
-        <div class="row"><input id="exOffset" class="mono" style="width:150px" placeholder="00:00:00"><span class="muted" style="font-size:13px">Es suma a tots els talls. Deixa-ho buit si ho ajustes a XPS.</span></div>
+      <div id="exOffBox" class="row">
+        <div class="field" style="flex:0 1 260px"><label for="exOffset" id="exOffLbl">Second of the video where the signal is seen</label><input id="exOffset" class="mono" placeholder="00:00:00"></div>
+        <div class="field hidden" style="flex:0 1 260px" id="exOff2Box"><label for="exOffset2">Second of the video where the 2nd half kicks off</label><input id="exOffset2" class="mono" placeholder="00:00:00"></div>
+        <div class="muted" style="font-size:13px;flex:1 1 220px">Added to every clip. Leave empty if you align in XPS.</div>
       </div>
       <div class="ex">
         <div class="l">
           <table>
-            <thead><tr><th>#</th><th>Tipus</th><th>Temps</th><th>Etiquetes</th></tr></thead>
+            <thead><tr><th>#</th><th>Type</th><th>Time</th><th>Tags</th></tr></thead>
             <tbody id="exRows"></tbody>
           </table>
         </div>
         <div class="r">
-          <div class="sec"><div class="lb" id="exXmlLbl">2 · Individuals → Importar XML/XLS › SportsCode</div>
+          <div class="sec"><div class="lb">All clips in one file → Importar XML/XLS › SportsCode</div>
             <pre id="exXml"></pre>
           </div>
-          <div id="exMatch">
-            <div class="sec"><div class="lb" id="exTxtLbl">1 · Fases → Importar Eventos desde el portapapeles</div>
-              <pre id="exTxt"></pre>
-              <div class="row"><button class="btn" id="bCopyTxt">Copiar</button><button class="btn" id="bDlTxt">Descarregar .txt</button></div>
-            </div>
+          <div class="sec"><div class="lb">Alternative · clips with SYSTEM only → Importar Eventos desde el portapapeles</div>
+            <pre id="exTxt"></pre>
+            <div class="row"><button class="btn" id="bCopyTxt">Copy</button><button class="btn" id="bDlTxt">Download .txt</button></div>
           </div>
-          <div class="muted" style="font-size:13px;line-height:1.5" id="exHelp"></div>
+          <div class="muted" style="font-size:13px;line-height:1.5">On the PC: in XPS, right-click › Avanzado › Importar XML/XLS › SportsCode and choose the .xml. In the wizard, assign the new combinations (in red) by clicking the tags in the right order: XPS remembers them for future imports.</div>
         </div>
       </div>
     </div>
@@ -414,11 +432,11 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 <!-- ================= ROSTER ================= -->
 <div class="ov hidden" id="ovRoster">
   <div class="modal" style="width:min(640px,100%)">
-    <div class="mh"><div class="t" id="rTitle">Plantilla</div><button class="btn" data-close="ovRoster">Tancar</button></div>
+    <div class="mh"><div class="t" id="rTitle">Roster</div><button class="btn" data-close="ovRoster">Close</button></div>
     <div class="mb">
-      <div class="muted" style="font-size:14px;line-height:1.5">Un jugador per línia, escrit exactament com a XPS (p. ex. <span class="mono">32. ZMAVC Nejc</span>). També pots enganxar-hi una exportació de text d'XPS: l'app n'agafarà la columna Deportista.</div>
+      <div class="muted" style="font-size:14px;line-height:1.5">One player per line, written exactly as in XPS (e.g. <span class="mono">32. ZMAVC Nejc</span>). You can also paste an XPS text export: the app takes the Deportista column.</div>
       <textarea id="rText" rows="14" class="mono" style="font-size:14px"></textarea>
-      <div class="row"><button class="btn primary" id="bRSave">Desar plantilla</button><span class="muted" id="rCount"></span></div>
+      <div class="row"><button class="btn primary" id="bRSave">Save roster</button><span class="muted" id="rCount"></span></div>
     </div>
   </div>
 </div>
@@ -426,11 +444,11 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 <!-- ================= KEYS ================= -->
 <div class="ov hidden" id="ovKeys">
   <div class="modal" style="width:min(560px,100%)">
-    <div class="mh"><div class="t">Tecles del comandament</div><button class="btn" data-close="ovKeys">Tancar</button></div>
+    <div class="mh"><div class="t">Remote keys</div><button class="btn" data-close="ovKeys">Close</button></div>
     <div class="mb">
-      <div class="muted" style="font-size:14px">Prem «Canviar» i després la tecla del comandament que vulguis fer servir.</div>
+      <div class="muted" style="font-size:14px">Press «Change» and then the key on the remote you want to use.</div>
       <div id="kList"></div>
-      <div class="row"><button class="btn" id="bKReset">Restablir per defecte</button></div>
+      <div class="row"><button class="btn" id="bKReset">Reset to default</button></div>
     </div>
   </div>
 </div>
@@ -439,10 +457,7 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 
 <script>
 'use strict';
-const APP_VERSION = 'v13';
-const FAULT_TXT = 'FAULT';      // FIGURÁK, as XPS exports it alone (no trailing space)
-const FAULT_PASTE = '[FAULT]';  // FAULT is a folder: clipboard import needs brackets (like TIME OUT)
-const SYNC_LEN = 2;
+const APP_VERSION = 'v14';
 /* =====================================================================
    TAG DICTIONARY — exact texts as they exist in the XPS template.
    Trailing spaces matter. All verified against XPS imports.
@@ -457,6 +472,7 @@ const SYS_MAIN = [ {p:['6:0']}, {p:['5:1']}, {p:['7X6']}, {p:['PASSIVE '],l:'PAS
 const SYS_MODS = [ {p:['+1']}, {p:['-1'],l:'−1'}, {p:['OTHERS ','+2 '],l:'+2'}, {p:['OTHERS ','-2'],l:'−2'},
                    {p:['OTHERS ','7x5 '],l:'7x5'}, {p:['OTHERS ','5x6 '],l:'5x6'} ];
 const TIMEOUT = ['TIME OUT '];
+const PASSIVE = ['PASSIVE '];
 const FORCE_BRACKET = new Set(['TIME OUT ']);
 
 const IND_ATT = [
@@ -469,13 +485,15 @@ const IND_ATT = [
 ];
 const DECISIONS = [ {v:'LW ',l:'LW'}, {v:'RW ',l:'RW'}, {v:'LB ',l:'LB'}, {v:'RB ',l:'RB'}, {v:'PL ',l:'PL'}, {v:'PIV ',l:'PIV'} ];
 const IND_DEF = [
-  ['ACCIONS', [ {p:['1X1']}, {p:['HELP']}, {p:['1X2']}, {p:['BLOCK']}, {p:['STEAL (LOP) '],l:'STEAL (LOP)'},
+  ['ACTIONS', [ {p:['1X1']}, {p:['HELP']}, {p:['1X2']}, {p:['BLOCK']}, {p:['STEAL (LOP) '],l:'STEAL (LOP)'},
      {p:['CONTROL PIVOT']}, {p:['FIGHT PIVOT']} ]],
   ['', [ {p:['ATTACK FAULT']}, {p:['DISSUATION (IMPAR)'],l:'DISSUATION'},
      {p:['DISSUATION (IMPAR)','OWN OPPONENT (PAR)'],l:'DISS. OWN OPP.'}, {p:['BRUTAL '],l:'BRUTAL'}, {p:['ACTITUDS '],l:'ACTITUDS'}, {p:['OUT '],l:'OUT'} ]]
 ];
 const IND_FIRST = ['INDIVIDUAL'];
 const IND_BEFORE = 4, IND_AFTER = 1;
+const FAULT_TXT = 'FAULT';      // FIGURÁK, as XPS exports it alone (no trailing space)
+const FAULT_PASTE = '[FAULT]';  // FAULT is a folder: clipboard import needs brackets (like TIME OUT)
 
 /* ---------- TRAINING ---------- */
 const DEFAULT_TRAIN_TEAM = 'PLOCK 26-27';
@@ -484,47 +502,51 @@ const DEFAULT_TRAIN_ROSTER = ['01. MARTINEZ Jorge','03. DASZEK Michał','07. KAN
  '22. RICHARDSON Melvin','23. ZARABEC Miha','24. FAZEKAS Gergo','26. KRAJEWSKI Przemysław','30. TERZIĆ Mak',
  '31. ZENKTELER Aleks','32. ALILOVIĆ Mirko','33. DAWYDZIK Dawid','34. MIHIĆ Lovro','43. ILIC Zoran',
  '53. MATYSZCZYK Maksym','66. BJERRE Frederik','99. KOSOROTOV Sergei'];
-// pre = seconds before the click that the clip starts
+// pre = seconds before the tap that the clip starts · fault/passive = which extra tags the button allows
 const TBTN = {
-  A60:{side:'TAM',l:'ATTACK 6:0',tags:[['6:0']],fault:true},
-  A51:{side:'TAM',l:'ATTACK 5:1',tags:[['5:1']],fault:true},
-  A76:{side:'TAM',l:'7x6',tags:[['7X6'],['6:0']]},
-  AP1:{side:'TAM',l:'+1',tags:[['+1']]},
-  AM1:{side:'TAM',l:'−1',tags:[['-1']]},
+  A60:{side:'TAM',l:'ATTACK 6:0',tags:[['6:0']],fault:true,passive:true},
+  A51:{side:'TAM',l:'ATTACK 5:1',tags:[['5:1']],fault:true,passive:true},
+  A76:{side:'TAM',l:'7x6',tags:[['7X6'],['6:0']],fault:true,passive:true},
+  AP1:{side:'TAM',l:'+1',tags:[['+1']],fault:true,passive:true},
+  AM1:{side:'TAM',l:'−1',tags:[['-1']],fault:true,passive:true},
   ABAL:{side:'TAM',l:'BALANCE',tags:[['BAL 2W']],pre:1},
-  D60:{side:'VED',l:'DEFENSE 6:0',tags:[['6:0']],fault:true},
-  D51:{side:'VED',l:'DEFENSE 5:1',tags:[['5:1']],fault:true},
-  D76:{side:'VED',l:'7x6',tags:[['7X6'],['6:0']]},
-  DP1:{side:'VED',l:'+1',tags:[['+1']]},
-  DM1:{side:'VED',l:'−1',tags:[['-1']]},
+  D60:{side:'VED',l:'DEFENSE 6:0',tags:[['6:0']],fault:true,passive:true},
+  D51:{side:'VED',l:'DEFENSE 5:1',tags:[['5:1']],fault:true,passive:true},
+  D76:{side:'VED',l:'7x6',tags:[['7X6'],['6:0']],fault:true,passive:true},
+  DP1:{side:'VED',l:'+1',tags:[['+1']],fault:true,passive:true},
+  DM1:{side:'VED',l:'−1',tags:[['-1']],fault:true,passive:true},
   DFB:{side:'VED',l:'FASTBREAK',tags:[['FB 2W']],pre:1},
-  MATT:{side:'TAM',l:'ATT',tags:[['6:0']],fault:true},
+  MATT:{side:'TAM',l:'ATT',tags:[['6:0']],fault:true,passive:true},
   MBAL:{side:'TAM',l:'BAL',tags:[['BAL 2W']],pre:1},
-  MDEF:{side:'VED',l:'DEF',tags:[['6:0']],fault:true},
+  MDEF:{side:'VED',l:'DEF',tags:[['6:0']],fault:true,passive:true},
   MFB:{side:'VED',l:'FB',tags:[['FB 2W']],pre:1},
   BLKA:{side:'TAM',l:'BLOCK ATT',tags:[],note:'A',blk:true},
   BLKD:{side:'VED',l:'BLOCK DEF',tags:[],note:'D',blk:true},
-  NBLK:{side:'TAM',l:'NEW BLOCK',tags:[],note:'',nb:true},
+  NBLK:{side:'TAM',l:'NEW BLOCK',tags:[],nb:true},
 };
 const T_COL_A = ['A60','A51','A76','AP1','AM1','ABAL','BLKA'];
 const T_COL_D = ['D60','D51','D76','DP1','DM1','DFB','BLKD'];
 const T_MATCH = ['MATT','MBAL','MDEF','MFB'];
 const T_EDIT = { TAM:[['6:0'],['5:1'],['7X6'],['+1'],['-1'],['BAL 2W']], VED:[['6:0'],['5:1'],['7X6'],['+1'],['-1'],['FB 2W']] };
-const BLOCK_NOTE = { TAM:'BLOCK ATT', VED:'BLOCK DEF' };
 const SHOOT_BEFORE = 4, SHOOT_AFTER = 1;
+const NB_LEN = 1;
 const ZONE_7M = '7M';   // exported as SITUATION "7m"
 const decLabel = d => d===ZONE_7M ? '7m' : String(d||'').trim();
+const SHOT_ZONES = [ {v:'LW ',l:'LW'}, {v:'PIV ',l:'PIV'}, {v:'RW ',l:'RW'},
+                     {v:'LB ',l:'LB'}, {v:'PL ',l:'PL'}, {v:'RB ',l:'RB'},
+                     null, {v:ZONE_7M,l:'7m'}, null ];
+const SYNC_LEN = 2;
 
 const KIND_SIDE = {ATT:'TAM',BAL:'TAM',DEF:'VED',FB:'VED'};
 const ACTIONS_M = [
-  ['ATT','Inici ATT'],['BAL','Inici BAL'],['DEF','Inici DEF'],['FB','Inici FB'],['TO','Inici TO'],
-  ['INDATT','IND ATT'],['INDDEF','IND DEF'],['FINAL','FINAL · i «Fet» als individuals'],
-  ['PLAY','Play / pausa'],['BACK','−3 s'],['FWD','+3 s'],['SPEED','Velocitat'],['UNDO','Desfer']
+  ['ATT','Start ATT'],['BAL','Start BAL'],['DEF','Start DEF'],['FB','Start FB'],['TO','Start TO'],
+  ['INDATT','IND ATT (video)'],['INDDEF','IND DEF (video)'],['P7','7m (live)'],['FINAL','FINAL · and «Done» on pop-ups'],
+  ['PLAY','Play / pause'],['BACK','−3 s'],['FWD','+3 s'],['SPEED','Speed'],['UNDO','Undo']
 ];
 const ACTIONS_T = [
-  ...T_COL_A.map(k=>['T:'+k,'Entreno · '+TBTN[k].l+' (atac)']),
-  ...T_COL_D.map(k=>['T:'+k,'Entreno · '+TBTN[k].l+' (defensa)']),
-  ...T_MATCH.map(k=>['T:'+k,'Entreno · zona match '+TBTN[k].l]), ['SHOOT','Entreno · SHOOT'], ['T:NBLK','Entreno · NEW BLOCK']
+  ...T_COL_A.map(k=>['T:'+k,'Training · '+TBTN[k].l+' (attack)']),
+  ...T_COL_D.map(k=>['T:'+k,'Training · '+TBTN[k].l+' (defense)']),
+  ...T_MATCH.map(k=>['T:'+k,'Training · match zone '+TBTN[k].l]), ['SHOOT','Training · SHOT'], ['T:NBLK','Training · NEW BLOCK']
 ];
 const DEFAULT_KEYS = {'1':'ATT','2':'BAL','3':'DEF','4':'FB','5':'TO','6':'INDATT','7':'INDDEF','Enter':'FINAL',
   '0':'PLAY',' ':'PLAY','-':'BACK','ArrowLeft':'BACK','+':'FWD','ArrowRight':'FWD','*':'SPEED','/':'UNDO'};
@@ -540,15 +562,16 @@ const pad = n => String(n).padStart(2,'0');
 function hms(sec){ sec = Math.max(0, Math.round(sec)); return pad(Math.floor(sec/3600))+':'+pad(Math.floor(sec%3600/60))+':'+pad(sec%60); }
 function hmsF(sec){ const d=Math.round(Math.max(0,sec)*10); return hms(Math.floor(d/10)).slice(3)+'.'+(d%10); }
 function hmsT(sec){ const d=Math.round(Math.max(0,sec)*10); return hms(Math.floor(d/10))+'.'+(d%10); }
-function parseTime(s){ s=String(s||'').trim().replace(',','.'); if(!s) return 0;
+function parseTime(s){ s=String(s||'').trim().replace(',','.'); if(!s) return null;
   const p=s.split(':').map(Number); if(p.some(isNaN)) return NaN; return p.reduce((a,b)=>a*60+b,0); }
 const r1 = x => Math.round(x*10)/10;
+const today = () => { const d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); };
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.style.opacity=1; clearTimeout(toast._t); toast._t=setTimeout(()=>t.style.opacity=0,2200); }
 const selStyle = side => side==='VED' ? '--sel:#2563eb' : '--sel:#dc2626';
 
 const LS = {
   get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
-  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ toast('ATENCIÓ: no s\'ha pogut desar a la tauleta'); return false; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ toast('WARNING: could not save on the tablet'); return false; } },
   del(k){ try{ localStorage.removeItem(k); }catch(e){} }
 };
 
@@ -565,6 +588,8 @@ function labelOf(p){
   if(p.length===1 && p[0]==='-1') return '−1';
   return p.map(s=>s.trim()).join(' ');
 }
+// SYSTEM column of a clip: its tags, plus PASSIVE always last when marked
+const sysTags = c => (c.tags||[]).concat(c.passive ? [PASSIVE] : []);
 
 /* ===================== state ===================== */
 let S = null;
@@ -575,19 +600,19 @@ let videoReady = false, videoURL = null;
 let speedIdx = 0;
 let wakeLock = null;
 let indResume = false;
-let newMode = 'match', newSrc = 'video', newTT = 'ATT';
+let newMode = 'match', newSrc = 'video', newTT = 'ATT', newTeam = LS.get('xt.lastTeam', null);
 let clockTimer = null;
 
 const isT = () => S && S.mode==='training';
 const isLive = () => S && S.mode!=='training' && !!S.live;
 const clocked = () => isT() || isLive();
 function idx(){ return LS.get('xt.index', []); }
+function trainTeam(){ return LS.get('xt.trainTeam', DEFAULT_TRAIN_TEAM); }
 function rosters(){
   const r = LS.get('xt.rosters', {});
   if(!r[trainTeam()]){ r[trainTeam()] = DEFAULT_TRAIN_ROSTER.slice(); LS.set('xt.rosters', r); }
   return r;
 }
-function trainTeam(){ return LS.get('xt.trainTeam', DEFAULT_TRAIN_TEAM); }
 function roster(){ return (S && rosters()[S.team]) || []; }
 function clip(id){ return S && S.clips.find(c=>c.id===id) || null; }
 function save(){
@@ -598,21 +623,21 @@ function save(){
   const e = {id:S.id,name:S.name,team:S.team,mode:S.mode||'match',live:!!S.live,updated:S.updated,count:S.clips.length};
   if(i>=0) list[i]=e; else list.unshift(e);
   LS.set('xt.index', list);
-  $('#saved').textContent = ok ? '✓ desat · '+S.clips.length+' talls' : '⚠ NO DESAT';
+  $('#saved').textContent = ok ? '✓ saved · '+S.clips.length+' clips' : '⚠ NOT SAVED';
   $('#saved').style.color = ok ? 'var(--muted)' : '#ef4444';
 }
 function snapshot(){
   undoStack.push(JSON.stringify({clips:S.clips,openId:S.openId,focusId:S.focusId,counter:S.counter}));
   if(undoStack.length>60) undoStack.shift();
 }
+const isPop = c => c && (c.kind==='IND' || c.kind==='SHOOT' || c.kind==='P7');
 function undo(){
-  if(!undoStack.length){ toast('No hi ha res per desfer'); return; }
+  if(!undoStack.length){ toast('Nothing to undo'); return; }
   Object.assign(S, JSON.parse(undoStack.pop())); save();
   const f=clip(S.focusId);
-  const pop = c => c && (c.kind==='IND' || c.kind==='SHOOT');
-  if(!indOpen() && pop(f)) S.focusId=S.openId;
-  if(indOpen() && !pop(f)) hideInd(false);
-  renderAll(); toast('Desfet');
+  if(!indOpen() && isPop(f)) S.focusId=S.openId;
+  if(indOpen() && !isPop(f)) hideInd(false);
+  renderAll(); toast('Undone');
 }
 
 /* ===================== screen awake ===================== */
@@ -631,38 +656,68 @@ function setNewMode(m){
   document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('on', b.dataset.mode===m));
   $('#newMatch').classList.toggle('hidden', m!=='match');
   $('#newTrain').classList.toggle('hidden', m!=='training');
+  if(!$('#mDate').value) $('#mDate').value = today();
+  if(!$('#tDate').value) $('#tDate').value = today();
   if(m==='training'){
-    $('#tTeam').value = trainTeam();
-    if(!$('#tDate').value){ const d=new Date(); $('#tDate').value = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+    if(!$('#tTeam').value) $('#tTeam').value = trainTeam();
     if(!$('#tMicro').value) $('#tMicro').value = LS.get('xt.lastMicro','');
-    $('#tRosterInfo').textContent = (rosters()[trainTeam()]||[]).length+' jugadors';
-    updTName();
-  }
+    $('#tRosterInfo').textContent = (rosters()[$('#tTeam').value.trim()]||[]).length+' players';
+  } else renderTeams();
+  updNames();
 }
+function matchCode(){ const c=$('#mCode').value.trim(); return [$('#mDate').value, c].filter(Boolean).join(' '); }
 function trainCode(){
   const m=String($('#tMicro').value||'').trim().replace(/^M/i,'');
   return [$('#tDate').value, m?'M'+m:'', 'TR', newTT].filter(Boolean).join(' ');
 }
-function updTName(){ $('#tName').textContent = trainCode(); }
-['#tDate','#tMicro'].forEach(q=>$(q).addEventListener('input', updTName));
-document.querySelectorAll('[data-tt]').forEach(b=>b.onclick=()=>{ newTT=b.dataset.tt; document.querySelectorAll('[data-tt]').forEach(x=>x.classList.toggle('on',x===b)); updTName(); });
+function updNames(){ $('#tName').textContent = trainCode(); $('#mName').textContent = matchCode() || '—'; }
+['#tDate','#tMicro','#mDate','#mCode'].forEach(q=>$(q).addEventListener('input', updNames));
+$('#tTeam').addEventListener('input', ()=>{ $('#tRosterInfo').textContent = (rosters()[$('#tTeam').value.trim()]||[]).length+' players'; });
+document.querySelectorAll('[data-tt]').forEach(b=>b.onclick=()=>{ newTT=b.dataset.tt; document.querySelectorAll('[data-tt]').forEach(x=>x.classList.toggle('on',x===b)); updNames(); });
 document.querySelectorAll('[data-src]').forEach(b=>b.onclick=()=>{ newSrc=b.dataset.src; document.querySelectorAll('[data-src]').forEach(x=>x.classList.toggle('on',x===b)); });
 document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>setNewMode(b.dataset.mode));
+
+function teamList(){
+  const r=rosters();
+  const set=new Set(Object.keys(r));
+  idx().filter(s=>s.mode!=='training').forEach(s=>set.add(s.team));
+  return [...set].sort((a,b)=>a.localeCompare(b));
+}
+function renderTeams(){
+  const r=rosters(), list=teamList();
+  if(newTeam && !list.includes(newTeam)) newTeam=null;
+  $('#teamPick').innerHTML = list.map(t=>`<button class="team ${t===newTeam?'on':''}" data-team="${esc(t)}"><b>${esc(t)}</b><span>${(r[t]||[]).length} players${t===newTeam?' · selected':''}</span></button>`).join('')
+    + `<button class="team new" id="bTeamNew">+ New team</button>`;
+  $('#teamInfo').textContent = newTeam ? 'Selected: '+newTeam+' · '+(r[newTeam]||[]).length+' players' : 'No team selected';
+  $('#bTeamEdit').disabled = !newTeam;
+}
+$('#teamPick').addEventListener('click', e=>{
+  const b=e.target.closest('[data-team]');
+  if(b){ newTeam=b.dataset.team; LS.set('xt.lastTeam',newTeam); renderTeams(); return; }
+  if(e.target.closest('#bTeamNew')){ $('#newTeamRow').classList.remove('hidden'); $('#newTeamName').value=''; $('#newTeamName').focus(); }
+});
+$('#bNewTeamNo').onclick=()=>$('#newTeamRow').classList.add('hidden');
+$('#bNewTeamOk').onclick=()=>{
+  const t=$('#newTeamName').value.trim().replace(/\s+(TAM|VED)$/i,'');
+  if(!t){ toast('Type the team name'); return; }
+  const r=rosters(); if(!r[t]){ r[t]=[]; LS.set('xt.rosters',r); }
+  newTeam=t; LS.set('xt.lastTeam',t); $('#newTeamRow').classList.add('hidden'); renderTeams(); openRosterFor(t);
+};
+$('#newTeamName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('#bNewTeamOk').click(); });
+$('#bTeamEdit').onclick=()=>{ if(newTeam) openRosterFor(newTeam); };
+
 function modeBadge(s){
-  if(s.mode==='training') return '<span class="badge b-train">Entreno</span>';
-  return s.live ? '<span class="badge b-mlive">● Partit · directe</span>' : '<span class="badge b-mvid">Partit · vídeo</span>';
+  if(s.mode==='training') return '<span class="badge b-train">Training</span>';
+  return s.live ? '<span class="badge b-mlive">● Game · live</span>' : '<span class="badge b-mvid">Game · video</span>';
 }
 function renderSetup(){
   const list = idx();
   $('#sessList').innerHTML = list.length ? list.map(s=>`
     <div class="sess"><div class="info"><div class="t">${modeBadge(s)} ${esc(s.name)}</div>
-      <div class="muted" style="font-size:13px">${esc(s.team)} · ${s.count} talls · ${new Date(s.updated).toLocaleString('ca-ES')}</div></div>
-      <button class="btn primary" data-open="${s.id}">Obrir</button>
-      <button class="btn grey" data-del="${s.id}">Esborrar</button></div>`).join('')
-    : '<div class="muted">Encara no hi ha res desat.</div>';
-  const teams = new Set([...Object.keys(rosters()), ...list.filter(s=>s.mode!=='training').map(s=>s.team)]);
-  teams.delete(trainTeam());
-  $('#teamList').innerHTML = [...teams].map(t=>`<option value="${esc(t)}">`).join('');
+      <div class="muted" style="font-size:13px">${esc(s.team)} · ${s.count} clips · ${new Date(s.updated).toLocaleString('en-GB')}</div></div>
+      <button class="btn primary" data-open="${s.id}">Open</button>
+      <button class="btn grey" data-del="${s.id}">Delete</button></div>`).join('')
+    : '<div class="muted">Nothing saved yet.</div>';
   $('#scrInfo').textContent = 'ClipAPP '+APP_VERSION+' · made by Haritz';
   setNewMode(newMode);
 }
@@ -670,35 +725,36 @@ $('#sessList').addEventListener('click', e=>{
   const o=e.target.closest('[data-open]'), d=e.target.closest('[data-del]');
   if(o) openSession(o.dataset.open);
   if(d){ const s=idx().find(x=>x.id===d.dataset.del);
-    if(confirm('Esborrar «'+s.name+'» i tots els seus talls?')){ LS.del('xt.s.'+s.id); LS.set('xt.index', idx().filter(x=>x.id!==s.id)); renderSetup(); } }
+    if(confirm('Delete «'+s.name+'» and all its clips?')){ LS.del('xt.s.'+s.id); LS.set('xt.index', idx().filter(x=>x.id!==s.id)); renderSetup(); } }
 });
 $('#bCreate').onclick = ()=>{
   if(newMode==='training'){
     const name=trainCode(), team=$('#tTeam').value.trim().replace(/\s+(TAM|VED)$/i,'');
-    if(!$('#tDate').value||!$('#tMicro').value.trim()||!team){ toast('Omple la data, el microcicle i l\'equip'); return; }
+    if(!$('#tDate').value||!$('#tMicro').value.trim()||!team){ toast('Fill in date, microcycle and team'); return; }
     LS.set('xt.lastMicro', $('#tMicro').value.trim().replace(/^M/i,''));
-    if(team!==trainTeam()){ const r=rosters(); if(!r[team]) { r[team]=(r[trainTeam()]||DEFAULT_TRAIN_ROSTER).slice(); LS.set('xt.rosters',r); } LS.set('xt.trainTeam', team); }
+    if(team!==trainTeam()){ const r=rosters(); if(!r[team]){ r[team]=(r[trainTeam()]||DEFAULT_TRAIN_ROSTER).slice(); LS.set('xt.rosters',r); } LS.set('xt.trainTeam', team); }
     S = {id:uid(), mode:'training', name, team, created:Date.now(), updated:Date.now(), clips:[], openId:null, focusId:null, counter:1,
          t0:null, tEnd:null, offset:0};
     save(); showMain(); return;
   }
-  const name=$('#nName').value.trim(), team=$('#nTeam').value.trim().replace(/\s+(TAM|VED)$/i,'');
-  if(!name||!team){ toast('Omple el codi del partit i l\'equip'); return; }
-  S = {id:uid(), mode:'match', live:newSrc==='live', name, team, created:Date.now(), updated:Date.now(), clips:[], openId:null, focusId:null, counter:1, videoName:null,
-       t0:null, tEnd:null, offset:0};
-  save(); $('#nName').value=''; showMain();
+  if(!$('#mDate').value || !$('#mCode').value.trim()){ toast('Fill in the date and the game code'); return; }
+  if(!newTeam){ toast('Select the analysed team (or create a new one)'); return; }
+  S = {id:uid(), mode:'match', live:newSrc==='live', name:matchCode(), team:newTeam, created:Date.now(), updated:Date.now(), clips:[], openId:null, focusId:null, counter:1, videoName:null,
+       t0:null, t2:null, tEnd:null, offset:0, offset2:null};
+  $('#mCode').value=''; save(); showMain();
   if(!roster().length) setTimeout(()=>openRoster(),300);
 };
 $('#bTRoster').onclick = ()=>{ const t=$('#tTeam').value.trim()||trainTeam(); openRosterFor(t); };
-function openSession(id){ const s=LS.get('xt.s.'+id,null); if(!s){ toast('No s\'ha trobat'); return; } S=s; if(!S.mode) S.mode='match'; undoStack=[]; showMain(); }
+function openSession(id){ const s=LS.get('xt.s.'+id,null); if(!s){ toast('Not found'); return; } S=s; if(!S.mode) S.mode='match'; undoStack=[]; showMain(); }
 
 function offerBackup(why){
-  setTimeout(()=>{ if(confirm((why?why+'\n\n':'')+'Vols baixar ara un backup (.json) de tots els partits, entrenos i plantilles? Així no depens només de la memòria de la tauleta.')) doBackup(); }, 400);
+  setTimeout(()=>{ if(confirm((why?why+'\n\n':'')+'Download a backup (.json) of all games, trainings and rosters now? Then you do not depend only on the tablet memory.')) doBackup(); }, 400);
 }
 $('#bBackup').onclick = ()=>doBackup();
 function doBackup(){
   const data = {app:'tallador-xps',v:1,date:new Date().toISOString(),rosters:rosters(),trainTeam:trainTeam(),keys,sessions:idx().map(x=>LS.get('xt.s.'+x.id,null)).filter(Boolean)};
-  download('clipapp_backup_'+new Date().toISOString().slice(0,10)+'.json', JSON.stringify(data), 'application/json');
+  const d=new Date();
+  download('_clipapp_backup_'+today()+'_'+pad(d.getHours())+'-'+pad(d.getMinutes())+'.json', JSON.stringify(data), 'application/json');
 }
 $('#fRestore').onchange = async e=>{
   const f=e.target.files[0]; if(!f) return;
@@ -709,8 +765,8 @@ $('#fRestore').onchange = async e=>{
     for(const s of d.sessions||[]){ LS.set('xt.s.'+s.id,s); const l=idx().filter(x=>x.id!==s.id);
       l.unshift({id:s.id,name:s.name,team:s.team,mode:s.mode||'match',live:!!s.live,updated:s.updated,count:s.clips.length}); LS.set('xt.index',l); }
     const nR=Object.keys(d.rosters||{}).length, nS=(d.sessions||[]).length;
-    toast('Importat: '+nS+' partits/entrenos · '+nR+' plantilles'); renderSetup();
-  }catch(err){ toast('Aquest fitxer no és vàlid'); }
+    toast('Imported: '+nS+' games/trainings · '+nR+' rosters'); renderSetup();
+  }catch(err){ toast('This file is not valid'); }
   e.target.value='';
 };
 
@@ -718,20 +774,20 @@ $('#fRestore').onchange = async e=>{
 const video = $('#video'), pv = $('#pv');
 function showMain(){
   $('#setup').classList.add('hidden'); $('#main').classList.remove('hidden');
-  const t=isT();
+  const t=isT(), lv=isLive();
   $('#bodyMatch').classList.toggle('hidden', t);
   $('#bodyTrain').classList.toggle('hidden', !t);
-  const lv=isLive();
   $('#lblVideo').classList.toggle('hidden', t||lv);
   ['#vwrap','#timeline','#seek','#controls'].forEach(q=>$(q).classList.toggle('hidden', lv));
   $('#liveBox').classList.toggle('hidden', !lv);
   $('#transport').classList.toggle('hidden', lv);
-  // move the shared tag panel into the right column of the active mode
-  const host = t ? $('#tRight') : $('#right');
-  host.appendChild($('#panel'));
+  document.querySelectorAll('.vidOnly').forEach(b=>b.classList.toggle('hidden', lv));
+  document.querySelectorAll('.liveOnly').forEach(b=>b.classList.toggle('hidden', !lv));
+  $('#bFinalM').classList.toggle('span2', lv);
+  (t ? $('#tRight') : $('#right')).insertBefore($('#panel'), t ? null : $('#transport'));
   $('#mTitle').innerHTML = modeBadge(S)+' '+esc(S.name)+' <span class="muted" style="font-weight:500">· '+esc(S.team)+'</span>';
-  if(!t) $('#novideoHint').textContent = S.videoName ? 'Últim vídeo fet servir: '+S.videoName : 'El vídeo no es puja enlloc: es llegeix des de la tauleta.';
-  const f=clip(S.focusId); if(f && (f.kind==='IND'||f.kind==='SHOOT')) S.focusId=S.openId;
+  if(!t && !lv) $('#novideoHint').textContent = S.videoName ? 'Last video used: '+S.videoName : 'The video is not uploaded anywhere: it is read from the tablet.';
+  const f=clip(S.focusId); if(isPop(f)) S.focusId=S.openId;
   if(t) buildTrainButtons();
   clearInterval(clockTimer); if(clocked()) clockTimer=setInterval(tick,200);
   save(); renderAll(); keepAwake();
@@ -739,7 +795,7 @@ function showMain(){
 $('#bHome').onclick = ()=>{
   const o=clip(S.openId);
   if(o){
-    if(!confirm('Hi ha un tall obert (#'+o.n+' · '+clipName(o)+').\n\nPrem «Acceptar» per tancar-lo ara i sortir, o «Cancel·lar» per quedar-te.')) return;
+    if(!confirm('A clip is still open (#'+o.n+' · '+clipName(o)+').\n\nPress «OK» to close it now and leave, or «Cancel» to stay.')) return;
     snapshot(); closeOpen(now()); save();
   }
   video.pause(); hideInd(false); releaseAwake(); clearInterval(clockTimer);
@@ -748,7 +804,7 @@ $('#bHome').onclick = ()=>{
 
 function loadVideo(f){
   if(!f) return;
-  if(S.videoName && S.videoName!==f.name && !confirm('Aquest partit es va tallar amb «'+S.videoName+'». Segur que vols fer servir «'+f.name+'»?')) return;
+  if(S.videoName && S.videoName!==f.name && !confirm('This game was cut with «'+S.videoName+'». Are you sure you want to use «'+f.name+'»?')) return;
   if(videoURL) URL.revokeObjectURL(videoURL);
   videoURL = URL.createObjectURL(f); video.src = videoURL; pv.src = videoURL;
   S.videoName=f.name; save();
@@ -779,7 +835,8 @@ function tick(){
   const t=now();
   if(clocked()){
     const c = isT() ? $('#tClock') : $('#mClock');
-    c.innerHTML = hms(Math.floor(t))+`<small>${!S.t0?'Sense sincronitzar':S.tEnd?'■ acabat':'● en marxa'}</small>`;
+    let st = !S.t0 ? 'Not synced' : S.tEnd ? '■ ended' : (isLive() ? (S.t2!=null ? '● running · 2nd half' : '● running · 1st half') : '● running');
+    c.innerHTML = hms(Math.floor(t))+`<small>${st}</small>`;
     c.classList.toggle('live', !!S.t0 && !S.tEnd); c.classList.toggle('ended', !!S.tEnd);
     const ic=$('#indClock'); if(!ic.classList.contains('hidden')) ic.textContent=hms(Math.floor(t));
   } else {
@@ -788,42 +845,55 @@ function tick(){
     if(document.activeElement!==$('#seek')) $('#seek').value=t;
     $('#playhead').style.left = (t/dur()*100)+'%';
   }
-  const el=document.getElementById('liveEnd'); if(el && S.openId) el.textContent='obert · '+hms(Math.floor(t));
+  const el=document.getElementById('liveEnd'); if(el && S.openId) el.textContent='open · '+hms(Math.floor(t));
 }
 
-/* ---------- training: sync & buttons ---------- */
+/* ---------- sync / end ---------- */
+function syncClip(start, note){
+  return {id:uid(), n:S.counter++, kind:'SYNC', side:'TAM', start, end:r1(start+SYNC_LEN), tags:[], note, player:null, decision:null};
+}
 document.querySelectorAll('[data-sync]').forEach(b=>b.onclick=()=>{
-  if(S.t0 && S.clips.length && !confirm('Ja hi ha talls marcats amb la sincronització actual. Si tornes a sincronitzar, el cronòmetre tornarà a 0 i els talls anteriors quedaran desquadrats. Continuar?')) return;
+  if(S.t0 && S.clips.length>1 && !confirm('There are clips marked with the current sync. If you sync again, the clock goes back to 0 and the previous clips will be out of place. Continue?')) return;
   snapshot();
-  S.t0 = Date.now(); S.tEnd=null;
+  S.t0 = Date.now(); S.tEnd=null; S.t2=null;
   S.clips = S.clips.filter(c=>c.kind!=='SYNC');
-  const sc={id:uid(), n:S.counter++, kind:'SYNC', side:'TAM', start:0, end:SYNC_LEN, tags:[], note:'SYNC', player:null, decision:null};
+  const sc = syncClip(0, isLive() ? 'SYNC 1H' : 'SYNC');
   S.clips.push(sc); S.focusId=sc.id;
-  save(); renderAll(); flash('SINC');
+  save(); renderAll(); flash('SYNC');
+});
+document.querySelectorAll('[data-sync2]').forEach(b=>b.onclick=()=>{
+  if(!S.t0){ toast('Sync the 1st half first'); return; }
+  if(S.tEnd){ toast('The clock is stopped'); return; }
+  if(S.t2!=null && !confirm('The 2nd half was already synced. Sync it again now?')) return;
+  snapshot();
+  const t=now(); S.t2 = r1(t);
+  S.clips = S.clips.filter(c=>!(c.kind==='SYNC' && c.note==='SYNC 2H'));
+  const sc = syncClip(S.t2, 'SYNC 2H'); sc.h2=true; S.clips.push(sc); S.focusId=sc.id;
+  save(); renderAll(); flash('SYNC 2nd half');
 });
 document.querySelectorAll('[data-finish]').forEach(b=>b.onclick=()=>{
-  if(!S.t0){ toast('Encara no has sincronitzat'); return; }
+  if(!S.t0){ toast('Not synced yet'); return; }
   if(S.tEnd){
-    if(!confirm('Reprendre el cronòmetre? Comptarà també el temps que ha estat aturat, com la càmera.')) return;
+    if(!confirm('Resume the clock? The stopped time will also be counted, like the camera.')) return;
     S.tEnd=null; save(); renderAll(); return;
   }
-  if(!confirm(isT()?'Acabar l\'entreno? El cronòmetre s\'aturarà.':'Acabar el partit? El cronòmetre s\'aturarà.')) return;
-  snapshot(); const t=now(); closeOpen(t); S.tEnd=Date.now(); save(); renderAll(); toast('Cronòmetre aturat. Ja pots exportar.');
-  offerBackup(isT()?'Entreno acabat.':'Partit acabat.');
+  if(!confirm(isT()?'End the training? The clock will stop.':'End the game? The clock will stop.')) return;
+  snapshot(); const t=now(); closeOpen(t); S.tEnd=Date.now(); save(); renderAll(); toast('Clock stopped. You can export now.');
+  offerBackup(isT()?'Training ended.':'Game ended.');
 });
 function buildTrainButtons(){
   const mk = k => `<button class="sb ${TBTN[k].blk?'BLK ':''}${TBTN[k].side}" data-act="T:${k}">${TBTN[k].l}</button>`;
-  $('#tColA').innerHTML = '<div class="hdr">ATAC · TAM</div>'+T_COL_A.map(mk).join('');
-  $('#tColD').innerHTML = '<div class="hdr">DEFENSA · VED</div>'+T_COL_D.map(mk).join('');
+  $('#tColA').innerHTML = '<div class="hdr">ATTACK · TAM</div>'+T_COL_A.map(mk).join('');
+  $('#tColD').innerHTML = '<div class="hdr">DEFENSE · VED</div>'+T_COL_D.map(mk).join('');
   $('#tMatch').innerHTML = T_MATCH.map(mk).join('');
-  document.querySelectorAll('#bodyTrain [data-act^="T:"]').forEach(b=>b.addEventListener('click', ()=>act(b.dataset.act)));
+  document.querySelectorAll('#tColA [data-act], #tColD [data-act], #tMatch [data-act]').forEach(b=>b.addEventListener('click', ()=>act(b.dataset.act)));
 }
 
 /* ---------- actions ---------- */
 function needTime(){
-  if(clocked()){ if(!S.t0){ toast('Primer prem SINC quan facis el senyal a la càmera'); return true; }
-    if(S.tEnd){ toast('El cronòmetre està aturat. Prem «Reprendre» si vols seguir marcant.'); return true; } return false; }
-  if(!videoReady){ toast('Primer obre el vídeo'); return true; } return false;
+  if(clocked()){ if(!S.t0){ toast('First press SYNC'); return true; }
+    if(S.tEnd){ toast('The clock is stopped. Press «Resume» to keep tagging.'); return true; } return false; }
+  if(!videoReady){ toast('First open the video'); return true; } return false;
 }
 function flash(text, side){
   const f = isT() ? $('#flashT') : (isLive() ? $('#flashT2') : $('#flashM')); f.textContent=text;
@@ -842,22 +912,26 @@ function startPhase(kind){
   const t=now(); closeOpen(t);
   const c={id:uid(), n:S.counter++, kind, side:KIND_SIDE[kind]||null, start: clocked() ? r1(Math.max(0,t-1)) : Math.max(0,Math.floor(t-1)), end:null,
            tags: kind==='TO'?[TIMEOUT]:[], player:null, decision:null};
+  if(isLive() && S.t2!=null) c.h2=true;
   S.clips.push(c); S.openId=c.id; S.focusId=c.id; save(); renderAll();
   flash(kind, c.side);
 }
 function startTrain(k){
   if(needTime()) return;
   const b=TBTN[k]; snapshot();
-  const t=now(); closeOpen(t);
+  const t=now();
+  if(b.nb){   // NEW BLOCK: a 1-second clip, does not touch the open clip
+    const c={id:uid(), n:S.counter++, kind:'T', btn:k, label:b.l, side:b.side, start:r1(t), end:r1(t+NB_LEN), tags:[], note:null, player:null, decision:null};
+    S.clips.push(c); S.focusId=c.id; save(); renderAll(); flash('NEW BLOCK'); openNote(c.id); return;
+  }
+  closeOpen(t);
   const c={id:uid(), n:S.counter++, kind:'T', btn:k, label:b.l, side:b.side, start:r1(Math.max(0,t-(b.pre||0))), end:null,
            tags:b.tags.map(p=>p.slice()), note:b.note||null, player:null, decision:null};
-  if(b.nb) c.note=null;
   S.clips.push(c); S.openId=c.id; S.focusId=c.id; save(); renderAll();
-  flash(b.l, b.nb?null:b.side);
-  if(b.nb) openNote(c.id);
+  flash(b.l, b.side);
 }
 function finalClip(){
-  if(!S.openId){ toast('No hi ha cap tall obert'); return; }
+  if(!S.openId){ toast('No open clip'); return; }
   snapshot(); const o=closeOpen(now()); S.focusId=o.id; save(); renderAll(); flash('FINAL');
 }
 function startInd(side){
@@ -869,10 +943,12 @@ function startInd(side){
   S.clips.push(c); S.focusId=c.id; save(); renderAll();
   showInd(wasPlaying);
 }
-function startShoot(){
+function startPop(kind){   // SHOT (training) and 7m (live game): one tap, −4 s / +1 s
   if(needTime()) return;
   snapshot(); const t=now();
-  const c={id:uid(), n:S.counter++, kind:'SHOOT', side:'TAM', start:r1(Math.max(0,t-SHOOT_BEFORE)), end:r1(t+SHOOT_AFTER), tags:[], player:null, decision:null};
+  const c={id:uid(), n:S.counter++, kind, side:'TAM', start:r1(Math.max(0,t-SHOOT_BEFORE)), end:r1(t+SHOOT_AFTER), tags:[], player:null,
+           decision: kind==='P7' ? ZONE_7M : null};
+  if(isLive() && S.t2!=null) c.h2=true;
   S.clips.push(c); S.focusId=c.id; save(); renderAll();
   showInd(false);
 }
@@ -880,36 +956,34 @@ function act(a){
   if(!S) return;
   if(indOpen()){
     if(a==='UNDO'){ undo(); return; }
-    if(a==='FINAL'||a==='PLAY'){ hideInd(true); if(!(isT() && a==='FINAL')) return; }
-    else if(['ATT','BAL','DEF','FB','TO','INDATT','INDDEF','SHOOT'].includes(a) || a.startsWith('T:')) hideInd(true);
+    if(a==='FINAL'||a==='PLAY'){ hideInd(true); if(!(clocked() && a==='FINAL')) return; }
+    else if(['ATT','BAL','DEF','FB','TO','INDATT','INDDEF','SHOOT','P7'].includes(a) || a.startsWith('T:')) hideInd(true);
     else return;
   }
-  if(a.startsWith('T:')){
-    if(!isT()) return;
-    startTrain(a.slice(2)); return;
-  }
-  if(isT() && ['ATT','BAL','DEF','FB','TO','INDATT','INDDEF','PLAY','BACK','FWD','SPEED'].includes(a)) return;
-  if(isLive() && ['PLAY','BACK','FWD','SPEED'].includes(a)) return;
-  if(!isT() && a==='SHOOT') return;
+  if(a.startsWith('T:')){ if(isT()) startTrain(a.slice(2)); return; }
+  if(isT() && ['ATT','BAL','DEF','FB','TO','INDATT','INDDEF','P7','PLAY','BACK','FWD','SPEED'].includes(a)) return;
+  if(isLive() && ['PLAY','BACK','FWD','SPEED','INDATT','INDDEF','SHOOT'].includes(a)) return;
+  if(!isT() && !isLive() && ['SHOOT','P7'].includes(a)) return;
   switch(a){
     case 'ATT': case 'BAL': case 'DEF': case 'FB': case 'TO': startPhase(a); break;
     case 'INDATT': startInd('TAM'); break;
     case 'INDDEF': startInd('VED'); break;
-    case 'SHOOT': startShoot(); break;
+    case 'SHOOT': startPop('SHOOT'); break;
+    case 'P7': startPop('P7'); break;
     case 'FINAL': finalClip(); break;
     case 'PLAY': if(needTime()) return; video.paused ? video.play() : video.pause(); break;
     case 'BACK': if(videoReady) video.currentTime=Math.max(0,now()-SEEK_STEP); break;
     case 'FWD': if(videoReady) video.currentTime=Math.min(dur(),now()+SEEK_STEP); break;
     case 'SPEED': speedIdx=(speedIdx+1)%SPEEDS.length; video.playbackRate=SPEEDS[speedIdx];
-                  $('#bSpeed').textContent='x'+String(SPEEDS[speedIdx]).replace('.',','); break;
+                  $('#bSpeed').textContent='x'+String(SPEEDS[speedIdx]); break;
     case 'UNDO': undo(); break;
   }
 }
-document.querySelectorAll('[data-act]').forEach(b=>{ if(!b.dataset.act.startsWith('T:')) b.addEventListener('click', ()=>act(b.dataset.act)); });
+document.querySelectorAll('#main [data-act]').forEach(b=>b.addEventListener('click', ()=>act(b.dataset.act)));
 
 function focusClip(id, seek){
   const c=clip(id); if(!c) return;
-  if(c.kind==='IND'||c.kind==='SHOOT'){ if(!clocked()) video.pause(); S.focusId=id; save(); renderAll(); showInd(false); return; }
+  if(isPop(c)){ if(!clocked()) video.pause(); S.focusId=id; save(); renderAll(); showInd(false); return; }
   S.focusId=id; save(); renderAll();
   if(seek && videoReady && !clocked()){ video.pause(); video.currentTime=c.start; }
 }
@@ -930,7 +1004,8 @@ function deleteFocused(){
   const c=clip(S.focusId); if(!c) return;
   snapshot(); S.clips=S.clips.filter(x=>x.id!==c.id);
   if(S.openId===c.id) S.openId=null;
-  S.focusId = S.openId || null; save(); renderAll(); toast('Tall esborrat (pots desfer-ho)');
+  if(c.kind==='SYNC' && c.note==='SYNC 2H') S.t2=null;
+  S.focusId = S.openId || null; save(); renderAll(); toast('Clip deleted (you can undo)');
 }
 
 /* ===================== rendering ===================== */
@@ -942,13 +1017,17 @@ function renderStarts(){
   const o=clip(S.openId);
   document.querySelectorAll('#main .sb[data-act]').forEach(b=>{
     const a=b.dataset.act;
-    const on = !!o && (a===o.kind || (o.kind==='T' && a==='T:'+o.btn));
-    b.classList.toggle('on', on);
+    b.classList.toggle('on', !!o && (a===o.kind || (o.kind==='T' && a==='T:'+o.btn)));
     if(a==='FINAL') b.disabled = !o;
   });
   if(clocked()){
-    document.querySelectorAll('[data-sync]').forEach(b=>{ b.textContent = S.t0 ? 'Tornar a sincronitzar' : 'SINC · senyal a la càmera'; b.classList.toggle('done', !!S.t0); });
-    document.querySelectorAll('[data-finish]').forEach(b=>{ b.textContent = S.tEnd ? 'Reprendre el cronòmetre' : (isT()?'Acabar entreno':'Acabar partit'); b.disabled=!S.t0; });
+    document.querySelectorAll('[data-sync]').forEach(b=>{
+      b.textContent = S.t0 ? (isLive()?'Re-sync 1st half':'Re-sync') : (isLive()?'SYNC · 1st half kick-off':'SYNC · signal to camera');
+      b.classList.toggle('done', !!S.t0); });
+    document.querySelectorAll('[data-sync2]').forEach(b=>{
+      b.textContent = S.t2!=null ? 'Re-sync 2nd half' : 'SYNC · 2nd half kick-off';
+      b.classList.toggle('done', S.t2!=null); b.disabled = !S.t0 || !!S.tEnd; });
+    document.querySelectorAll('[data-finish]').forEach(b=>{ b.textContent = S.tEnd ? 'Resume the clock' : (isT()?'End training':'End game'); b.disabled=!S.t0; });
   }
 }
 function renderBadge(){
@@ -958,7 +1037,9 @@ function renderBadge(){
 function clipName(c){
   if(c.kind==='IND') return 'IND '+(c.side==='TAM'?'ATT':'DEF');
   if(c.kind==='T') return c.label;
-  if(c.kind==='SYNC') return 'SYNC';
+  if(c.kind==='SYNC') return c.note||'SYNC';
+  if(c.kind==='SHOOT') return 'SHOT';
+  if(c.kind==='P7') return '7m';
   return c.kind;
 }
 const sideColor = s => s==='VED'?'var(--ved)':s==='TAM'?'var(--tam)':'#9aa6b2';
@@ -968,7 +1049,7 @@ function renderRecents(){
   if(o && !list.includes(o)) list.unshift(o);
   $('#recents').innerHTML = list.map(c=>`<button class="rc ${c.id===S.focusId?'f':''} ${c.id===S.openId?'open':''}" data-fid="${c.id}">
       <span class="dot" style="background:${sideColor(c.side)}"></span>${c.n} · ${esc(clipName(c))}</button>`).join('') ||
-      '<span class="muted" style="font-size:13px">Encara no hi ha talls</span>';
+      '<span class="muted" style="font-size:13px">No clips yet</span>';
 }
 $('#recents').addEventListener('click', e=>{ const b=e.target.closest('[data-fid]'); if(b) focusClip(b.dataset.fid,false); });
 
@@ -977,66 +1058,73 @@ function tagBtn(p, label, on, side){
 }
 function chipsHtml(c){
   const list = c.kind==='IND' ? [IND_FIRST,...c.tags] : c.tags;
-  const html = list.map((p,i)=>{
+  return list.map((p,i)=>{
     const fixed = c.kind==='TO' || (c.kind==='IND' && i===0);
     const ri = c.kind==='IND' ? i-1 : i;
     return `<button class="chip" ${fixed?'disabled style="opacity:.8"':`data-rm="${ri}"`}><i>${i+1}</i>${esc(labelOf(p))}${fixed?'':' <i>×</i>'}</button>`;
-  }).join('') + (c.fault?`<button class="chip" data-fault="1" style="background:#3a2a44;color:#e9d5ff">FIGURÁK: FAULT <i>×</i></button>`:'') + (c.note && c.kind==='T' ?`<span class="chip" style="background:#3b3412;color:var(--warn)">NOTES: ${esc(c.note)}</span>`:'');
-  return html || '<span class="muted" style="font-size:12px">Sense etiquetes</span>';
+  }).join('')
+  + (c.passive?`<button class="chip" data-passive="1" style="background:#1f3b4d;color:#bae6fd">PASSIVE <i>×</i></button>`:'')
+  + (c.fault?`<button class="chip" data-fault="1" style="background:#3a2a44;color:#e9d5ff">FAULT <i>×</i></button>`:'')
+  + (c.note && (c.kind==='T'||c.kind==='SYNC') ?`<span class="chip" style="background:#3b3412;color:var(--warn)">NOTES: ${esc(c.note)}</span>`:'')
+  || '<span class="muted" style="font-size:12px">No tags</span>';
 }
 function timesHtml(c){
-  const f = (c.kind==='IND'||c.kind==='SHOOT') ? hmsF : (clocked()?hmsT:hms);
+  const f = (isPop(c)||c.kind==='SYNC') ? hmsF : (clocked()?hmsT:hms);
   const isOpen = c.id===S.openId;
   return `<div class="times mono">
-      <div class="nud"><button data-nud="s,-1" aria-label="Inici abans">−</button>${f(c.start)}<button data-nud="s,1" aria-label="Inici després">+</button></div>
+      <div class="nud"><button data-nud="s,-1" aria-label="Start earlier">−</button>${f(c.start)}<button data-nud="s,1" aria-label="Start later">+</button></div>
       <span>→</span>
-      ${isOpen?`<span id="liveEnd" style="color:var(--warn)">obert</span>`:
-      `<div class="nud"><button data-nud="e,-1" aria-label="Final abans">−</button>${f(c.end)}<button data-nud="e,1" aria-label="Final després">+</button></div>`}
+      ${isOpen?`<span id="liveEnd" style="color:var(--warn)">open</span>`:
+      `<div class="nud"><button data-nud="e,-1" aria-label="End earlier">−</button>${f(c.end)}<button data-nud="e,1" aria-label="End later">+</button></div>`}
     </div>`;
 }
 function renderPanel(){
   const c=clip(S.focusId), P=$('#panel');
-  if(!c || c.kind==='IND' || c.kind==='SHOOT'){
-    P.innerHTML = isT()
-      ? `<div class="empty">${S.t0?'Prem un botó per començar un tall i FINAL per acabar-lo.<br>SHOOT marca un llançament d\'un sol clic.':'Prem <b>SINC</b> just quan facis el senyal a la càmera.'}</div>`
-      : (isLive() && !S.t0 ? `<div class="empty">Prem <b>SINC</b> just quan facis el senyal a la càmera.</div>`
-         : `<div class="empty">Prem ATT, DEF, BAL, FB o TO per començar un tall.<br>IND ATT / IND DEF obren la pantalla d'individuals${isLive()?'':' i aturen el vídeo'}.</div>`);
+  if(!c || isPop(c)){
+    P.innerHTML = clocked()
+      ? `<div class="empty">${S.t0?(isT()?'Press a button to start a clip and FINAL to end it.<br>SHOT marks a shot with one tap.':'Press a button to start a clip and FINAL to end it.<br>7m marks a 7-metre throw with one tap.'):(isLive()?'Press <b>SYNC · 1st half</b> at the kick-off.':'Press <b>SYNC</b> right when you give the signal to the camera.')}</div>`
+      : `<div class="empty">Press ATT, DEF, BAL, FB or TO to start a clip.<br>IND ATT / IND DEF pause the video and open the individual screen.</div>`;
     return;
   }
   const has = p => c.tags.some(x=>key(x)===key(p));
   let h = `<div class="cc"><div class="hd"><span class="k">#${c.n} · ${esc(clipName(c))}</span>
-      ${c.side?`<span class="badge b-${c.side}">${c.side}</span>`:'<span class="badge b-none">tria TAM o VED</span>'}
+      ${c.side?`<span class="badge b-${c.side}">${c.side}</span>`:'<span class="badge b-none">choose TAM or VED</span>'}
       <span style="flex:1"></span>
-      ${videoReady&&!clocked()?`<button class="btn sbtn" id="bGo">Veure</button>`:''}
-      <button class="btn grey sbtn" id="bDel">Esborrar</button></div>
+      ${videoReady&&!clocked()?`<button class="btn sbtn" id="bGo">View</button>`:''}
+      <button class="btn grey sbtn" id="bDel">Delete</button></div>
     ${timesHtml(c)}
     <div class="chips">${chipsHtml(c)}</div></div>`;
   if(c.kind==='SYNC'){
-    h += `<div class="muted" style="font-size:13px;line-height:1.5">Tall de sincronització: comença a 00:00:00, el moment en què has premut SINC. A XPS, quadra aquest tall amb el moment del senyal a la càmera.</div>`;
+    h += `<div class="muted" style="font-size:13px;line-height:1.5">Sync clip: it starts at the moment you pressed SYNC${c.note==='SYNC 2H'?' for the 2nd half':''}. In XPS, align it with the signal / kick-off in the video.</div>`;
   } else if(c.kind==='T' && c.btn==='NBLK'){
-    h += `<div class="sec"><div class="lb">Text a NOTES</div><button class="tb" style="min-height:52px;font-size:17px;text-align:left;padding:0 12px" id="bEditNote">${c.note?esc(c.note):'<span class="muted">(sense text) · toca per escriure</span>'}</button></div>`;
+    h += `<div class="sec"><div class="lb">Text in NOTES</div><button class="tb" style="min-height:52px;font-size:17px;text-align:left;padding:0 12px" id="bEditNote">${c.note?esc(c.note):'<span class="muted">(no text) · tap to write</span>'}</button></div>`;
   } else if(c.kind==='T' && TBTN[c.btn] && TBTN[c.btn].blk){
     const onA=c.note==='A', onD=c.note==='D';
-    h += `<div class="sec"><div class="lb">Bloc (NOTES)</div><div class="g g2">
+    h += `<div class="sec"><div class="lb">Block (NOTES)</div><div class="g g2">
       <button class="tb ${onA?'on':''}" style="${onA?selStyle('TAM'):''};min-height:54px;font-size:16px;font-weight:800" data-blk="A">A · BLOCK ATT</button>
       <button class="tb ${onD?'on':''}" style="${onD?selStyle('VED'):''};min-height:54px;font-size:16px;font-weight:800" data-blk="D">D · BLOCK DEF</button></div>
-      <div class="muted" style="font-size:12px">SYSTEM queda buit. Canviar-lo també canvia el costat (TAM / VED).</div></div>`;
+      <div class="muted" style="font-size:12px">SYSTEM stays empty. Changing it also changes the side (TAM / VED).</div></div>`;
   } else if(c.kind==='T'){
-    h += `<div class="sec"><div class="lb">Etiquetes (SYSTEM)</div><div class="g g3">`+T_EDIT[c.side].map(p=>tagBtn(p,labelOf(p),has(p),c.side)).join('')+`</div></div>`;
-    if(TBTN[c.btn] && TBTN[c.btn].fault)
-      h += `<div class="sec"><div class="lb">Figurák</div><div class="g g3"><button class="tb ${c.fault?'on':''}" style="${c.fault?selStyle(c.side):''}" data-fault="1">FAULT</button></div></div>`;
+    h += `<div class="sec"><div class="lb">Game phases</div><div class="g g3">`+T_EDIT[c.side].map(p=>tagBtn(p,labelOf(p),has(p),c.side)).join('')+`</div></div>`;
+    const b=TBTN[c.btn]||{};
+    if(b.fault || b.passive){
+      h += `<div class="sec"><div class="lb">Tags</div><div class="g g2">`+
+        (b.fault?`<button class="tb ${c.fault?'on':''}" style="${c.fault?selStyle(c.side):''};min-height:46px" data-fault="1">FAULT</button>`:'')+
+        (b.passive?`<button class="tb ${c.passive?'on':''}" style="${c.passive?selStyle(c.side):''};min-height:46px" data-passive="1">PASSIVE</button>`:'')+
+        `</div></div>`;
+    }
   } else if(c.kind==='TO'){
-    h += `<div class="sec"><div class="lb">Temps mort de</div><div class="g g2">
+    h += `<div class="sec"><div class="lb">Time-out of</div><div class="g g2">
       <button class="tb ${c.side==='TAM'?'on':''}" style="${c.side==='TAM'?selStyle('TAM'):''};min-height:54px;font-size:18px;font-weight:800" data-side="TAM">TAM</button>
       <button class="tb ${c.side==='VED'?'on':''}" style="${c.side==='VED'?selStyle('VED'):''};min-height:54px;font-size:18px;font-weight:800" data-side="VED">VED</button></div></div>`;
   } else {
     if(c.kind==='BAL'||c.kind==='FB'){
-      h += `<div class="sec"><div class="lb">Transició</div><div class="g gt">`;
+      h += `<div class="sec"><div class="lb">Transition</div><div class="g gt">`;
       for(const [rl,arr] of TRANS[c.kind]) h += `<div class="rl">${rl}</div>` + arr.map(v=>tagBtn([v], v.replace(rl+' ',''), has([v]), c.side)).join('');
       h += `</div></div>`;
     }
-    h += `<div class="sec"><div class="lb">Sistema</div><div class="g g4">`+SYS_MAIN.map(t=>tagBtn(t.p,t.l||t.p[0],has(t.p),c.side)).join('')+`</div></div>`;
-    h += `<div class="sec"><div class="lb">Inferioritat / superioritat</div><div class="g g6">`+SYS_MODS.map(t=>tagBtn(t.p,t.l||t.p[0],has(t.p),c.side)).join('')+`</div></div>`;
+    h += `<div class="sec"><div class="lb">System</div><div class="g g4">`+SYS_MAIN.map(t=>tagBtn(t.p,t.l||t.p[0],has(t.p),c.side)).join('')+`</div></div>`;
+    h += `<div class="sec"><div class="lb">Inferiority / superiority</div><div class="g g6">`+SYS_MODS.map(t=>tagBtn(t.p,t.l||t.p[0],has(t.p),c.side)).join('')+`</div></div>`;
   }
   P.innerHTML = h;
 }
@@ -1044,17 +1132,17 @@ function panelClick(e){
   const t=e.target.closest('button'); if(!t||t.disabled) return;
   if(t.dataset.tag) toggleTag(JSON.parse(t.dataset.tag));
   else if(t.dataset.rm!=null) removeTagAt(+t.dataset.rm);
-  else if(t.dataset.note) edit(c=>{ c.note=null; });
-  else if(t.id==='bEditNote') openNote(S.focusId);
-  else if(t.dataset.blk) edit(c=>{ c.note=t.dataset.blk; c.side = t.dataset.blk==='A'?'TAM':'VED'; c.btn = t.dataset.blk==='A'?'BLKA':'BLKD'; c.label = TBTN[c.btn].l; });
-  else if(t.dataset.fault) edit(c=>{ c.fault=!c.fault; });
   else if(t.dataset.side) edit(c=>{ c.side=t.dataset.side; });
-  else if(t.dataset.player!=null){ edit(c=>{ c.player = t.dataset.player===''?null:t.dataset.player; c.pChosen=true; }); autoCloseShoot(); }
-  else if(t.dataset.dec) { edit(c=>{ c.decision = c.decision===t.dataset.dec?null:t.dataset.dec; }); autoCloseShoot(); }
+  else if(t.dataset.player!=null){ edit(c=>{ c.player = t.dataset.player===''?null:t.dataset.player; c.pChosen=true; }); autoClosePop(); }
+  else if(t.dataset.dec) { edit(c=>{ c.decision = c.decision===t.dataset.dec?null:t.dataset.dec; }); autoClosePop(); }
   else if(t.dataset.nud){ const [w,d]=t.dataset.nud.split(','); nudge(w,+d); }
   else if(t.id==='bDel') deleteFocused();
   else if(t.id==='bGo'){ const c=clip(S.focusId); video.currentTime=c.start; video.play(); }
   else if(t.id==='bR2') openRoster();
+  else if(t.id==='bEditNote') openNote(S.focusId);
+  else if(t.dataset.blk) edit(c=>{ c.note=t.dataset.blk; c.side = t.dataset.blk==='A'?'TAM':'VED'; c.btn = t.dataset.blk==='A'?'BLKA':'BLKD'; c.label = TBTN[c.btn].l; });
+  else if(t.dataset.fault) edit(c=>{ c.fault=!c.fault; });
+  else if(t.dataset.passive) edit(c=>{ c.passive=!c.passive; });
 }
 $('#panel').addEventListener('click', panelClick);
 $('#indR').addEventListener('click', panelClick);
@@ -1077,7 +1165,7 @@ function renderTimeline(){
   TL.appendChild(frag);
 }
 
-/* ===================== individual / shoot screen ===================== */
+/* ===================== pop-up screen (IND / SHOT / 7m) ===================== */
 const indOpen = () => !$('#ovInd').classList.contains('hidden');
 function showInd(resume){
   indResume = resume;
@@ -1095,46 +1183,55 @@ function hideInd(resume){
   if(resume && indResume && videoReady && !clocked()) video.play();
   indResume=false;
 }
-function autoCloseShoot(){
+function autoClosePop(){
   const c=clip(S.focusId);
-  if(isT() && c && c.kind==='SHOOT' && c.decision && c.pChosen) setTimeout(()=>{ if(indOpen()) hideInd(false); }, 250);
+  if(c && c.kind==='SHOOT' && c.decision && c.pChosen) setTimeout(()=>{ if(indOpen()) hideInd(false); }, 250);
 }
 function playerGrid(c){
   const R=roster();
   const noneOn = !c.player;
-  let h = `<div class="sec"><div class="lb">Jugador</div>`;
+  let h = `<div class="sec"><div class="lb">Player</div>`;
   h += `<div class="g gp">`+
-    `<button class="tb none ${noneOn?'on':''}" data-player=""><span class="n" style="font-size:13px">NINGUNO</span><span class="s">sense jugador</span></button>`+
+    `<button class="tb none ${noneOn?'on':''}" data-player=""><span class="n" style="font-size:13px">NINGUNO</span><span class="s">no player</span></button>`+
     R.map(n=>{ const m=n.match(/^\s*(\d+)\.?\s*(.*)$/); const num=m?m[1]:'·', nm=(m?m[2]:n).split(' ')[0];
       return `<button class="tb ${c.player===n?'on':''}" style="${c.player===n?selStyle(c.side):''}" data-player="${esc(n)}"><span class="n">${esc(num)}</span><span class="s">${esc(nm)}</span></button>`; }).join('')+`</div>`;
-  if(!R.length) h += `<div class="muted" style="font-size:13px">Sense plantilla. <button class="btn sbtn" id="bR2">Afegir plantilla</button></div>`;
+  if(!R.length) h += `<div class="muted" style="font-size:13px">No roster. <button class="btn sbtn" id="bR2">Add roster</button></div>`;
   return h + `</div>`;
 }
 function decisionGrid(c){
-  const opts = c.kind==='SHOOT' ? [...DECISIONS, {v:ZONE_7M,l:'7m'}] : DECISIONS;
-  return `<div class="sec"><div class="lb">${c.kind==='SHOOT'?'Zona (opcional)':'Decision (només una)'}</div><div class="g ${opts.length>6?'gi7':'gi'}">`+
-    opts.map(d=>`<button class="tb ${c.decision===d.v?'on':''}" style="${c.decision===d.v?selStyle('TAM'):''}" data-dec="${esc(d.v)}">${d.l}</button>`).join('')+`</div></div>`;
+  if(c.kind==='SHOOT'){
+    return `<div class="sec"><div class="lb">Zone (optional)</div><div class="g gz">`+
+      SHOT_ZONES.map(d=> d ? `<button class="tb ${c.decision===d.v?'on':''}" style="${c.decision===d.v?selStyle('TAM'):''}" data-dec="${esc(d.v)}">${d.l}</button>` : '<div></div>').join('')+`</div></div>`;
+  }
+  return `<div class="sec"><div class="lb">Decision (only one)</div><div class="g gi">`+
+    DECISIONS.map(d=>`<button class="tb ${c.decision===d.v?'on':''}" style="${c.decision===d.v?selStyle('TAM'):''}" data-dec="${esc(d.v)}">${d.l}</button>`).join('')+`</div></div>`;
 }
 function renderInd(){
-  const c=clip(S.focusId); if(!c || (c.kind!=='IND' && c.kind!=='SHOOT')){ hideInd(false); return; }
-  $('#indBox').className = c.side + (c.kind==='SHOOT'?' shoot':'');
+  const c=clip(S.focusId); if(!isPop(c)){ hideInd(false); return; }
+  $('#indBox').className = c.side + (c.kind!=='IND'?' big':'');
   $('#indInfo').innerHTML = `<div class="hd"><span class="k">#${c.n} · ${esc(clipName(c))}</span><span class="badge b-${c.side}">${c.side}</span></div>
     ${timesHtml(c)}${c.kind==='IND'?`<div class="chips">${chipsHtml(c)}</div>`:''}
     <div class="mono" style="font-size:12px">${esc(c.player||'NINGUNO')}</div>
     ${c.decision?`<div class="mono" style="font-size:12px">${c.decision===ZONE_7M?'SITUATION':'DECISION'}: ${esc(decLabel(c.decision))}</div>`:''}`;
-  $('#bFet').textContent = (clocked()||!indResume) ? 'Fet' : 'Fet ▶';
-  let h = playerGrid(c);
+  $('#bFet').textContent = (clocked()||!indResume) ? 'Done' : 'Done ▶';
+  let h = '';
+  if(c.kind==='P7'){
+    h += `<div class="sec"><div class="lb">7m for</div><div class="g g2" style="max-width:520px">
+      <button class="tb ${c.side==='TAM'?'on':''}" style="${c.side==='TAM'?selStyle('TAM'):''}" data-side="TAM">TAM · analysed team attacks</button>
+      <button class="tb ${c.side==='VED'?'on':''}" style="${c.side==='VED'?selStyle('VED'):''}" data-side="VED">VED · analysed team defends</button></div></div>`;
+  }
+  h += playerGrid(c);
   if(c.kind==='IND'){
     const has = p => c.tags.some(x=>key(x)===key(p));
     const groups = c.side==='TAM'?IND_ATT:IND_DEF;
-    h += `<div class="sec"><div class="lb">${c.side==='TAM'?'Accions d\'atac':'Accions de defensa'}</div>`;
+    h += `<div class="sec"><div class="lb">${c.side==='TAM'?'Attack actions':'Defense actions'}</div>`;
     for(const [lb,items] of groups){
       const cls = items.length>6 ? 'gi7' : 'gi';
       h += `<div class="grp"><div class="rl">${lb}</div><div class="g ${cls}">`+items.map(t=>tagBtn(t.p,t.l||t.p.join(' '),has(t.p),c.side)).join('')+`</div></div>`;
     }
     h += `</div>`;
     if(c.side==='TAM') h += decisionGrid(c);
-  } else {
+  } else if(c.kind==='SHOOT'){
     h += decisionGrid(c);
   }
   $('#indR').innerHTML = h;
@@ -1160,7 +1257,7 @@ function closeNote(text){
   const c=clip(noteFor); $('#ovNote').classList.add('hidden'); $('#noteText').blur();
   if(!c) return;
   const v=(text||'').trim();
-  edit(x=>{ x.note = v||null; });
+  const keep=S.focusId; S.focusId=noteFor; edit(x=>{ x.note = v||null; }); S.focusId=keep; renderAll();
   if(v){ const rec=[v,...LS.get('xt.recentNotes',[]).filter(x=>x!==v)].slice(0,8); LS.set('xt.recentNotes',rec); }
   noteFor=null;
 }
@@ -1172,65 +1269,48 @@ $('#noteRecent').addEventListener('click',e=>{ const b=e.target.closest('[data-r
 /* ===================== export ===================== */
 function warnings(c){
   const w=[];
-  if(c.end==null) w.push('obert');
-  if(c.kind==='TO' && !c.side) w.push('falta TAM o VED');
-  if((c.kind==='BAL'||c.kind==='FB') && !c.tags.some(p=>p.length===1 && /^(BAL|FB) /.test(p[0]))) w.push('falta l\'onada');
-  if(c.kind==='IND' && !c.tags.length) w.push('sense etiquetes');
-  if(c.kind==='SHOOT' && !c.decision) w.push('sense zona (s\'exporta amb NOTES «SHOOT»)');
+  if(c.end==null) w.push('open');
+  if(c.kind==='TO' && !c.side) w.push('TAM or VED missing');
+  if((c.kind==='BAL'||c.kind==='FB') && !c.tags.some(p=>p.length===1 && /^(BAL|FB) /.test(p[0]))) w.push('wave missing');
+  if(c.kind==='IND' && !c.tags.length) w.push('no tags');
+  if(c.kind==='SHOOT' && !c.decision) w.push('no zone (exported with NOTES «SHOT»)');
   return w;
 }
 const sorted = arr => arr.slice().sort((a,b)=>a.start-b.start || a.n-b.n);
+// time in the final video: training/live use the offsets; the live game can have a 2nd-half sync
+function outT(x, c){
+  if(!clocked()) return x;
+  const o1 = S.offset||0;
+  if(isLive() && S.t2!=null && (c.h2!=null ? c.h2 : c.start >= S.t2 - 0.05)){
+    const o2 = (S.offset2!=null) ? S.offset2 : (S.t2 + o1);
+    return x - S.t2 + o2;
+  }
+  return x + o1;
+}
 function phasesTxt(){
-  const off = clocked() ? (S.offset||0) : 0;
-  const rows = sorted(S.clips.filter(c=>c.end!=null && (isT() ? (c.kind==='T' && !c.note) : (c.kind!=='IND' && c.kind!=='SYNC'))));
+  const rows = sorted(S.clips.filter(c=>c.end!=null && (isT() ? (c.kind==='T' && !c.note) : !['IND','SYNC','P7'].includes(c.kind))));
   const L=['Partido\tNr\tStart\tEnd\tEquipo\tDeportista\tSYSTEM\tFIGURÁK'];
-  rows.forEach((c,i)=>L.push([S.name, i+1, hms(Math.floor(c.start+off+1e-6)), hms(Math.ceil(c.end+off-1e-6)), S.team+' '+(c.side||'TAM'), 'NINGUNO', fmtCol(c.tags), c.fault?FAULT_PASTE:''].join('\t')));
+  rows.forEach((c,i)=>L.push([S.name, i+1, hms(Math.floor(outT(c.start,c)+1e-6)), hms(Math.ceil(outT(c.end,c)-1e-6)), S.team+' '+(c.side||'TAM'), 'NINGUNO', fmtCol(sysTags(c)), c.fault?FAULT_PASTE:''].join('\t')));
   return {text:L.join('\r\n'), n:rows.length};
 }
 const xesc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const xlabel = (group, text) => `      <label><group>${xesc(group)}</group><text>${xesc(text)}</text></label>`;
-const ptext = p => p.length===1 ? p[0] : fmtPath(p);
 function xmlDoc(inst){ return `<?xml version="1.0" encoding="utf-8"?>\n<file>\n  <ALL_INSTANCES>\n${inst.join('\n')}\n  </ALL_INSTANCES>\n</file>\n`; }
-function xinst(i, c, labels, off){
-  const code = S.team+' '+c.side+(c.player?' '+c.player:'');
-  return `    <instance>\n      <ID>${i}</ID>\n      <start>${r1(c.start+off)}</start>\n      <end>${r1(c.end+off)}</end>\n      <code>${xesc(code)}</code>\n${labels.join('\n')}${labels.length?'\n':''}    </instance>`;
-}
-function indXml(){
-  const rows = sorted(S.clips.filter(c=>c.kind==='IND' || c.kind==='SYNC'));
-  const inst = rows.map((c,i)=>{
-    if(c.kind==='SYNC') return xinst(i+1, c, [xlabel('NOTES ', 'SYNC')], clocked() ? (S.offset||0) : 0);
-    const labels = [IND_FIRST,...c.tags].map(p=>xlabel('INDIVIDUAL ', ptext(p)));
-    if(c.decision) labels.push(xlabel('DECISION ', c.decision));
-    return xinst(i+1, c, labels, clocked() ? (S.offset||0) : 0);
-  });
-  return {text:xmlDoc(inst), n:rows.length};
-}
-function trainXml(){
-  const off = S.offset||0;
-  const rows = sorted(S.clips.filter(c=>c.end!=null && (c.kind!=='T' || c.note)));
-  const inst = rows.map((c,i)=>{
-    const labels = (c.tags||[]).map(p=>xlabel('SYSTEM', ptext(p)));
-    if(c.note) labels.push(xlabel('NOTES ', c.note));
-    if(c.decision) labels.push(xlabel('DECISION ', c.decision));
-    return xinst(i+1, c, labels, off);
-  });
-  return {text:xmlDoc(inst), n:rows.length};
-}
 function allXml(){
-  const off = clocked() ? (S.offset||0) : 0;
-  const rows = S.clips.filter(c=>c.end!=null).slice().sort((a,b)=>a.start-b.start || a.end-b.end || a.n-b.n);
-  const inst = rows.map((c,i)=>{
+  const rows = S.clips.filter(c=>c.end!=null).map(c=>({c, s:r1(outT(c.start,c)), e:r1(outT(c.end,c))}))
+    .sort((a,b)=>a.s-b.s || a.e-b.e || a.c.n-b.c.n);
+  const inst = rows.map(({c,s,e},i)=>{
     const labels=[];
     if(c.kind==='IND') labels.push(xlabel('INDIVIDUAL ', fmtCol([IND_FIRST,...c.tags])));
-    else if(c.tags && c.tags.length) labels.push(xlabel('SYSTEM', fmtCol(c.tags)));
+    else { const st=sysTags(c); if(st.length) labels.push(xlabel('SYSTEM', fmtCol(st))); }
     if(c.fault) labels.push(xlabel('FIGURÁK', FAULT_TXT));
     if(c.decision===ZONE_7M) labels.push(xlabel('SITUATION ', '7m'));
     else if(c.decision) labels.push(xlabel('DECISION ', c.decision));
     if(c.note) labels.push(xlabel('NOTES ', c.note));
     // XPS drops clips without any label: give them a NOTES so they always import
-    if(!labels.length) labels.push(xlabel('NOTES ', c.kind==='SHOOT' ? 'SHOOT' : clipName(c)));
+    if(!labels.length) labels.push(xlabel('NOTES ', clipName(c)));
     const code = S.team+' '+(c.side||'TAM')+' '+(c.player||'NINGUNO');
-    return `    <instance>\n      <ID>${i+1}</ID>\n      <start>${r1(c.start+off)}</start>\n      <end>${r1(c.end+off)}</end>\n      <code>${xesc(code)}</code>\n${labels.join('\n')}${labels.length?'\n':''}    </instance>`;
+    return `    <instance>\n      <ID>${i+1}</ID>\n      <start>${s}</start>\n      <end>${e}</end>\n      <code>${xesc(code)}</code>\n${labels.join('\n')}\n    </instance>`;
   });
   return {text:xmlDoc(inst), n:rows.length};
 }
@@ -1242,55 +1322,56 @@ function download(name, text, type){
 }
 function tagsCell(c){
   if(c.kind==='IND') return (c.player?esc(c.player)+'<br>':'')+esc(fmtCol([IND_FIRST,...c.tags]))+(c.decision?' · '+esc(c.decision):'');
-  if(c.kind==='SHOOT') return esc(c.player||'NINGUNO')+(c.decision?' · '+esc(decLabel(c.decision)):'');
-  return esc(fmtCol(c.tags))+(c.fault?' · FAULT':'')+(c.note?' · <span style="color:var(--warn)">'+esc(c.note)+'</span>':'');
+  if(c.kind==='SHOOT'||c.kind==='P7') return esc(c.player||'NINGUNO')+(c.decision?' · '+esc(decLabel(c.decision)):'');
+  return esc(fmtCol(sysTags(c)))+(c.fault?' · FAULT':'')+(c.note?' · <span style="color:var(--warn)">NOTES: '+esc(c.note)+'</span>':'');
 }
 function refreshExportText(){
   const T=phasesTxt(), X=allXml();
-  $('#exTxt').textContent = T.text; $('#exXml').textContent = X.n ? X.text : '(cap tall tancat)';
+  $('#exTxt').textContent = T.text; $('#exXml').textContent = X.n ? X.text : '(no closed clips)';
 }
 function openExport(){
-  const t=isT();
   const all=sorted(S.clips);
   const wn = all.filter(c=>warnings(c).length).length;
   $('#exOffBox').classList.toggle('hidden', !clocked());
-  $('#exTxtLbl').textContent = 'Alternativa · només talls amb SYSTEM → Importar Eventos desde el portapapeles';
-  $('#exXmlLbl').textContent = 'Tots els talls en un sol fitxer → Importar XML/XLS › SportsCode';
-  $('#exHelp').textContent = 'Al PC: a XPS, botó dret › Avanzado › Importar XML/XLS › SportsCode i tria el .xml. A l\'assistent, assigna les combinacions noves (en vermell) clicant les etiquetes en l\'ordre correcte: XPS les recordarà per a les properes importacions.';
-  if(clocked()) $('#exOffset').value = S.offset ? hmsT(S.offset) : '';
-  $('#bDlAll').textContent = '⬇ Descarregar XML (tots els talls)';
-  const cnt = t ? `${all.length} talls` : (()=>{ const ph=all.filter(c=>c.kind!=='IND').length; return `${all.length} talls · ${ph} de fase · ${all.length-ph} individuals`; })();
-  $('#exSummary').innerHTML = cnt+(wn?` · <span style="color:var(--warn)">${wn} amb avisos</span>`:'')+
-    (S.openId?` · <span style="color:var(--warn)">hi ha un tall obert: no s'exportarà fins que el tanquis</span>`:'');
-  const tf = c => (c.kind==='IND'||c.kind==='SHOOT'||c.kind==='SYNC') ? hmsF : (clocked()?hmsT:hms);
+  $('#exOffLbl').textContent = isLive() ? 'Second of the video where the 1st half kicks off' : 'Second of the video where the signal is seen';
+  $('#exOff2Box').classList.toggle('hidden', !(isLive() && S.t2!=null));
+  if(clocked()){ $('#exOffset').value = S.offset ? hmsT(S.offset) : ''; $('#exOffset2').value = S.offset2!=null ? hmsT(S.offset2) : ''; }
+  $('#exSummary').innerHTML = `${all.length} clips`+(wn?` · <span style="color:var(--warn)">${wn} with warnings</span>`:'')+
+    (S.openId?` · <span style="color:var(--warn)">a clip is still open: it will not be exported until you close it</span>`:'')+
+    (isLive() && S.t2!=null && S.offset2==null ? ` · <span style="color:var(--warn)">2nd-half kick-off in the video not set</span>`:'');
+  const tf = c => (isPop(c)||c.kind==='SYNC') ? hmsF : (clocked()?hmsT:hms);
   $('#exRows').innerHTML = all.map(c=>{
     const w=warnings(c);
     return `<tr class="${w.length?'w':''}" data-go="${c.id}"><td class="muted">${c.n}</td>
       <td><span class="badge b-${c.side||'none'}">${esc(clipName(c))}${c.side?' · '+c.side:''}</span></td>
-      <td class="mono" style="white-space:nowrap">${tf(c)(c.start)} → ${c.end==null?'obert':tf(c)(c.end)}</td>
+      <td class="mono" style="white-space:nowrap">${tf(c)(c.start)} → ${c.end==null?'open':tf(c)(c.end)}</td>
       <td class="mono" style="font-size:12px">${tagsCell(c)||'—'}${w.length?`<div style="color:var(--warn);font-family:system-ui;font-size:12px;font-weight:600">${w.join(' · ')}</div>`:''}</td></tr>`;
-  }).join('') || '<tr><td colspan="4" class="muted">Encara no hi ha talls.</td></tr>';
+  }).join('') || '<tr><td colspan="4" class="muted">No clips yet.</td></tr>';
   refreshExportText();
   $('#ovExport').classList.remove('hidden');
 }
-$('#exOffset').addEventListener('input', e=>{
-  const v=parseTime(e.target.value);
-  if(isNaN(v)){ e.target.style.borderColor='#ef4444'; return; }
-  e.target.style.borderColor=''; S.offset=v; save(); refreshExportText();
-});
+function offsetInput(el, prop){
+  el.addEventListener('input', e=>{
+    const v=parseTime(e.target.value);
+    if(Number.isNaN(v)){ e.target.style.borderColor='#ef4444'; return; }
+    e.target.style.borderColor='';
+    S[prop] = (prop==='offset') ? (v||0) : v; save(); refreshExportText();
+  });
+}
+offsetInput($('#exOffset'),'offset'); offsetInput($('#exOffset2'),'offset2');
 $('#bExport').onclick = ()=>{ video.pause(); openExport(); };
 $('#exRows').addEventListener('click', e=>{ const r=e.target.closest('[data-go]'); if(r){ $('#ovExport').classList.add('hidden'); focusClip(r.dataset.go,true); } });
 $('#bCopyTxt').onclick = async ()=>{
   const t=phasesTxt().text;
-  try{ await navigator.clipboard.writeText(t); toast('Copiat'); }
-  catch(e){ const a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); toast('Copiat'); }
+  try{ await navigator.clipboard.writeText(t); toast('Copied'); }
+  catch(e){ const a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); toast('Copied'); }
 };
-$('#bDlTxt').onclick = ()=> download(safeName()+(isT()?'_entreno.txt':'_fases.txt'), phasesTxt().text, 'text/plain;charset=utf-8');
+$('#bDlTxt').onclick = ()=> download(safeName()+'.txt', phasesTxt().text, 'text/plain;charset=utf-8');
 $('#bDlAll').onclick = ()=>{
   const X=allXml();
-  if(!X.n){ toast('No hi ha talls tancats'); return; }
-  download(safeName()+'.xml', X.text, 'application/xml'); toast('Descarregant '+X.n+' talls');
-  if(!clocked() || !S.tEnd) offerBackup('XML descarregat.');
+  if(!X.n){ toast('No closed clips'); return; }
+  download(safeName()+'.xml', X.text, 'application/xml'); toast('Downloading '+X.n+' clips');
+  if(!clocked() || !S.tEnd) offerBackup('XML downloaded.');
 };
 
 /* ===================== roster ===================== */
@@ -1309,26 +1390,26 @@ function parseRoster(text){
 }
 function openRosterFor(team){
   rosterTeam=team; const R=rosters()[team]||[];
-  $('#rTitle').textContent='Plantilla · '+team; $('#rText').value=R.join('\n'); $('#rCount').textContent=R.length+' jugadors';
+  $('#rTitle').textContent='Roster · '+team; $('#rText').value=R.join('\n'); $('#rCount').textContent=R.length+' players';
   $('#ovRoster').classList.remove('hidden');
 }
 function openRoster(){ openRosterFor(S.team); }
 $('#bRoster').onclick=openRoster;
 $('#bRSave').onclick=()=>{
   const list=parseRoster($('#rText').value); const r=rosters(); r[rosterTeam]=list; LS.set('xt.rosters',r);
-  $('#rText').value=list.join('\n'); $('#rCount').textContent=list.length+' jugadors desats';
+  $('#rText').value=list.join('\n'); $('#rCount').textContent=list.length+' players saved';
   if(S) renderAll(); else setNewMode(newMode);
-  toast('Plantilla desada');
+  toast('Roster saved');
 };
 
 /* ===================== keys ===================== */
-function keyName(k){ return k===' '?'Espai':k; }
+function keyName(k){ return k===' '?'Space':k; }
 function renderKeys(){
-  const list = (S && isT()) ? [['FINAL','FINAL'],['UNDO','Desfer'],...ACTIONS_T] : ACTIONS_M;
+  const list = (S && isT()) ? [['FINAL','FINAL'],['UNDO','Undo'],...ACTIONS_T] : ACTIONS_M;
   $('#kList').innerHTML = list.map(([a,l])=>{
     const ks=Object.keys(keys).filter(k=>keys[k]===a);
-    return `<div class="keyrow"><div class="a">${esc(l)}</div><div class="kcap mono">${learning===a?'prem una tecla…':(ks.map(keyName).join(' · ')||'—')}</div>
-      <button class="btn" data-learn="${a}">Canviar</button></div>`;
+    return `<div class="keyrow"><div class="a">${esc(l)}</div><div class="kcap mono">${learning===a?'press a key…':(ks.map(keyName).join(' · ')||'—')}</div>
+      <button class="btn" data-learn="${a}">Change</button></div>`;
   }).join('');
 }
 $('#bKeys').onclick=()=>{ renderKeys(); $('#ovKeys').classList.remove('hidden'); };
@@ -1355,7 +1436,6 @@ document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{ $('#'+b.dat
 /* ===================== init ===================== */
 rosters();
 renderSetup();
-window.addEventListener('resize', ()=>{ if(!$('#setup').classList.contains('hidden')) $('#scrInfo').textContent='ClipAPP '+APP_VERSION+' · pantalla '+innerWidth+'×'+innerHeight; });
 window.addEventListener('beforeunload', ()=>{ if(S) save(); });
 if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
