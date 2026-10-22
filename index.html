@@ -232,13 +232,14 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
         <div class="field"><label for="mCode">Game code (after the date)</label><input id="mCode" placeholder="e.g. S7.PLO-GDA"></div>
       </div>
       <div class="field" style="margin-top:10px"><label>Resulting code</label><div id="mName" class="mono code"></div></div>
-      <div class="flabel" style="margin:6px 0 8px">Analysed team · tap to select</div>
-      <div class="teams" id="teamPick"></div>
+      <div class="row" style="margin-top:6px">
+        <div class="field"><label for="teamSel">Analysed team</label><select id="teamSel" style="height:46px"></select></div>
+        <div class="field" style="flex:0 1 auto"><label>&nbsp;</label><div class="row"><span class="muted" id="teamInfo" style="font-size:13px"></span><button class="btn" id="bTeamEdit">Edit roster</button></div></div>
+      </div>
       <div class="row hidden" id="newTeamRow" style="margin-top:10px">
         <input id="newTeamName" placeholder="Team name exactly as in XPS, without TAM/VED (e.g. GDANSK 26-27)" style="flex:1">
         <button class="btn primary" id="bNewTeamOk">Create</button><button class="btn" id="bNewTeamNo">Cancel</button>
       </div>
-      <div class="row" style="margin-top:10px"><span class="muted" id="teamInfo" style="font-size:13px;flex:1"></span><button class="btn" id="bTeamEdit">Edit roster</button></div>
       <div class="flabel" style="margin:14px 0 8px">Source</div>
       <div class="srcs"><button class="src on" data-src="video">With video</button><button class="src" data-src="live">Live (no video)</button></div>
     </div>
@@ -294,6 +295,7 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
       <div id="liveBox" class="hidden">
         <div id="mClock" class="mono">00:00:00<small>Not synced</small></div>
         <button class="bsync" data-sync="1">SYNC · 1st half kick-off</button>
+        <button class="bfin" data-end1="1">End 1st half</button>
         <button class="bsync" data-sync2="1">SYNC · 2nd half kick-off</button>
         <button class="bfin" data-finish="1">End game</button>
       </div>
@@ -457,7 +459,7 @@ pre{margin:0;background:#05080a;border:1px solid #252e37;border-radius:10px;padd
 
 <script>
 'use strict';
-const APP_VERSION = 'v14';
+const APP_VERSION = 'v16';
 /* =====================================================================
    TAG DICTIONARY — exact texts as they exist in the XPS template.
    Trailing spaces matter. All verified against XPS imports.
@@ -686,15 +688,16 @@ function teamList(){
 function renderTeams(){
   const r=rosters(), list=teamList();
   if(newTeam && !list.includes(newTeam)) newTeam=null;
-  $('#teamPick').innerHTML = list.map(t=>`<button class="team ${t===newTeam?'on':''}" data-team="${esc(t)}"><b>${esc(t)}</b><span>${(r[t]||[]).length} players${t===newTeam?' · selected':''}</span></button>`).join('')
-    + `<button class="team new" id="bTeamNew">+ New team</button>`;
-  $('#teamInfo').textContent = newTeam ? 'Selected: '+newTeam+' · '+(r[newTeam]||[]).length+' players' : 'No team selected';
+  $('#teamSel').innerHTML = `<option value="" ${newTeam?'':'selected'} disabled>— choose a team —</option>`+
+    list.map(t=>`<option value="${esc(t)}" ${t===newTeam?'selected':''}>${esc(t)} · ${(r[t]||[]).length} players</option>`).join('')+
+    `<option value="__new">+ New team…</option>`;
+  $('#teamInfo').textContent = newTeam ? '' : 'No team selected';
   $('#bTeamEdit').disabled = !newTeam;
 }
-$('#teamPick').addEventListener('click', e=>{
-  const b=e.target.closest('[data-team]');
-  if(b){ newTeam=b.dataset.team; LS.set('xt.lastTeam',newTeam); renderTeams(); return; }
-  if(e.target.closest('#bTeamNew')){ $('#newTeamRow').classList.remove('hidden'); $('#newTeamName').value=''; $('#newTeamName').focus(); }
+$('#teamSel').addEventListener('change', e=>{
+  const v=e.target.value;
+  if(v==='__new'){ $('#newTeamRow').classList.remove('hidden'); $('#newTeamName').value=''; $('#newTeamName').focus(); renderTeams(); return; }
+  newTeam=v; LS.set('xt.lastTeam',newTeam); $('#newTeamRow').classList.add('hidden'); renderTeams();
 });
 $('#bNewTeamNo').onclick=()=>$('#newTeamRow').classList.add('hidden');
 $('#bNewTeamOk').onclick=()=>{
@@ -754,7 +757,7 @@ $('#bBackup').onclick = ()=>doBackup();
 function doBackup(){
   const data = {app:'tallador-xps',v:1,date:new Date().toISOString(),rosters:rosters(),trainTeam:trainTeam(),keys,sessions:idx().map(x=>LS.get('xt.s.'+x.id,null)).filter(Boolean)};
   const d=new Date();
-  download('_clipapp_backup_'+today()+'_'+pad(d.getHours())+'-'+pad(d.getMinutes())+'.json', JSON.stringify(data), 'application/json');
+  download('clipapp_backup_'+today()+'_'+pad(d.getHours())+'-'+pad(d.getMinutes())+'.json', JSON.stringify(data), 'application/json');
 }
 $('#fRestore').onchange = async e=>{
   const f=e.target.files[0]; if(!f) return;
@@ -835,9 +838,10 @@ function tick(){
   const t=now();
   if(clocked()){
     const c = isT() ? $('#tClock') : $('#mClock');
-    let st = !S.t0 ? 'Not synced' : S.tEnd ? '■ ended' : (isLive() ? (S.t2!=null ? '● running · 2nd half' : '● running · 1st half') : '● running');
+    let st = !S.t0 ? 'Not synced' : S.tEnd ? '■ ended' : (isLive() ? (S.t2!=null ? '● running · 2nd half' : (S.h1End!=null ? '■ half-time · waiting for 2nd half sync' : '● running · 1st half')) : '● running');
     c.innerHTML = hms(Math.floor(t))+`<small>${st}</small>`;
-    c.classList.toggle('live', !!S.t0 && !S.tEnd); c.classList.toggle('ended', !!S.tEnd);
+    const ht = isLive() && S.h1End!=null && S.t2==null;
+    c.classList.toggle('live', !!S.t0 && !S.tEnd && !ht); c.classList.toggle('ended', !!S.tEnd || ht);
     const ic=$('#indClock'); if(!ic.classList.contains('hidden')) ic.textContent=hms(Math.floor(t));
   } else {
     $('#vclock').textContent=hms(Math.floor(t));
@@ -855,14 +859,22 @@ function syncClip(start, note){
 document.querySelectorAll('[data-sync]').forEach(b=>b.onclick=()=>{
   if(S.t0 && S.clips.length>1 && !confirm('There are clips marked with the current sync. If you sync again, the clock goes back to 0 and the previous clips will be out of place. Continue?')) return;
   snapshot();
-  S.t0 = Date.now(); S.tEnd=null; S.t2=null;
+  S.t0 = Date.now(); S.tEnd=null; S.t2=null; S.h1End=null;
   S.clips = S.clips.filter(c=>c.kind!=='SYNC');
   const sc = syncClip(0, isLive() ? 'SYNC 1H' : 'SYNC');
   S.clips.push(sc); S.focusId=sc.id;
   save(); renderAll(); flash('SYNC');
 });
+const h1Ended = () => S.h1End!=null || S.t2!=null;
+document.querySelectorAll('[data-end1]').forEach(b=>b.onclick=()=>{
+  if(!S.t0){ toast('Sync the 1st half first'); return; }
+  if(h1Ended()) return;
+  if(!confirm('End the 1st half?\n\nThe open clip will be closed. After this you can sync the 2nd half kick-off.')) return;
+  snapshot(); const t=now(); closeOpen(t); S.h1End=r1(t); save(); renderAll(); toast('1st half ended. Press SYNC · 2nd half at the kick-off.');
+});
 document.querySelectorAll('[data-sync2]').forEach(b=>b.onclick=()=>{
   if(!S.t0){ toast('Sync the 1st half first'); return; }
+  if(!h1Ended()){ toast('First end the 1st half'); return; }
   if(S.tEnd){ toast('The clock is stopped'); return; }
   if(S.t2!=null && !confirm('The 2nd half was already synced. Sync it again now?')) return;
   snapshot();
@@ -892,7 +904,9 @@ function buildTrainButtons(){
 /* ---------- actions ---------- */
 function needTime(){
   if(clocked()){ if(!S.t0){ toast('First press SYNC'); return true; }
-    if(S.tEnd){ toast('The clock is stopped. Press «Resume» to keep tagging.'); return true; } return false; }
+    if(S.tEnd){ toast('The clock is stopped. Press «Resume» to keep tagging.'); return true; }
+    if(isLive() && S.h1End!=null && S.t2==null){ toast('Half-time: press SYNC · 2nd half at the kick-off'); return true; }
+    return false; }
   if(!videoReady){ toast('First open the video'); return true; } return false;
 }
 function flash(text, side){
@@ -1024,9 +1038,10 @@ function renderStarts(){
     document.querySelectorAll('[data-sync]').forEach(b=>{
       b.textContent = S.t0 ? (isLive()?'Re-sync 1st half':'Re-sync') : (isLive()?'SYNC · 1st half kick-off':'SYNC · signal to camera');
       b.classList.toggle('done', !!S.t0); });
+    document.querySelectorAll('[data-end1]').forEach(b=>{ b.classList.toggle('hidden', !S.t0 || h1Ended()); b.disabled=!!S.tEnd; });
     document.querySelectorAll('[data-sync2]').forEach(b=>{
       b.textContent = S.t2!=null ? 'Re-sync 2nd half' : 'SYNC · 2nd half kick-off';
-      b.classList.toggle('done', S.t2!=null); b.disabled = !S.t0 || !!S.tEnd; });
+      b.classList.toggle('done', S.t2!=null); b.classList.toggle('hidden', !h1Ended()); b.disabled = !!S.tEnd; });
     document.querySelectorAll('[data-finish]').forEach(b=>{ b.textContent = S.tEnd ? 'Resume the clock' : (isT()?'End training':'End game'); b.disabled=!S.t0; });
   }
 }
@@ -1314,7 +1329,7 @@ function allXml(){
   });
   return {text:xmlDoc(inst), n:rows.length};
 }
-function safeName(){ return (S.name||'clips').replace(/[^\w.\-]+/g,'_'); }
+function safeName(){ return (isT()?'clipapp_training_':'clipapp_game_') + (S.name||'clips').replace(/[^\w.\-]+/g,'_'); }
 function download(name, text, type){
   const b=new Blob([text],{type}); const a=document.createElement('a');
   a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click();
